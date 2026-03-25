@@ -25,17 +25,25 @@ const sendTokenResponse = (user, statusCode, res) => {
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
-    console.log(`DEBUG: Attempting register for: ${email}`);
+    console.log(`DEBUG: Register inputs - Name: ${name}, Email: ${email}, Password length: ${password?.length}`);
 
     const user = await User.create({
       name,
       email,
       password,
     });
-
+    
+    console.log("DEBUG: User created successfully");
     sendTokenResponse(user, 201, res);
   } catch (err) {
-    next(err);
+    console.error("DEBUG: REGISTER CONTROLLER ERROR:", err);
+    // Temporarily send the full error message to the client for debugging
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal Server Error during registration", 
+      debug: err.message,
+      stack: err.stack 
+    });
   }
 };
 

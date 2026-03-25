@@ -1,0 +1,50 @@
+# AI-Powered Code Debugger and Explanation System
+
+A production-ready full-stack application for intelligent code analysis, debugging, and optimization.
+
+## Features
+- **Intelligent Debugging**: Detects syntax and logical errors using AI.
+- **Simple Explanations**: Breaks down complex errors into beginner-friendly language.
+- **Code Optimization**: Suggests more efficient versions of your code.
+- **Complexity Analysis**: Provides Big-O time and space complexity.
+- **Multi-language Support**: Supports C, C++, Java, Python, and JavaScript.
+- **History Tracking**: View and manage previous analysis results in a personalized dashboard.
+- **Modern UI**: Sleek dark-themed interface with Monaco Editor integration.
+
+## Tech Stack
+- **Frontend**: Next.js, Tailwind CSS, Monaco Editor, Lucide Icons, Framer Motion.
+- **Backend**: Node.js, Express, MongoDB, OpenAI API.
+- **Security**: JWT, Bcrypt, Helmet, CORS, Rate Limiting.
+
+## Getting Started
+
+### Prerequisites
+- Node.js installed
+- MongoDB URI
+- OpenAI API Key
+
+### Installation
+
+1. **Clone the repository**
+2. **Setup Backend**
+   ```bash
+   cd backend
+   npm install
+   # Create .env file based on .env.example
+   npm start
+   ```
+3. **Setup Frontend**
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+
+## Deployment
+- **Frontend**: Deploy to Vercel.
+- **Backend**: Deploy to Render or Railway.
+- **Database**: Use MongoDB Atlas.
+
+## Documentation
+Refer to `brain/documentation.md` for project abstract and system architecture.
+Refer to `brain/viva_qa.md` for exam preparation.

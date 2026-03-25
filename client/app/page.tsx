@@ -30,7 +30,11 @@ export default function Home() {
       setResult(response.data.data);
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || "Failed to analyze code. Please check your API key and connection.");
+      if (err.response?.status === 401) {
+        setError("You must be logged in to analyze code. Please sign in or create an account.");
+      } else {
+        setError(err.response?.data?.message || "Failed to analyze code. Please check your connection.");
+      }
     } finally {
       setIsAnalyzing(false);
     }

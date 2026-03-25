@@ -14,7 +14,7 @@ const analysisSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  errors: {
+  findings: {
     type: String,
   },
   explanation: {

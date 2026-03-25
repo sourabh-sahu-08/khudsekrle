@@ -1,9 +1,21 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Terminal, History, User, LogOut } from 'lucide-react';
+import { Terminal, History, User, LogOut, LogIn } from 'lucide-react';
 
 export default function Navbar() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(!!localStorage.getItem('token'));
+    }, []);
+
+    const handleSignOut = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+    };
     return (
         <nav className="fixed top-0 w-full z-50 glass h-16 flex items-center px-6 justify-between">
             <div className="flex items-center gap-2">
@@ -14,18 +26,32 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-6">
-                <Link href="/dashboard" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
-                    <History size={18} />
-                    <span>History</span>
-                </Link>
-                <Link href="/profile" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
-                    <User size={18} />
-                    <span>Profile</span>
-                </Link>
-                <button className="flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors">
-                    <LogOut size={18} />
-                    <span>Sign Out</span>
-                </button>
+                {isLoggedIn ? (
+                    <>
+                        <Link href="/dashboard" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
+                            <History size={18} />
+                            <span>History</span>
+                        </Link>
+                        <Link href="/profile" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
+                            <User size={18} />
+                            <span>Profile</span>
+                        </Link>
+                        <button onClick={handleSignOut} className="flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors">
+                            <LogOut size={18} />
+                            <span>Sign Out</span>
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <Link href="/auth/login" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors font-medium">
+                            <LogIn size={18} />
+                            <span>Sign In</span>
+                        </Link>
+                        <Link href="/auth/register" className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl text-sm font-medium transition-colors">
+                            Get Started
+                        </Link>
+                    </>
+                )}
             </div>
         </nav>
     );

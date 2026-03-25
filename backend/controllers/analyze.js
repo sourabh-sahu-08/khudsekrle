@@ -22,7 +22,7 @@ Analyze the following code written in ${language}.
 Provide output in JSON format:
 
 {
-  "errors": "List of errors found",
+  "findings": "List of errors found",
   "explanation": "Explain errors in simple English",
   "correctedCode": "Fixed version of code",
   "optimizedCode": "More optimized version",
@@ -70,6 +70,52 @@ exports.getHistory = async (req, res, next) => {
   try {
     const history = await Analysis.find({ userId: req.user.id }).sort('-createdAt');
     res.status(200).json({ success: true, count: history.length, data: history });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get single analysis
+// @route   GET /api/analyze/:id
+// @access  Private
+exports.getAnalysis = async (req, res, next) => {
+  try {
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    // Make sure user owns the analysis
+    if (analysis.userId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to access this analysis' });
+    }
+
+    res.status(200).json({ success: true, data: analysis });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Delete analysis
+// @route   DELETE /api/analyze/:id
+// @access  Private
+exports.deleteAnalysis = async (req, res, next) => {
+  try {
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    // Make sure user owns the analysis
+    if (analysis.userId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to delete this analysis' });
+    }
+
+    await analysis.deleteOne();
+
+    res.status(200).json({ success: true, data: {} });
   } catch (err) {
     next(err);
   }

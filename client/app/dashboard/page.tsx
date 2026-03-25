@@ -10,6 +10,15 @@ export default function Dashboard() {
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const handleDelete = async (id: string) => {
+        try {
+            await analysisService.deleteAnalysis(id);
+            setHistory(prev => prev.filter(item => item._id !== id));
+        } catch (err) {
+            console.error("Failed to delete analysis", err);
+        }
+    };
+
     useEffect(() => {
         const fetchHistory = async () => {
             try {
@@ -76,11 +85,11 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <button className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2">
+                                    <Link href={`/dashboard/analysis/${item._id}`} className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2">
                                         <ExternalLink size={16} />
                                         View Details
-                                    </button>
-                                    <button className="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                                    </Link>
+                                    <button onClick={() => handleDelete(item._id)} className="p-2 text-slate-500 hover:text-red-400 transition-colors">
                                         <Trash2 size={18} />
                                     </button>
                                 </div>

@@ -25,6 +25,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
+    console.log(`DEBUG: Attempting register for: ${email}`);
 
     const user = await User.create({
       name,

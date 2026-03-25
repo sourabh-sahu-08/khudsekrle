@@ -22,6 +22,8 @@ export const authService = {
 export const analysisService = {
     analyze: (data: { code: string; language: string }) => API.post('/analyze', data),
     getHistory: () => API.get('/analyze/history'),
+    getAnalysisById: (id: string) => API.get(`/analyze/${id}`),
+    deleteAnalysis: (id: string) => API.delete(`/analyze/${id}`),
 };
 
 export default API;

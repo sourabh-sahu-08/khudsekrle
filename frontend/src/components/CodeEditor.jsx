@@ -2,13 +2,7 @@
 
 import Editor from "@monaco-editor/react";
 
-interface CodeEditorProps {
-    code: string;
-    onChange: (value: string | undefined) => void;
-    language: string;
-}
-
-export default function CodeEditor({ code, onChange, language }: CodeEditorProps) {
+export default function CodeEditor({ code, onChange, language }) {
     return (
         <div className="h-full w-full rounded-xl overflow-hidden border border-slate-800">
             <Editor

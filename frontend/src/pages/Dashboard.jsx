@@ -6,10 +6,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
-    const [history, setHistory] = useState<any[]>([]);
+    const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id) => {
         try {
             await analysisService.deleteAnalysis(id);
             setHistory(prev => prev.filter(item => item._id !== id));

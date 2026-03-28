@@ -14,16 +14,16 @@ API.interceptors.request.use((config) => {
 });
 
 export const authService = {
-    login: (data: any) => API.post('/auth/login', data),
-    register: (data: any) => API.post('/auth/register', data),
+    login: (data) => API.post('/auth/login', data),
+    register: (data) => API.post('/auth/register', data),
     getMe: () => API.get('/auth/me'),
 };
 
 export const analysisService = {
-    analyze: (data: { code: string; language: string }) => API.post('/analyze', data),
+    analyze: (data) => API.post('/analyze', data),
     getHistory: () => API.get('/analyze/history'),
-    getAnalysisById: (id: string) => API.get(`/analyze/${id}`),
-    deleteAnalysis: (id: string) => API.delete(`/analyze/${id}`),
+    getAnalysisById: (id) => API.get(`/analyze/${id}`),
+    deleteAnalysis: (id) => API.delete(`/analyze/${id}`),
 };
 
 export default API;

@@ -10,8 +10,8 @@ export default function Home() {
   const [code, setCode] = useState("// Paste your code here to begin...");
   const [language, setLanguage] = useState("javascript");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   const languages = [
     { value: "javascript", label: "JavaScript" },
@@ -27,7 +27,7 @@ export default function Home() {
     try {
       const response = await analysisService.analyze({ code, language });
       setResult(response.data.data);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       if (err.response?.status === 401) {
         setError("You must be logged in to analyze code. Please sign in or create an account.");

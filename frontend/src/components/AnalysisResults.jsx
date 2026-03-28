@@ -4,26 +4,12 @@ import { Check, Copy, AlertCircle, Zap, Clock, Maximize2, Sparkles, Terminal } f
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-interface AnalysisData {
-    errors: string;
-    explanation: string;
-    correctedCode: string;
-    optimizedCode: string;
-    timeComplexity: string;
-    spaceComplexity: string;
-    confidenceScore: string;
-}
-
-interface ResultsProps {
-    data: AnalysisData | null;
-}
-
-export default function AnalysisResults({ data }: ResultsProps) {
-    const [copied, setCopied] = useState<string | null>(null);
+export default function AnalysisResults({ data }) {
+    const [copied, setCopied] = useState(null);
 
     if (!data) return null;
 
-    const copyToClipboard = (text: string, id: string) => {
+    const copyToClipboard = (text, id) => {
         navigator.clipboard.writeText(text);
         setCopied(id);
         setTimeout(() => setCopied(null), 2000);
@@ -132,8 +118,8 @@ export default function AnalysisResults({ data }: ResultsProps) {
     );
 }
 
-function CodeBlock({ title, code, onCopy, isCopied, variant = "blue", icon }: any) {
-    const themes: any = {
+function CodeBlock({ title, code, onCopy, isCopied, variant = "blue", icon }) {
+    const themes = {
         blue: {
             border: "border-l-blue-500/50",
             text: "text-blue-400",

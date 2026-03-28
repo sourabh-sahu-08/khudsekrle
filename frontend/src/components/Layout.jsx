@@ -1,6 +1,6 @@
 import Navbar from "./Navbar";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }) {
     return (
         <div className="min-h-screen bg-[#080c14] relative overflow-hidden">
             {/* Background Decorations */}

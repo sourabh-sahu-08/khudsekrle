@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export default function AnalysisDetail() {
     const { id } = useParams();
-    const [analysis, setAnalysis] = useState<any>(null);
+    const [analysis, setAnalysis] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -17,7 +17,7 @@ export default function AnalysisDetail() {
                 if (!id) return;
                 const response = await analysisService.getAnalysisById(id);
                 setAnalysis(response.data.data);
-            } catch (err: any) {
+            } catch (err) {
                 console.error("Failed to fetch analysis", err);
                 setError(err.response?.data?.message || "Something went wrong fetching the analysis.");
             } finally {

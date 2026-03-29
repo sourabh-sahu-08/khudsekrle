@@ -22,15 +22,24 @@ export default function Home() {
   ];
 
   const handleAnalyze = async () => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError("Authentication Required: You must be logged in to analyze code. Please sign in to continue.");
+      return;
+    }
+
     setIsAnalyzing(true);
     setError(null);
     try {
       const response = await analysisService.analyze({ code, language });
       setResult(response.data.data);
     } catch (err) {
-      console.error(err);
+      console.error("ANALYSIS ERROR:", err);
       if (err.response?.status === 401) {
-        setError("You must be logged in to analyze code. Please sign in or create an account.");
+        setError(err.response.data.message || "Session expired or invalid. Please sign in again.");
+        // Optional: clear invalid token
+        // localStorage.removeItem('token');
       } else {
         setError(err.response?.data?.message || "Failed to analyze code. Please check your connection.");
       }

@@ -13,6 +13,22 @@ API.interceptors.request.use((config) => {
     return config;
 });
 
+// Add 401 response interceptor
+API.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Token expired or invalid
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (window.location.pathname !== '/auth/login') {
+                window.location.href = '/auth/login?expired=true';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const authService = {
     login: (data) => API.post('/auth/login', data),
     register: (data) => API.post('/auth/register', data),

@@ -1,8 +1,8 @@
-const OpenAI = require('openai');
+const Groq = require('groq-sdk');
 const Analysis = require('../models/Analysis');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 // @desc    Analyze code
@@ -11,6 +11,7 @@ const openai = new OpenAI({
 exports.analyzeCode = async (req, res, next) => {
   try {
     const { code, language } = req.body;
+    console.log(`DEBUG: ANALYZE REQUEST - User ID: ${req.user.id}, Email: ${req.user.email}, Language: ${language}`);
 
     if (!code || !language) {
       return res.status(400).json({ success: false, message: 'Please provide code and language' });
@@ -35,8 +36,8 @@ Code:
 ${code}
 `;
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o', // or gpt-3.5-turbo
+    const response = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile', 
       messages: [
         { role: 'system', content: 'You are an expert programming debugger and architect.' },
         { role: 'user', content: prompt }

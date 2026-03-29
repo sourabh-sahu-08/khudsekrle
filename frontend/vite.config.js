@@ -11,6 +11,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    hmr: {
+      host: 'localhost',
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

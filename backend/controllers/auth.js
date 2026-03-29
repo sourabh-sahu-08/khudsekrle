@@ -36,14 +36,7 @@ exports.register = async (req, res, next) => {
     console.log("DEBUG: User created successfully");
     sendTokenResponse(user, 201, res);
   } catch (err) {
-    console.error("DEBUG: REGISTER CONTROLLER ERROR:", err);
-    // Temporarily send the full error message to the client for debugging
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal Server Error during registration", 
-      debug: err.message,
-      stack: err.stack 
-    });
+    next(err);
   }
 };
 

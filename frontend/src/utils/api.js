@@ -40,6 +40,7 @@ export const analysisService = {
     getHistory: () => API.get('/analyze/history'),
     getAnalysisById: (id) => API.get(`/analyze/${id}`),
     deleteAnalysis: (id) => API.delete(`/analyze/${id}`),
+    getStats: () => API.get('/analyze/stats'),
 };
 
 export default API;

@@ -1,18 +1,41 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, Hash, Shield, ArrowLeft } from 'lucide-react';
+import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
+import { analysisService } from '@/utils/api';
 
 export default function Profile() {
     const [user, setUser] = useState(null);
+    const [stats, setStats] = useState({ totalAnalyses: 0, corrections: 0, optimizations: 0 });
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
+
+        const fetchStats = async () => {
+            try {
+                const response = await analysisService.getStats();
+                setStats(response.data.data);
+            } catch (err) {
+                console.error("Failed to fetch stats", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/auth/login');
+    };
 
     if (!user) {
         return (
@@ -28,10 +51,19 @@ export default function Profile() {
     return (
         <Layout>
             <div className="max-w-4xl mx-auto pt-32 px-6 pb-20">
-                <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8 group">
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    <span>Back to Home</span>
-                </Link>
+                <div className="flex items-center justify-between mb-8">
+                    <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors group">
+                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                        <span>Back to Home</span>
+                    </Link>
+                    <button 
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors font-bold text-sm"
+                    >
+                        <LogOut size={18} />
+                        Logout Session
+                    </button>
+                </div>
 
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
@@ -57,7 +89,7 @@ export default function Profile() {
 
                             <div className="flex-1 pb-2">
                                 <h1 className="text-4xl font-black text-white tracking-tight mb-2">
-                                    {user.username}
+                                    {user.name}
                                 </h1>
                                 <p className="text-slate-400 flex items-center gap-2">
                                     <Shield size={16} className="text-emerald-500" />
@@ -73,8 +105,8 @@ export default function Profile() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <ProfileField 
                                 icon={<User size={20} />} 
-                                label="Username" 
-                                value={user.username} 
+                                label="Name" 
+                                value={user.name} 
                                 delay={0.1}
                             />
                             <ProfileField 
@@ -86,7 +118,7 @@ export default function Profile() {
                             <ProfileField 
                                 icon={<Hash size={20} />} 
                                 label="User ID" 
-                                value={user.id.substring(0, 12) + "..."} 
+                                value={user.id?.substring(0, 12) + "..." || "N/A"} 
                                 delay={0.3}
                             />
                             <ProfileField 
@@ -99,9 +131,9 @@ export default function Profile() {
 
                         {/* Stats Section */}
                         <div className="mt-12 pt-12 border-t border-white/5 grid grid-cols-2 md:grid-cols-3 gap-8">
-                            <StatCard label="Analyses" value="12" />
-                            <StatCard label="Fixed" value="8" />
-                            <StatCard label="Optimized" value="4" />
+                            <StatCard label="Analyses" value={loading ? "..." : stats.totalAnalyses} />
+                            <StatCard label="Fixed" value={loading ? "..." : stats.corrections} />
+                            <StatCard label="Optimized" value={loading ? "..." : stats.optimizations} />
                         </div>
                     </div>
                 </motion.div>

@@ -97,7 +97,10 @@ export default function Profile() {
                                 </p>
                             </div>
 
-                            <button className="bg-white text-black px-6 py-3 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-xl shadow-white/5">
+                            <button 
+                                onClick={() => alert("Edit Profile feature coming soon!")}
+                                className="bg-white text-black px-6 py-3 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-xl shadow-white/5"
+                            >
                                 Edit Profile
                             </button>
                         </div>

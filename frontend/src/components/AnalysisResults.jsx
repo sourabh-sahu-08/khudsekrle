@@ -31,7 +31,7 @@ export default function AnalysisResults({ data }) {
     };
 
     return (
-        <motion.div 
+        <motion.div
             variants={container}
             initial="hidden"
             animate="show"
@@ -48,7 +48,7 @@ export default function AnalysisResults({ data }) {
                         <p className="font-mono font-bold text-slate-200">{data.timeComplexity}</p>
                     </div>
                 </motion.div>
-                
+
                 <motion.div variants={item} className="glass p-5 rounded-3xl flex items-center gap-4 glass-hover border border-white/5">
                     <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shadow-inner">
                         <Maximize2 size={22} />
@@ -78,13 +78,13 @@ export default function AnalysisResults({ data }) {
                     <h3 className="font-bold uppercase tracking-[0.2em] text-xs">Identified Vulnerabilities</h3>
                 </div>
                 <div className="bg-slate-900/40 p-5 rounded-2xl border border-white/5 relative z-10">
-                    <pre className="text-slate-300 font-sans text-sm leading-relaxed whitespace-pre-wrap">{data.findings}</pre>
+                    <pre className="text-slate-300 font-sans text-sm leading-relaxed whitespace-pre-wrap">{data.errors}</pre>
                 </div>
             </motion.section>
 
             {/* Explanation Section */}
             <motion.section variants={item} className="glass p-8 rounded-3xl border border-white/5 relative overflow-hidden">
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full translate-x-16 -translate-y-16" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full translate-x-16 -translate-y-16" />
                 <div className="flex items-center gap-2 mb-4 text-blue-400">
                     <Sparkles size={18} />
                     <h3 className="font-bold uppercase tracking-[0.2em] text-xs">AI Insights</h3>

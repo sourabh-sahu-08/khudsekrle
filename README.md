@@ -12,8 +12,8 @@ A production-ready full-stack application for intelligent code analysis, debuggi
 - **Modern UI**: Sleek dark-themed interface with Monaco Editor integration.
 
 ## Tech Stack
-- **Frontend**: Next.js, Tailwind CSS, Monaco Editor, Lucide Icons, Framer Motion.
-- **Backend**: Node.js, Express, MongoDB, OpenAI API.
+- **Frontend**: React (Vite), Tailwind CSS, Monaco Editor, Lucide Icons, Framer Motion.
+- **Backend**: Node.js, Express, MongoDB, Groq API (Llama 3.3).
 - **Security**: JWT, Bcrypt, Helmet, CORS, Rate Limiting.
 
 ## Getting Started
@@ -21,7 +21,7 @@ A production-ready full-stack application for intelligent code analysis, debuggi
 ### Prerequisites
 - Node.js installed
 - MongoDB URI
-- OpenAI API Key
+- Groq API Key
 
 ### Installation
 
@@ -35,7 +35,7 @@ A production-ready full-stack application for intelligent code analysis, debuggi
    ```
 3. **Setup Frontend**
    ```bash
-   cd client
+   cd frontend
    npm install
    npm run dev
    ```

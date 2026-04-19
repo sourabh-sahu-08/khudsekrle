@@ -78,7 +78,7 @@ export default function AnalysisResults({ data }) {
                     <h3 className="font-bold uppercase tracking-[0.2em] text-xs">Identified Vulnerabilities</h3>
                 </div>
                 <div className="bg-slate-900/40 p-5 rounded-2xl border border-white/5 relative z-10">
-                    <pre className="text-slate-300 font-sans text-sm leading-relaxed whitespace-pre-wrap">{data.errors}</pre>
+                    <pre className="text-slate-300 font-sans text-sm leading-relaxed whitespace-pre-wrap">{data.findings}</pre>
                 </div>
             </motion.section>
 

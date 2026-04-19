@@ -121,3 +121,32 @@ exports.deleteAnalysis = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Get analysis stats for a user
+// @route   GET /api/analyze/stats
+// @access  Private
+exports.getStats = async (req, res, next) => {
+  try {
+    const totalAnalyses = await Analysis.countDocuments({ userId: req.user.id });
+    const corrections = await Analysis.countDocuments({ 
+        userId: req.user.id, 
+        correctedCode: { $ne: null, $ne: "" } 
+    });
+    const optimizations = await Analysis.countDocuments({ 
+        userId: req.user.id, 
+        optimizedCode: { $ne: null, $ne: "" } 
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalAnalyses,
+        corrections,
+        optimizations
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

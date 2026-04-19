@@ -102,7 +102,11 @@ export default function Dashboard() {
 
                                 <div className="flex items-center gap-4 text-xs font-bold text-slate-500 mb-8 tracking-wide">
                                     <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/5 text-blue-400/80">
-                                        <span className="italic">O</span>({itemValue.timeComplexity.includes('(') ? itemValue.timeComplexity.split('(')[1]?.split(')')[0] : itemValue.timeComplexity.replace('O(', '').replace(')', '') || "n"})
+                                        <span className="italic">O</span>({
+                                            itemValue.timeComplexity?.match(/O\((.*?)\)/)?.[1] || 
+                                            itemValue.timeComplexity?.replace(/O\(|\)/g, '') || 
+                                            "n"
+                                        })
                                     </span>
                                     <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-500/5 text-emerald-400/80">
                                         {itemValue.confidenceScore} match

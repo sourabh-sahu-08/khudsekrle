@@ -48,6 +48,18 @@ export default function Home() {
     }
   };
 
+  const handleDownload = () => {
+    if (!result) return;
+    const content = `AI Code Debugger Analysis Report\nGenerated on: ${new Date().toLocaleString()}\nLanguage: ${language}\n\n---------------------------------\nIDENTIFIED FINDINGS:\n${result.findings}\n\nEXPLANATION:\n${result.explanation}\n\nCORRECTED CODE:\n${result.correctedCode}\n\nOPTIMIZED CODE:\n${result.optimizedCode}\n\nCOMPLEXITY:\nTime: ${result.timeComplexity}\nSpace: ${result.spaceComplexity}\n---------------------------------`;
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `debug_analysis_${new Date().getTime()}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Layout>
       <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
@@ -92,9 +104,9 @@ export default function Home() {
             >
               <div className="rounded-2xl overflow-hidden border border-slate-800/50 shadow-inner">
                 <CodeEditor
-                  code={code}
-                  onChange={(val) => setCode(val || "")}
-                  language={language}
+                   code={code}
+                   onChange={(val) => setCode(val || "")}
+                   language={language}
                 />
               </div>
 
@@ -125,8 +137,13 @@ export default function Home() {
                   )}
                   {isAnalyzing ? "Analyzing Environment..." : "Analyze Code"}
                 </button>
-                <button className="flex-1 bg-slate-800/50 hover:bg-slate-800 text-white px-6 rounded-2xl transition-all border border-slate-700/50 flex items-center justify-center hover:border-slate-600">
-                  <Save size={20} />
+                <button 
+                  onClick={handleDownload}
+                  disabled={!result}
+                  title="Download Report"
+                  className="flex-1 bg-slate-800/50 hover:bg-slate-800 text-white px-6 rounded-2xl transition-all border border-slate-700/50 flex items-center justify-center hover:border-slate-600 disabled:opacity-30 disabled:cursor-not-allowed group"
+                >
+                  <Save size={20} className="group-hover:scale-110 transition-transform" />
                 </button>
               </div>
             </motion.div>

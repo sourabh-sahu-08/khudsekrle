@@ -359,7 +359,115 @@ ${analysis.optimizedCode || "N/A"}
                         </div>
                     </motion.div>
                 )}
+
+                {/* AI Chat Section */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mt-20 glass rounded-[3rem] p-10 border border-white/5 relative overflow-hidden shadow-2xl"
+                >
+                    <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/[0.02] blur-3xl rounded-full -translate-x-32 -translate-y-32" />
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                                <Sparkles size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-white">Ask AI Assistant</h3>
+                                <p className="text-sm text-slate-500 font-medium">Get deeper insights or clarifications about this analysis</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ChatInterface analysisId={id} />
+                </motion.div>
             </div>
         </Layout>
+    );
+}
+
+function ChatInterface({ analysisId }) {
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState("");
+    const [isSending, setIsSending] = useState(false);
+    const scrollRef = useState(null);
+
+    const handleSend = async (e) => {
+        e.preventDefault();
+        if (!input.trim() || isSending) return;
+
+        const userMsg = input.trim();
+        setInput("");
+        setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+        setIsSending(true);
+
+        try {
+            const response = await analysisService.chat(analysisId, userMsg);
+            setMessages(prev => [...prev, { role: 'ai', content: response.data.data }]);
+        } catch (err) {
+            toast.error("Failed to get AI response");
+            setMessages(prev => [...prev, { role: 'ai', content: "Sorry, I encountered an error. Please try again." }]);
+        } finally {
+            setIsSending(false);
+        }
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="bg-slate-950/50 rounded-3xl p-6 min-h-[200px] max-h-[400px] overflow-y-auto border border-white/5 space-y-4">
+                {messages.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-600 py-10">
+                        <Sparkles size={32} className="mb-4 opacity-20" />
+                        <p className="text-sm font-medium">No messages yet. Ask about the time complexity or security risks!</p>
+                    </div>
+                ) : (
+                    messages.map((msg, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
+                                msg.role === 'user' 
+                                ? 'bg-blue-600 text-white rounded-tr-none' 
+                                : 'bg-white/5 text-slate-300 border border-white/5 rounded-tl-none'
+                            }`}>
+                                {msg.content}
+                            </div>
+                        </motion.div>
+                    ))
+                )}
+                {isSending && (
+                    <div className="flex justify-start">
+                        <div className="bg-white/5 p-4 rounded-2xl rounded-tl-none border border-white/5">
+                            <div className="flex gap-1">
+                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" />
+                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:0.2s]" />
+                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <form onSubmit={handleSend} className="relative group">
+                <input 
+                    type="text" 
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your question here..."
+                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-4 pl-6 pr-16 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all placeholder:text-slate-600"
+                />
+                <button 
+                    type="submit"
+                    disabled={!input.trim() || isSending}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all disabled:opacity-30 disabled:grayscale"
+                >
+                    <ArrowLeft size={18} className="rotate-180" />
+                </button>
+            </form>
+        </div>
     );
 }

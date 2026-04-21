@@ -210,7 +210,97 @@ export default function Home() {
             </AnimatePresence>
           </div>
         </motion.div>
+
+        {/* Features Section */}
+        <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <FeatureCard 
+            icon={<Zap className="text-amber-400" size={32} />}
+            title="Instant Analysis"
+            description="Our advanced LLM models identify bugs and vulnerabilities in milliseconds, providing real-time feedback."
+            delay={0.1}
+          />
+          <FeatureCard 
+            icon={<Sparkles className="text-blue-400" size={32} />}
+            title="Smart Correction"
+            description="Don't just find bugs—fix them. Get production-ready code replacements that follow industry best practices."
+            delay={0.2}
+          />
+          <FeatureCard 
+            icon={<Code2 className="text-emerald-400" size={32} />}
+            title="Optimization"
+            description="Go beyond basic fixes. AI analyzes time and space complexity to recommend more efficient algorithms."
+            delay={0.3}
+          />
+        </div>
+
+        {/* How It Works */}
+        <div className="mt-32">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">How it Works</h2>
+            <p className="text-slate-400 max-w-2xl mx-auto text-lg font-medium">Three simple steps to cleaner, more efficient code.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Connector Line (Desktop) */}
+            <div className="hidden md:block absolute top-1/2 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-y-1/2 pointer-events-none" />
+            
+            <ProcessStep 
+              number="01"
+              title="Input Code"
+              description="Paste your snippet into our advanced code editor and select your language."
+            />
+            <ProcessStep 
+              number="02"
+              title="AI Processing"
+              description="Our specialized models perform a deep audit of logic, security, and performance."
+            />
+            <ProcessStep 
+              number="03"
+              title="Apply Fixes"
+              description="Review identified vulnerabilities and apply the recommended corrections instantly."
+            />
+          </div>
+        </div>
       </div>
     </Layout>
+  );
+}
+
+function FeatureCard({ icon, title, description, delay }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="glass p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden group hover:border-blue-500/20 transition-all shadow-xl"
+    >
+      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/[0.02] blur-3xl rounded-full translate-x-16 -translate-y-16 group-hover:bg-blue-500/10 transition-colors" />
+      <div className="mb-6 group-hover:scale-110 transition-transform origin-left">{icon}</div>
+      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+      <p className="text-slate-400 leading-relaxed font-medium">{description}</p>
+    </motion.div>
+  );
+}
+
+function ProcessStep({ number, title, description }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      className="relative z-10 text-center space-y-6"
+    >
+      <div className="w-20 h-20 rounded-3xl bg-slate-950 border border-white/5 flex items-center justify-center mx-auto shadow-2xl relative group overflow-hidden">
+        <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-400 to-indigo-600 tracking-tighter relative z-10">
+          {number}
+        </span>
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-bold text-white">{title}</h3>
+        <p className="text-slate-400 text-sm leading-relaxed max-w-[240px] mx-auto font-medium">{description}</p>
+      </div>
+    </motion.div>
   );
 }

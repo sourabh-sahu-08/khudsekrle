@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy } from "lucide-react";
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -12,6 +12,17 @@ export default function AnalysisDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [copied, setCopied] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalWidth = document.documentElement.scrollHeight - window.innerHeight;
+            const currentScroll = window.scrollY;
+            setScrollProgress((currentScroll / totalWidth) * 100);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         const fetchAnalysis = async () => {
@@ -80,6 +91,25 @@ ${analysis.optimizedCode || "N/A"}
         }
     };
 
+    const CopyButton = ({ text, tooltip }) => {
+        const [isCopied, setIsCopied] = useState(false);
+        const handleCopy = () => {
+            navigator.clipboard.writeText(text);
+            setIsCopied(true);
+            toast.success(`${tooltip} copied!`);
+            setTimeout(() => setIsCopied(false), 2000);
+        };
+        return (
+            <button 
+                onClick={handleCopy}
+                className="p-2 hover:bg-white/10 rounded-lg text-slate-500 hover:text-white transition-all active:scale-90"
+                title={`Copy ${tooltip}`}
+            >
+                {isCopied ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+            </button>
+        );
+    };
+
     if (loading) {
         return (
             <Layout>
@@ -120,6 +150,14 @@ ${analysis.optimizedCode || "N/A"}
 
     return (
         <Layout>
+            {/* Scroll Progress Bar */}
+            <div className="fixed top-0 left-0 w-full h-1 z-[100] pointer-events-none">
+                <motion.div 
+                    className="h-full bg-blue-500 origin-left"
+                    style={{ width: `${scrollProgress}%` }}
+                />
+            </div>
+
             <div className="max-w-6xl mx-auto pt-24 px-6 pb-12">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -286,6 +324,7 @@ ${analysis.optimizedCode || "N/A"}
                                 <CheckCircle size={18} className="text-emerald-500" />
                                 Recommended Resolution
                             </h3>
+                            <CopyButton text={analysis.correctedCode} tooltip="Corrected Code" />
                         </div>
                         <div className="p-8 bg-emerald-500/[0.01]">
                             <div className="bg-slate-950/80 rounded-2xl p-6 border border-emerald-500/10 shadow-inner overflow-x-auto group-hover:border-emerald-500/30 transition-colors">
@@ -309,6 +348,7 @@ ${analysis.optimizedCode || "N/A"}
                                 <Zap size={20} className="text-blue-500 animate-pulse" />
                                 Performance Optimized Pattern
                             </h3>
+                            <CopyButton text={analysis.optimizedCode} tooltip="Optimized Code" />
                         </div>
                         <div className="p-10 bg-blue-500/[0.01]">
                             <div className="bg-slate-950/80 rounded-3xl p-8 border border-blue-500/10 shadow-inner group-hover:border-blue-500/30 transition-all">

@@ -150,7 +150,7 @@ export default function Login() {
                         </button>
 
                         <p className="mt-10 text-center text-slate-500 font-medium text-xs">
-                            New to DebugAI?{' '}
+                            New to khudsekrle?{' '}
                             <Link to="/auth/register" className="text-blue-400 hover:text-blue-300 transition-colors font-bold underline underline-offset-4 decoration-blue-500/20">
                                 Create account
                             </Link>

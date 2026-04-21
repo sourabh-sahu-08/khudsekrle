@@ -33,7 +33,7 @@ export default function Register() {
             const { data } = await authService.register({ name, email, password });
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            toast.success(`Welcome to DebugAI, ${data.user.name}!`);
+            toast.success(`Welcome to khudsekrle, ${data.user.name}!`);
             navigate('/');
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Registration failed. Please try again.';
@@ -69,7 +69,7 @@ export default function Register() {
                             >
                                 <UserIcon size={32} />
                             </motion.div>
-                            <h1 className="text-4xl font-black text-white tracking-tight mb-2">Join DebugAI</h1>
+                            <h1 className="text-4xl font-black text-white tracking-tight mb-2">Join khudsekrle</h1>
                             <p className="text-slate-400 font-medium">Create your developer account today</p>
                         </div>
 
@@ -175,7 +175,7 @@ export default function Register() {
                         </button>
 
                         <p className="mt-10 text-center text-slate-500 font-medium text-xs">
-                            Already part of DebugAI?{' '}
+                            Already part of khudsekrle?{' '}
                             <Link to="/auth/login" className="text-emerald-400 hover:text-emerald-300 transition-colors font-bold underline underline-offset-4 decoration-emerald-500/20">
                                 Sign In
                             </Link>

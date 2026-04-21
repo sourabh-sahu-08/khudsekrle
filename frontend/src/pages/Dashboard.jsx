@@ -8,6 +8,8 @@ import { motion } from "framer-motion";
 export default function Dashboard() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filterLanguage, setFilterLanguage] = useState("all");
 
     const handleDelete = async (id) => {
         try {
@@ -62,20 +64,61 @@ export default function Dashboard() {
                     </Link>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                    <div className="md:col-span-3 relative group">
+                        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
+                            <History size={20} />
+                        </div>
+                        <input 
+                            type="text" 
+                            placeholder="Search your code or findings..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all placeholder:text-slate-600 hover:bg-white/[0.08]"
+                        />
+                    </div>
+                    <div className="relative">
+                        <select 
+                            value={filterLanguage}
+                            onChange={(e) => setFilterLanguage(e.target.value)}
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none"
+                        >
+                            <option value="all" className="bg-slate-900">All Languages</option>
+                            <option value="javascript" className="bg-slate-900">JavaScript</option>
+                            <option value="python" className="bg-slate-900">Python</option>
+                            <option value="java" className="bg-slate-900">Java</option>
+                            <option value="cpp" className="bg-slate-900">C++</option>
+                            <option value="c" className="bg-slate-900">C</option>
+                        </select>
+                    </div>
+                </div>
+
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
                             <div key={i} className="glass h-56 rounded-3xl animate-pulse bg-white/[0.02]" />
                         ))}
                     </div>
-                ) : history.length > 0 ? (
-                    <motion.div 
-                        variants={container}
-                        initial="hidden"
-                        animate="show"
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                    >
-                        {history.map((itemValue) => (
+                ) : (() => {
+                    const filteredHistory = history.filter(item => {
+                        const matchesSearch = 
+                            item.originalCode.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            item.findings?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            item.explanation?.toLowerCase().includes(searchQuery.toLowerCase());
+                        
+                        const matchesLanguage = filterLanguage === "all" || item.language === filterLanguage;
+                        
+                        return matchesSearch && matchesLanguage;
+                    });
+
+                    return filteredHistory.length > 0 ? (
+                        <motion.div 
+                            variants={container}
+                            initial="hidden"
+                            animate="show"
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                        >
+                            {filteredHistory.map((itemValue) => (
                             <motion.div 
                                 key={itemValue._id} 
                                 variants={item}
@@ -130,27 +173,28 @@ export default function Dashboard() {
                                 </div>
                             </motion.div>
                         ))}
-                    </motion.div>
-                ) : (
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="glass rounded-[3rem] p-16 text-center h-[500px] flex flex-col items-center justify-center relative overflow-hidden border border-white/5"
-                    >
-                        <div className="absolute inset-0 bg-blue-500/[0.02] blur-3xl rounded-full" />
-                        <div className="w-24 h-24 bg-slate-900/80 rounded-[2rem] flex items-center justify-center text-slate-500 mb-8 border border-white/5 shadow-2xl relative z-10">
-                            <History size={40} />
-                        </div>
-                        <h3 className="text-2xl font-black text-slate-100 mb-3 relative z-10 italic">Journey Starts Here</h3>
-                        <p className="text-slate-400 max-w-sm mb-10 text-lg relative z-10 leading-relaxed font-medium">Start your first analysis to see it tracked here in your dashboard.</p>
-                        <Link
-                            to="/"
-                            className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 font-bold text-lg group relative z-10"
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="glass rounded-[3rem] p-16 text-center h-[400px] flex flex-col items-center justify-center relative overflow-hidden border border-white/5"
                         >
-                            Analyze your first code <Code size={20} className="group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </motion.div>
-                )}
+                            <div className="absolute inset-0 bg-blue-500/[0.02] blur-3xl rounded-full" />
+                            <div className="w-20 h-20 bg-slate-900/80 rounded-[2rem] flex items-center justify-center text-slate-500 mb-6 border border-white/5 relative z-10">
+                                <History size={32} />
+                            </div>
+                            <h3 className="text-xl font-black text-slate-100 mb-2 relative z-10">No matches found</h3>
+                            <p className="text-slate-400 max-w-xs mb-8 relative z-10 font-medium">Try adjusting your search or filters to find what you're looking for.</p>
+                            <button
+                                onClick={() => { setSearchQuery(""); setFilterLanguage("all"); }}
+                                className="text-blue-400 hover:text-blue-300 transition-colors font-bold group relative z-10"
+                            >
+                                Clear all filters
+                            </button>
+                        </motion.div>
+                    );
+                })()}
             </div>
         </Layout>
     );

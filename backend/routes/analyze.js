@@ -1,5 +1,5 @@
 const express = require('express');
-const { analyzeCode, getHistory, getAnalysis, deleteAnalysis, getStats } = require('../controllers/analyze');
+const { analyzeCode, getHistory, getAnalysis, deleteAnalysis, getStats, chatWithAI } = require('../controllers/analyze');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -11,5 +11,6 @@ router.get('/history', getHistory);
 router.get('/stats', getStats);
 router.get('/:id', getAnalysis);
 router.delete('/:id', deleteAnalysis);
+router.post('/:id/chat', chatWithAI);
 
 module.exports = router;

@@ -164,3 +164,53 @@ exports.getStats = async (req, res, next) => {
   }
 };
 
+// @desc    Chat with AI about an analysis
+// @route   POST /api/analyze/:id/chat
+// @access  Private
+exports.chatWithAI = async (req, res, next) => {
+  try {
+    const { message } = req.body;
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    // Make sure user owns the analysis
+    if (analysis.userId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to chat about this analysis' });
+    }
+
+    const prompt = `
+Context: You previously analyzed this ${analysis.language} code.
+Original Code: 
+${analysis.originalCode}
+
+Your Previous Findings:
+${analysis.findings}
+
+User Question: ${message}
+
+Provide a concise, highly technical, and helpful response to the user's question. Stay in character as a Senior Principal Engineer.
+`;
+
+    const response = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { 
+          role: 'system', 
+          content: 'You are a Senior Principal Software Engineer and Mentor. Your goal is to explain technical concepts clearly and help developers improve their code.' 
+        },
+        { role: 'user', content: prompt }
+      ],
+    });
+
+    res.status(200).json({
+      success: true,
+      data: response.choices[0].message.content
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

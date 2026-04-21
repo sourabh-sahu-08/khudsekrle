@@ -18,28 +18,34 @@ exports.analyzeCode = async (req, res, next) => {
     }
 
     const prompt = `
-Analyze the following code written in ${language}.
+Analyze the following code written in ${language}. 
+Your analysis should be rigorous, professional, and architect-level.
 
-Provide output in JSON format:
+Provide output in STRICT JSON format:
 
 {
-  "findings": "List of errors found",
-  "explanation": "Explain errors in simple English",
-  "correctedCode": "Fixed version of code",
-  "optimizedCode": "More optimized version",
-  "timeComplexity": "Big-O time complexity",
-  "spaceComplexity": "Big-O space complexity",
-  "confidenceScore": "0-100%"
+  "findings": "Detailed list of syntax/logical errors and security vulnerabilities.",
+  "explanation": "Clear, step-by-step breakdown of why these issues occur and how the proposed fixes solve them.",
+  "correctedCode": "The fixed version of the code that resolves all 'findings'.",
+  "optimizedCode": "A performance-optimized version (if applicable) with improved algorithmic efficiency.",
+  "timeComplexity": "Big-O time complexity (e.g., O(n log n)).",
+  "spaceComplexity": "Big-O space complexity.",
+  "confidenceScore": "0-100%",
+  "securityAudit": "Specific security concerns (e.g., SQL Injection, Buffer Overflow, XSS) or 'None' if secure.",
+  "bestPractices": "Suggestions for cleaner, more maintainable, and idiomatic code."
 }
 
-Code:
+Code to analyze:
 ${code}
 `;
 
     const response = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile', 
       messages: [
-        { role: 'system', content: 'You are an expert programming debugger and architect.' },
+        { 
+            role: 'system', 
+            content: 'You are an expert programming debugger, security auditor, and systems architect. You analyze code for correctness, performance, security, and maintainability. Always respond in valid JSON.' 
+        },
         { role: 'user', content: prompt }
       ],
       response_format: { type: 'json_object' },

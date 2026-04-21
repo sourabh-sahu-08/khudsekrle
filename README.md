@@ -1,4 +1,4 @@
-# AI-Powered Code Debugger and Explanation System
+# khudsekrle (AI-Powered Code Debugger and Explanation System)
 
 A production-ready full-stack application for intelligent code analysis, debugging, and optimization.
 

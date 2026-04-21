@@ -41,9 +41,16 @@ A production-ready full-stack application for intelligent code analysis, debuggi
    ```
 
 ## Deployment
-- **Frontend**: Deploy to Vercel.
-- **Backend**: Deploy to Render or Railway.
-- **Database**: Use MongoDB Atlas.
+- **Backend (Render)**:
+  1. Connect your GitHub repository to Render.
+  2. Select "Blueprint" to use the `render.yaml` file automatically.
+  3. Alternatively, create a "Web Service" with:
+     - **Root Directory**: `backend`
+     - **Build Command**: `npm install`
+     - **Start Command**: `npm start`
+  4. Configure Environment Variables: `MONGODB_URI`, `JWT_SECRET`, `GROQ_API_KEY`.
+- **Frontend**: Deploy to Vercel or Netlify. Ensure `VITE_API_URL` environment variable points to your Render backend URL.
+- **Database**: Use MongoDB Atlas for a production-ready database.
 
 ## Documentation
 Refer to `brain/documentation.md` for project abstract and system architecture.

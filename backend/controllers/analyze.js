@@ -19,24 +19,32 @@ exports.analyzeCode = async (req, res, next) => {
 
     const prompt = `
 Analyze the following code written in ${language}. 
-Your analysis should be rigorous, professional, and architect-level.
 
-Provide output in STRICT JSON format:
+### INSTRUCTIONS:
+1. **DEEP ANALYSIS**: Identify syntax errors, logical bugs, security vulnerabilities (OWASP Top 10), and performance bottlenecks.
+2. **REASONING**: Before providing the final JSON, mentally simulate the execution and think through edge cases.
+3. **CORRECTION**: Provide a corrected version that is production-ready.
+4. **OPTIMIZATION**: Provide an optimized version with better time/space complexity if possible.
+
+### OUTPUT FORMAT:
+You must respond with a SINGLE JSON object. No markdown, no prose outside the JSON.
 
 {
-  "findings": "Detailed list of syntax/logical errors and security vulnerabilities.",
-  "explanation": "Clear, step-by-step breakdown of why these issues occur and how the proposed fixes solve them.",
-  "correctedCode": "The fixed version of the code that resolves all 'findings'.",
-  "optimizedCode": "A performance-optimized version (if applicable) with improved algorithmic efficiency.",
-  "timeComplexity": "Big-O time complexity (e.g., O(n log n)).",
-  "spaceComplexity": "Big-O space complexity.",
-  "confidenceScore": "0-100%",
-  "securityAudit": "Specific security concerns (e.g., SQL Injection, Buffer Overflow, XSS) or 'None' if secure.",
-  "bestPractices": "Suggestions for cleaner, more maintainable, and idiomatic code."
+  "findings": "Detailed, bulleted list of all identified issues (bugs, security, logic).",
+  "explanation": "Clear, technical breakdown of why these issues occur and the logic behind the fixes.",
+  "correctedCode": "The complete fixed version of the code.",
+  "optimizedCode": "A performance-optimized version (if applicable).",
+  "timeComplexity": "Big-O notation (e.g., O(n log n)) with brief justification.",
+  "spaceComplexity": "Big-O notation with brief justification.",
+  "confidenceScore": "A percentage (e.g., 95%) reflecting your certainty.",
+  "securityAudit": "Specific security evaluation (e.g., 'Vulnerable to SQL Injection', 'Secure').",
+  "bestPractices": "List of 3-5 specific improvements for modern, idiomatic code."
 }
 
-Code to analyze:
+### CODE TO ANALYZE:
+\`\`\`${language}
 ${code}
+\`\`\`
 `;
 
     const response = await groq.chat.completions.create({
@@ -44,7 +52,7 @@ ${code}
       messages: [
         { 
             role: 'system', 
-            content: 'You are an expert programming debugger, security auditor, and systems architect. You analyze code for correctness, performance, security, and maintainability. Always respond in valid JSON.' 
+            content: 'You are a Senior Principal Software Engineer and Security Architect. Your task is to perform deep technical audits of code. You are extremely critical, detail-oriented, and follow industry best practices. You ALWAYS respond in valid JSON format.' 
         },
         { role: 'user', content: prompt }
       ],

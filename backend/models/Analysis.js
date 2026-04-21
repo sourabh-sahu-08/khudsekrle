@@ -15,10 +15,10 @@ const analysisSchema = new mongoose.Schema({
     required: true,
   },
   findings: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
   },
   explanation: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
   },
   correctedCode: {
     type: String,
@@ -34,6 +34,12 @@ const analysisSchema = new mongoose.Schema({
   },
   confidenceScore: {
     type: String,
+  },
+  securityAudit: {
+    type: mongoose.Schema.Types.Mixed,
+  },
+  bestPractices: {
+    type: mongoose.Schema.Types.Mixed,
   },
 }, { timestamps: true });
 

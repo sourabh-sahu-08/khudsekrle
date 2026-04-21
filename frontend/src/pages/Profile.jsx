@@ -3,18 +3,23 @@ import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut } from 'lucide-re
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { analysisService } from '@/utils/api';
+import { analysisService, authService } from '@/utils/api';
 
 export default function Profile() {
     const [user, setUser] = useState(null);
     const [stats, setStats] = useState({ totalAnalyses: 0, corrections: 0, optimizations: 0 });
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState({ name: '', email: '' });
+    const [updating, setUpdating] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
+            setFormData({ name: parsedUser.name, email: parsedUser.email });
         }
 
         const fetchStats = async () => {
@@ -35,6 +40,24 @@ export default function Profile() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         navigate('/auth/login');
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        setUpdating(true);
+        try {
+            const response = await authService.updateDetails(formData);
+            const updatedUser = { ...user, ...response.data.data };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setIsEditing(false);
+            alert("Profile updated successfully!");
+        } catch (err) {
+            console.error("Failed to update profile", err);
+            alert(err.response?.data?.message || "Failed to update profile");
+        } finally {
+            setUpdating(false);
+        }
     };
 
     if (!user) {
@@ -97,15 +120,67 @@ export default function Profile() {
                                 </p>
                             </div>
 
-                            <button 
-                                onClick={() => alert("Edit Profile feature coming soon!")}
-                                className="bg-white text-black px-6 py-3 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-xl shadow-white/5"
-                            >
-                                Edit Profile
-                            </button>
+                            {!isEditing && (
+                                <button 
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-white text-black px-6 py-3 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-xl shadow-white/5"
+                                >
+                                    Edit Profile
+                                </button>
+                            )}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {isEditing ? (
+                            <motion.form 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                onSubmit={handleUpdate} 
+                                className="space-y-6 bg-white/[0.02] p-8 rounded-3xl border border-white/5"
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Full Name</label>
+                                        <input 
+                                            type="text" 
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                            className="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all font-medium"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
+                                        <input 
+                                            type="email" 
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            className="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all font-medium"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4 pt-4">
+                                    <button 
+                                        type="submit" 
+                                        disabled={updating}
+                                        className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-2xl font-bold transition-all disabled:opacity-50 flex items-center gap-2"
+                                    >
+                                        {updating ? "Saving..." : "Save Changes"}
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            setIsEditing(false);
+                                            setFormData({ name: user.name, email: user.email });
+                                        }}
+                                        className="text-slate-400 hover:text-white font-bold transition-colors px-4"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </motion.form>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <ProfileField 
                                 icon={<User size={20} />} 
                                 label="Name" 
@@ -131,6 +206,7 @@ export default function Profile() {
                                 delay={0.4}
                             />
                         </div>
+                        )}
 
                         {/* Stats Section */}
                         <div className="mt-12 pt-12 border-t border-white/5 grid grid-cols-2 md:grid-cols-3 gap-8">

@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import { analysisService } from "@/utils/api";
 import { History, Code, Calendar, ExternalLink, Trash2, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
@@ -15,8 +16,10 @@ export default function Dashboard() {
         try {
             await analysisService.deleteAnalysis(id);
             setHistory(prev => prev.filter(item => item._id !== id));
+            toast.success("Analysis deleted");
         } catch (err) {
             console.error("Failed to delete analysis", err);
+            toast.error("Failed to delete analysis");
         }
     };
 

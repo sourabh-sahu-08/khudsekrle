@@ -3,6 +3,7 @@ import CodeEditor from "@/components/CodeEditor";
 import AnalysisResults from "@/components/AnalysisResults";
 import { Sparkles, Save, AlertCircle, Code2, Zap } from "lucide-react";
 import { analysisService } from "@/utils/api";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/Layout";
 
@@ -25,7 +26,15 @@ export default function Home() {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     if (!token) {
-      setError("Authentication Required: You must be logged in to analyze code. Please sign in to continue.");
+      const authError = "Authentication Required: You must be logged in to analyze code.";
+      setError(authError);
+      toast.error(authError, {
+        description: "Please sign in to your account to continue.",
+        action: {
+          label: "Sign In",
+          onClick: () => navigate('/auth/login')
+        }
+      });
       return;
     }
 
@@ -34,15 +43,14 @@ export default function Home() {
     try {
       const response = await analysisService.analyze({ code, language });
       setResult(response.data.data);
+      toast.success("Analysis complete!", {
+        description: `Successfully analyzed ${language} code.`
+      });
     } catch (err) {
       console.error("ANALYSIS ERROR:", err);
-      if (err.response?.status === 401) {
-        setError(err.response.data.message || "Session expired or invalid. Please sign in again.");
-        // Optional: clear invalid token
-        // localStorage.removeItem('token');
-      } else {
-        setError(err.response?.data?.message || "Failed to analyze code. Please check your connection.");
-      }
+      const errorMsg = err.response?.data?.message || "Failed to analyze code. Please check your connection.";
+      setError(errorMsg);
+      toast.error("Analysis failed", { description: errorMsg });
     } finally {
       setIsAnalyzing(false);
     }
@@ -58,6 +66,9 @@ export default function Home() {
     link.download = `debug_analysis_${new Date().getTime()}.txt`;
     link.click();
     URL.revokeObjectURL(url);
+    toast.success("Report downloaded", {
+        description: "Your code analysis report is ready."
+    });
   };
 
   return (

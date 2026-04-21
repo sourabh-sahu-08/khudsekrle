@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Github, XCircle, LogIn } from 'lucide-react';
+import { toast } from 'sonner';
 import { authService } from '@/utils/api';
 import Layout from '@/components/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,9 +28,12 @@ export default function Login() {
             const { data } = await authService.login({ email, password });
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
+            toast.success(`Welcome back, ${data.user.name}!`);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            const errorMsg = err.response?.data?.message || 'Login failed. Please check your credentials.';
+            setError(errorMsg);
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }

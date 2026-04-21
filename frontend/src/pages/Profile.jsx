@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import { analysisService, authService } from '@/utils/api';
 
@@ -51,10 +52,10 @@ export default function Profile() {
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setIsEditing(false);
-            alert("Profile updated successfully!");
+            toast.success("Profile updated successfully!");
         } catch (err) {
             console.error("Failed to update profile", err);
-            alert(err.response?.data?.message || "Failed to update profile");
+            toast.error(err.response?.data?.message || "Failed to update profile");
         } finally {
             setUpdating(false);
         }

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
 import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson } from "lucide-react";
 import Layout from "@/components/Layout";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 export default function AnalysisDetail() {
@@ -32,12 +33,16 @@ export default function AnalysisDetail() {
     const handleShare = () => {
         navigator.clipboard.writeText(window.location.href);
         setCopied(true);
+        toast.success("Link copied to clipboard!", {
+            description: "You can now share this analysis with others."
+        });
         setTimeout(() => setCopied(false), 2000);
     };
 
     const handleDownloadMarkdown = () => {
         if (!analysis) return;
-        const markdown = `
+        try {
+            const markdown = `
 # Analysis Report: ${analysis.language.toUpperCase()}
 *Generated on: ${new Date(analysis.createdAt).toLocaleString()}*
 
@@ -62,13 +67,17 @@ ${analysis.optimizedCode || "N/A"}
 - **Space Complexity:** ${analysis.spaceComplexity}
 - **AI Confidence:** ${analysis.confidenceScore}
 `;
-        const blob = new Blob([markdown], { type: "text/markdown" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `analysis_${analysis.language}_${id?.substring(0, 8)}.md`;
-        a.click();
-        URL.revokeObjectURL(url);
+            const blob = new Blob([markdown], { type: "text/markdown" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analysis_${analysis.language}_${id?.substring(0, 8)}.md`;
+            a.click();
+            URL.revokeObjectURL(url);
+            toast.success("Markdown report downloaded");
+        } catch (err) {
+            toast.error("Failed to generate report");
+        }
     };
 
     if (loading) {

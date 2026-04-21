@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User as UserIcon, Mail, Lock, ArrowRight, Github, CheckCircle2, XCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import { authService } from '@/utils/api';
 import Layout from '@/components/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,9 +33,12 @@ export default function Register() {
             const { data } = await authService.register({ name, email, password });
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
+            toast.success(`Welcome to DebugAI, ${data.user.name}!`);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+            const errorMsg = err.response?.data?.message || 'Registration failed. Please try again.';
+            setError(errorMsg);
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }

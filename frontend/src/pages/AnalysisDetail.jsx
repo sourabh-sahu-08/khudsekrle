@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson } from "lucide-react";
 import Layout from "@/components/Layout";
 import { motion } from "framer-motion";
 
@@ -10,6 +10,7 @@ export default function AnalysisDetail() {
     const [analysis, setAnalysis] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const fetchAnalysis = async () => {
@@ -27,6 +28,48 @@ export default function AnalysisDetail() {
 
         fetchAnalysis();
     }, [id]);
+
+    const handleShare = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleDownloadMarkdown = () => {
+        if (!analysis) return;
+        const markdown = `
+# Analysis Report: ${analysis.language.toUpperCase()}
+*Generated on: ${new Date(analysis.createdAt).toLocaleString()}*
+
+## 1. Identified Findings
+${analysis.findings}
+
+## 2. AI Insights & Explanation
+${analysis.explanation}
+
+## 3. Recommended Resolution (Corrected Code)
+\`\`\`${analysis.language}
+${analysis.correctedCode}
+\`\`\`
+
+## 4. Performance Optimized Pattern
+\`\`\`${analysis.language}
+${analysis.optimizedCode || "N/A"}
+\`\`\`
+
+## 5. Complexity Analysis
+- **Time Complexity:** ${analysis.timeComplexity}
+- **Space Complexity:** ${analysis.spaceComplexity}
+- **AI Confidence:** ${analysis.confidenceScore}
+`;
+        const blob = new Blob([markdown], { type: "text/markdown" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analysis_${analysis.language}_${id?.substring(0, 8)}.md`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
     if (loading) {
         return (
@@ -120,6 +163,25 @@ export default function AnalysisDetail() {
                                 </div>
                                 <span className="text-blue-400 font-black text-xl leading-none">{analysis.confidenceScore}</span>
                             </div>
+                        </div>
+
+                        <div className="h-10 w-[1px] bg-white/10 hidden md:block" />
+
+                        <div className="flex items-center gap-3">
+                            <button 
+                                onClick={handleDownloadMarkdown}
+                                className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all active:scale-90 border border-white/5"
+                                title="Download Markdown"
+                            >
+                                <Download size={20} />
+                            </button>
+                            <button 
+                                onClick={handleShare}
+                                className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all active:scale-90 border border-white/5 relative"
+                                title="Copy Share Link"
+                            >
+                                {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
+                            </button>
                         </div>
                     </motion.div>
                 </div>

@@ -34,6 +34,7 @@ export const authService = {
     register: (data) => API.post('/auth/register', data),
     getMe: () => API.get('/auth/me'),
     updateDetails: (data) => API.put('/auth/updatedetails', data),
+    updatePassword: (data) => API.put('/auth/updatepassword', data),
 };
 
 export const analysisService = {

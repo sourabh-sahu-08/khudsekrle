@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut } from 'lucide-react';
+import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -13,6 +13,9 @@ export default function Profile() {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({ name: '', email: '' });
     const [updating, setUpdating] = useState(false);
+    const [securityData, setSecurityData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    const [showSecurity, setShowSecurity] = useState(false);
+    const [updatingSecurity, setUpdatingSecurity] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -58,6 +61,32 @@ export default function Profile() {
             toast.error(err.response?.data?.message || "Failed to update profile");
         } finally {
             setUpdating(false);
+        }
+    };
+
+    const handleUpdatePassword = async (e) => {
+        e.preventDefault();
+        if (securityData.newPassword !== securityData.confirmPassword) {
+            return toast.error("Passwords do not match");
+        }
+        if (securityData.newPassword.length < 6) {
+            return toast.error("New password must be at least 6 characters");
+        }
+        
+        setUpdatingSecurity(true);
+        try {
+            const response = await authService.updatePassword({
+                currentPassword: securityData.currentPassword,
+                newPassword: securityData.newPassword
+            });
+            localStorage.setItem('token', response.data.token);
+            setSecurityData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            setShowSecurity(false);
+            toast.success("Password updated successfully!");
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Failed to update password");
+        } finally {
+            setUpdatingSecurity(false);
         }
     };
 
@@ -214,6 +243,75 @@ export default function Profile() {
                             <StatCard label="Analyses" value={loading ? "..." : stats.totalAnalyses} />
                             <StatCard label="Fixed" value={loading ? "..." : stats.corrections} />
                             <StatCard label="Optimized" value={loading ? "..." : stats.optimizations} />
+                        </div>
+
+                        {/* Security Section Toggle */}
+                        <div className="mt-12 pt-8 border-t border-white/5">
+                            <button 
+                                onClick={() => setShowSecurity(!showSecurity)}
+                                className="flex items-center gap-3 text-slate-400 hover:text-white transition-all font-bold group"
+                            >
+                                <div className={`p-2 rounded-lg bg-white/5 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-all ${showSecurity ? 'bg-blue-500/10 text-blue-400' : ''}`}>
+                                    <Lock size={18} />
+                                </div>
+                                <span>{showSecurity ? "Hide Security Settings" : "Security & Password"}</span>
+                            </button>
+
+                            <AnimatePresence>
+                                {showSecurity && (
+                                    <motion.div 
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        className="overflow-hidden"
+                                    >
+                                        <form onSubmit={handleUpdatePassword} className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/[0.01] p-8 rounded-3xl border border-white/5">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Current Password</label>
+                                                <input 
+                                                    type="password" 
+                                                    required
+                                                    value={securityData.currentPassword}
+                                                    onChange={(e) => setSecurityData({...securityData, currentPassword: e.target.value})}
+                                                    className="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all text-sm"
+                                                    placeholder="••••••••"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">New Password</label>
+                                                <input 
+                                                    type="password" 
+                                                    required
+                                                    value={securityData.newPassword}
+                                                    onChange={(e) => setSecurityData({...securityData, newPassword: e.target.value})}
+                                                    className="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all text-sm"
+                                                    placeholder="••••••••"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Confirm New Password</label>
+                                                <div className="flex items-center gap-4">
+                                                    <input 
+                                                        type="password" 
+                                                        required
+                                                        value={securityData.confirmPassword}
+                                                        onChange={(e) => setSecurityData({...securityData, confirmPassword: e.target.value})}
+                                                        className="flex-1 bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all text-sm"
+                                                        placeholder="••••••••"
+                                                    />
+                                                    <button 
+                                                        type="submit"
+                                                        disabled={updatingSecurity}
+                                                        className="bg-white text-black h-full px-6 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95 disabled:opacity-50 min-w-[120px]"
+                                                    >
+                                                        {updatingSecurity ? "Updating..." : "Update"}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </motion.div>

@@ -54,7 +54,7 @@ export default function AnalysisDetail() {
         if (!analysis) return;
         try {
             const markdown = `
-# Analysis Report: ${analysis.language.toUpperCase()}
+# khudsekrle Analysis Report: ${analysis.language.toUpperCase()}
 *Generated on: ${new Date(analysis.createdAt).toLocaleString()}*
 
 ## 1. Identified Findings
@@ -82,7 +82,7 @@ ${analysis.optimizedCode || "N/A"}
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `analysis_${analysis.language}_${id?.substring(0, 8)}.md`;
+            a.download = `khudsekrle_analysis_${analysis.language}_${id?.substring(0, 8)}.md`;
             a.click();
             URL.revokeObjectURL(url);
             toast.success("Markdown report downloaded");

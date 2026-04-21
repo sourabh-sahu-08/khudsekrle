@@ -58,12 +58,12 @@ export default function Home() {
 
   const handleDownload = () => {
     if (!result) return;
-    const content = `AI Code Debugger Analysis Report\nGenerated on: ${new Date().toLocaleString()}\nLanguage: ${language}\n\n---------------------------------\nIDENTIFIED FINDINGS:\n${result.findings}\n\nEXPLANATION:\n${result.explanation}\n\nCORRECTED CODE:\n${result.correctedCode}\n\nOPTIMIZED CODE:\n${result.optimizedCode}\n\nCOMPLEXITY:\nTime: ${result.timeComplexity}\nSpace: ${result.spaceComplexity}\n---------------------------------`;
+    const content = `khudsekrle Analysis Report\nGenerated on: ${new Date().toLocaleString()}\nLanguage: ${language}\n\n---------------------------------\nIDENTIFIED FINDINGS:\n${result.findings}\n\nEXPLANATION:\n${result.explanation}\n\nCORRECTED CODE:\n${result.correctedCode}\n\nOPTIMIZED CODE:\n${result.optimizedCode}\n\nCOMPLEXITY:\nTime: ${result.timeComplexity}\nSpace: ${result.spaceComplexity}\n---------------------------------`;
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `debug_analysis_${new Date().getTime()}.txt`;
+    link.download = `khudsekrle_analysis_${new Date().getTime()}.txt`;
     link.click();
     URL.revokeObjectURL(url);
     toast.success("Report downloaded", {

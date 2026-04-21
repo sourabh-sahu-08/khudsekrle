@@ -1,5 +1,5 @@
 {
-  "name": "ai-code-debugger-root",
+  "name": "khudsekrle-root",
   "private": true,
   "scripts": {
     "install:all": "npm install --prefix frontend && npm install --prefix backend",

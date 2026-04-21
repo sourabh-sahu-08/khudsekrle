@@ -27,7 +27,7 @@ export default function Navbar() {
                     <Terminal size={24} />
                 </div>
                 <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent tracking-tighter">
-                    DebugAI
+                    khudsekrle
                 </span>
             </Link>
 

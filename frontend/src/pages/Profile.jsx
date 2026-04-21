@@ -9,6 +9,7 @@ import { analysisService, authService } from '@/utils/api';
 export default function Profile() {
     const [user, setUser] = useState(null);
     const [stats, setStats] = useState({ totalAnalyses: 0, corrections: 0, optimizations: 0 });
+    const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({ name: '', email: '' });
@@ -26,18 +27,22 @@ export default function Profile() {
             setFormData({ name: parsedUser.name, email: parsedUser.email });
         }
 
-        const fetchStats = async () => {
+        const fetchStatsAndHistory = async () => {
             try {
-                const response = await analysisService.getStats();
-                setStats(response.data.data);
+                const [statsRes, historyRes] = await Promise.all([
+                    analysisService.getStats(),
+                    analysisService.getHistory()
+                ]);
+                setStats(statsRes.data.data);
+                setHistory(historyRes.data.data);
             } catch (err) {
-                console.error("Failed to fetch stats", err);
+                console.error("Failed to fetch profile data", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchStats();
+        fetchStatsAndHistory();
     }, []);
 
     const handleLogout = () => {
@@ -243,6 +248,45 @@ export default function Profile() {
                             <StatCard label="Analyses" value={loading ? "..." : stats.totalAnalyses} />
                             <StatCard label="Fixed" value={loading ? "..." : stats.corrections} />
                             <StatCard label="Optimized" value={loading ? "..." : stats.optimizations} />
+                        </div>
+
+                        {/* Recent Activity */}
+                        <div className="mt-12 pt-12 border-t border-white/5">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Recent Activity</h3>
+                                <Link to="/dashboard" className="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors">View All</Link>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                {loading ? (
+                                    [1, 2, 3].map(i => <div key={i} className="h-20 bg-white/5 rounded-2xl animate-pulse" />)
+                                ) : history.length > 0 ? (
+                                    history.slice(0, 3).map((item, idx) => (
+                                        <Link 
+                                            key={item._id} 
+                                            to={`/dashboard/analysis/${item._id}`}
+                                            className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                                                    <Hash size={18} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-white font-bold text-sm line-clamp-1">{item.originalCode.substring(0, 40)}...</p>
+                                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{item.language} • {new Date(item.createdAt).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-slate-500 group-hover:text-white transition-colors">
+                                                <ArrowLeft size={16} className="rotate-180" />
+                                            </div>
+                                        </Link>
+                                    ))
+                                ) : (
+                                    <div className="p-10 text-center bg-white/[0.01] rounded-3xl border border-dashed border-white/5">
+                                        <p className="text-slate-500 text-sm font-medium">No recent analyses found.</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Security Section Toggle */}

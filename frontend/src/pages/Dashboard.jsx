@@ -87,11 +87,9 @@ export default function Dashboard() {
                             className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none"
                         >
                             <option value="all" className="bg-slate-900">All Languages</option>
-                            <option value="javascript" className="bg-slate-900">JavaScript</option>
-                            <option value="python" className="bg-slate-900">Python</option>
-                            <option value="java" className="bg-slate-900">Java</option>
-                            <option value="cpp" className="bg-slate-900">C++</option>
-                            <option value="c" className="bg-slate-900">C</option>
+                            {[...new Set(history.map(item => item.language))].map(lang => (
+                                <option key={lang} value={lang} className="bg-slate-900 capitalize">{lang}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -106,8 +104,8 @@ export default function Dashboard() {
                     const filteredHistory = history.filter(item => {
                         const matchesSearch = 
                             item.originalCode.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            item.findings?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            item.explanation?.toLowerCase().includes(searchQuery.toLowerCase());
+                            (item.findings && String(item.findings).toLowerCase().includes(searchQuery.toLowerCase())) ||
+                            (item.explanation && String(item.explanation).toLowerCase().includes(searchQuery.toLowerCase()));
                         
                         const matchesLanguage = filterLanguage === "all" || item.language === filterLanguage;
                         
@@ -155,7 +153,7 @@ export default function Dashboard() {
                                         })
                                     </span>
                                     <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-500/5 text-emerald-400/80">
-                                        {itemValue.confidenceScore} match
+                                        {itemValue.confidenceScore || "0%"} Score
                                     </span>
                                 </div>
 

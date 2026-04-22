@@ -45,6 +45,8 @@ export const analysisService = {
     getStats: () => API.get('/analyze/stats'),
     chat: (id, message) => API.post(`/analyze/${id}/chat`, { message }),
     addComment: (id, text) => API.post(`/analyze/${id}/comment`, { text }),
+    deleteComment: (id, commentId) => API.delete(`/analyze/${id}/comment/${commentId}`),
+    editComment: (id, commentId, text) => API.patch(`/analyze/${id}/comment/${commentId}`, { text }),
 };
 
 export default API;

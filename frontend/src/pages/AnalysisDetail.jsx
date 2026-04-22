@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2 } from "lucide-react";
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -440,6 +440,8 @@ function CommentsSection({ analysisId, initialComments }) {
     const [comments, setComments] = useState(initialComments);
     const [newComment, setNewComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [editText, setEditText] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -455,6 +457,34 @@ function CommentsSection({ analysisId, initialComments }) {
             toast.error("Failed to add note");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleDelete = async (commentId) => {
+        if (!window.confirm("Are you sure you want to delete this note?")) return;
+        try {
+            const response = await analysisService.deleteComment(analysisId, commentId);
+            setComments(response.data.data);
+            toast.success("Note deleted");
+        } catch (err) {
+            toast.error("Failed to delete note");
+        }
+    };
+
+    const handleEditStart = (comment) => {
+        setEditingId(comment._id);
+        setEditText(comment.text);
+    };
+
+    const handleEditSave = async (commentId) => {
+        if (!editText.trim()) return;
+        try {
+            const response = await analysisService.editComment(analysisId, commentId, editText.trim());
+            setComments(response.data.data);
+            setEditingId(null);
+            toast.success("Note updated");
+        } catch (err) {
+            toast.error("Failed to update note");
         }
     };
 
@@ -485,16 +515,60 @@ function CommentsSection({ analysisId, initialComments }) {
                 ) : (
                     comments.map((comment, i) => (
                         <motion.div 
-                            key={i}
+                            key={comment._id || i}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/[0.08] transition-all"
+                            className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/[0.08] transition-all group/comment"
                         >
                             <div className="flex items-center justify-between mb-3">
-                                <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">{comment.userName}</span>
-                                <span className="text-[10px] font-bold text-slate-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">{comment.userName}</span>
+                                    <span className="text-[10px] font-bold text-slate-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                                </div>
+                                
+                                <div className="flex items-center gap-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                                    <button 
+                                        onClick={() => handleEditStart(comment)}
+                                        className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all"
+                                        title="Edit Note"
+                                    >
+                                        <Edit2 size={14} />
+                                    </button>
+                                    <button 
+                                        onClick={() => handleDelete(comment._id)}
+                                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                                        title="Delete Note"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
                             </div>
-                            <p className="text-slate-300 text-sm leading-relaxed">{comment.text}</p>
+                            
+                            {editingId === comment._id ? (
+                                <div className="space-y-3">
+                                    <textarea 
+                                        value={editText}
+                                        onChange={(e) => setEditText(e.target.value)}
+                                        className="w-full bg-slate-900 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all min-h-[80px]"
+                                    />
+                                    <div className="flex items-center gap-3">
+                                        <button 
+                                            onClick={() => handleEditSave(comment._id)}
+                                            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                                        >
+                                            Save Changes
+                                        </button>
+                                        <button 
+                                            onClick={() => setEditingId(null)}
+                                            className="text-slate-400 hover:text-white text-xs font-bold transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-slate-300 text-sm leading-relaxed">{comment.text}</p>
+                            )}
                         </motion.div>
                     ))
                 )}

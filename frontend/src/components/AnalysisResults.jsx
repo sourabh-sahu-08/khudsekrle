@@ -202,8 +202,8 @@ export default function AnalysisResults({ data }) {
                             <DiffEditor
                                 height="100%"
                                 language={data.language || "javascript"}
-                                original={data.originalCode}
-                                modified={data.correctedCode}
+                                original={data.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                modified={data.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
                                 theme="vs-dark"
                                 options={{
                                     originalEditable: false,
@@ -232,16 +232,16 @@ export default function AnalysisResults({ data }) {
                         >
                             <CodeBlock
                                 title="Suggested Resolution"
-                                code={data.correctedCode}
-                                onCopy={() => copyToClipboard(data.correctedCode, 'fix')}
+                                code={data.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                onCopy={() => copyToClipboard(data.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, ''), 'fix')}
                                 isCopied={copied === 'fix'}
                                 icon={<Terminal size={18} />}
                             />
                             {data.optimizedCode && data.optimizedCode !== data.correctedCode && (
                                 <CodeBlock
                                     title="Performance Optimized"
-                                    code={data.optimizedCode}
-                                    onCopy={() => copyToClipboard(data.optimizedCode, 'opt')}
+                                    code={data.optimizedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                    onCopy={() => copyToClipboard(data.optimizedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, ''), 'opt')}
                                     isCopied={copied === 'opt'}
                                     variant="emerald"
                                     icon={<Zap size={18} />}

@@ -99,7 +99,7 @@ ${analysis.optimizedCode || "N/A"}
     if (loading) {
         return (
             <Layout>
-                <div className="max-w-6xl mx-auto pt-24 px-6 pb-12 flex flex-col justify-center items-center h-[70vh] space-y-4">
+                <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12 flex flex-col justify-center items-center h-[70vh] space-y-4">
                     <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
                     <p className="text-slate-400 font-mono text-sm tracking-widest">FETCHING PUBLIC DATA...</p>
                 </div>
@@ -110,7 +110,7 @@ ${analysis.optimizedCode || "N/A"}
     if (error || !analysis) {
         return (
             <Layout>
-                <div className="max-w-6xl mx-auto pt-24 px-6 pb-12">
+                <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
                     <div className="glass p-12 rounded-[2.5rem] text-center max-w-xl mx-auto border border-red-500/10 shadow-2xl">
                         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-400 mx-auto mb-6">
                             <AlertTriangle size={40} />
@@ -129,7 +129,7 @@ ${analysis.optimizedCode || "N/A"}
 
     return (
         <Layout>
-            <div className="max-w-6xl mx-auto pt-24 px-6 pb-12">
+            <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -278,8 +278,8 @@ ${analysis.optimizedCode || "N/A"}
                             <DiffEditor
                                 height="100%"
                                 language={analysis.language || "javascript"}
-                                original={analysis.originalCode}
-                                modified={analysis.correctedCode}
+                                original={analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                modified={analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
                                 theme="vs-dark"
                                 options={{
                                     originalEditable: false,
@@ -316,7 +316,7 @@ ${analysis.optimizedCode || "N/A"}
                                 <div className="p-8 bg-slate-950/80">
                                     <div className="bg-slate-900 rounded-2xl p-6 border border-white/5 shadow-inner overflow-x-auto">
                                         <pre className="text-slate-400 font-mono text-sm leading-relaxed">
-                                            <code>{analysis.originalCode}</code>
+                                            <code>{analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
                                         </pre>
                                     </div>
                                 </div>
@@ -333,7 +333,7 @@ ${analysis.optimizedCode || "N/A"}
                                 <div className="p-8 bg-emerald-500/[0.01]">
                                     <div className="bg-slate-950/80 rounded-2xl p-6 border border-emerald-500/10 shadow-inner group-hover:border-emerald-500/30 transition-colors">
                                         <pre className="text-emerald-400/90 font-mono text-sm leading-relaxed">
-                                            <code>{analysis.correctedCode}</code>
+                                            <code>{analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
                                         </pre>
                                     </div>
                                 </div>
@@ -359,7 +359,7 @@ ${analysis.optimizedCode || "N/A"}
                         <div className="p-10 bg-slate-950/50">
                             <div className="bg-black/40 rounded-3xl p-8 border border-white/5 shadow-inner group-hover:border-blue-500/10 transition-all">
                                 <pre className="text-blue-300/80 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-                                    <code>{analysis.expectedOutput}</code>
+                                    <code>{analysis.expectedOutput?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
                                 </pre>
                             </div>
                         </div>

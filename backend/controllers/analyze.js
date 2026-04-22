@@ -246,3 +246,72 @@ exports.addComment = async (req, res, next) => {
   }
 };
 
+// @desc    Delete comment from analysis
+// @route   DELETE /api/analyze/:id/comment/:commentId
+// @access  Private
+exports.deleteComment = async (req, res, next) => {
+  try {
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    const comment = analysis.comments.id(req.params.commentId);
+
+    if (!comment) {
+      return res.status(404).json({ success: false, message: 'Comment not found' });
+    }
+
+    // Make sure user owns the comment
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to delete this comment' });
+    }
+
+    comment.deleteOne();
+    await analysis.save();
+
+    res.status(200).json({
+      success: true,
+      data: analysis.comments,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Update comment in analysis
+// @route   PATCH /api/analyze/:id/comment/:commentId
+// @access  Private
+exports.editComment = async (req, res, next) => {
+  try {
+    const { text } = req.body;
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    const comment = analysis.comments.id(req.params.commentId);
+
+    if (!comment) {
+      return res.status(404).json({ success: false, message: 'Comment not found' });
+    }
+
+    // Make sure user owns the comment
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to edit this comment' });
+    }
+
+    comment.text = text;
+    await analysis.save();
+
+    res.status(200).json({
+      success: true,
+      data: analysis.comments,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

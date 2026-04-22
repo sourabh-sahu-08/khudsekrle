@@ -20,30 +20,44 @@ export default function Profile() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-            setFormData({ name: parsedUser.name, email: parsedUser.email });
-        }
-
-        const fetchStatsAndHistory = async () => {
+        const fetchAllData = async () => {
             try {
-                const [statsRes, historyRes] = await Promise.all([
+                // 1. Try to get initial user from localStorage for instant UI
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    const parsedUser = JSON.parse(storedUser);
+                    setUser(parsedUser);
+                    setFormData({ name: parsedUser.name, email: parsedUser.email });
+                }
+
+                // 2. Fetch fresh data from API
+                const [userRes, statsRes, historyRes] = await Promise.all([
+                    authService.getMe(),
                     analysisService.getStats(),
                     analysisService.getHistory()
                 ]);
+
+                const userData = userRes.data.data;
+                const userWithId = { ...userData, id: userData._id || userData.id };
+                
+                setUser(userWithId);
+                setFormData({ name: userData.name, email: userData.email });
+                localStorage.setItem('user', JSON.stringify(userWithId));
+                
                 setStats(statsRes.data.data);
                 setHistory(historyRes.data.data);
             } catch (err) {
                 console.error("Failed to fetch profile data", err);
+                if (err.response?.status === 401) {
+                    navigate('/auth/login');
+                }
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchStatsAndHistory();
-    }, []);
+        fetchAllData();
+    }, [navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -56,7 +70,8 @@ export default function Profile() {
         setUpdating(true);
         try {
             const response = await authService.updateDetails(formData);
-            const updatedUser = { ...user, ...response.data.data };
+            const userData = response.data.data;
+            const updatedUser = { ...user, ...userData, id: userData._id || userData.id };
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setIsEditing(false);
@@ -85,6 +100,12 @@ export default function Profile() {
                 newPassword: securityData.newPassword
             });
             localStorage.setItem('token', response.data.token);
+            
+            const userData = response.data.user;
+            const updatedUser = { ...user, ...userData };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            
             setSecurityData({ currentPassword: '', newPassword: '', confirmPassword: '' });
             setShowSecurity(false);
             toast.success("Password updated successfully!");

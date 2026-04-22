@@ -33,6 +33,7 @@ You must respond with a SINGLE JSON object. No markdown, no prose outside the JS
   "findings": "Detailed, bulleted list of all identified issues (bugs, security, logic).",
   "explanation": "Clear, technical breakdown of why these issues occur and the logic behind the fixes.",
   "correctedCode": "The complete fixed version of the code.",
+  "expectedOutput": "The exact output the corrected code is expected to produce when executed (e.g., console logs, return values).",
   "optimizedCode": "A performance-optimized version (if applicable).",
   "timeComplexity": "Big-O notation (e.g., O(n log n)) with brief justification.",
   "spaceComplexity": "Big-O notation with brief justification.",

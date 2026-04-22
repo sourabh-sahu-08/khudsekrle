@@ -47,6 +47,8 @@ export const analysisService = {
     addComment: (id, text) => API.post(`/analyze/${id}/comment`, { text }),
     deleteComment: (id, commentId) => API.delete(`/analyze/${id}/comment/${commentId}`),
     editComment: (id, commentId, text) => API.patch(`/analyze/${id}/comment/${commentId}`, { text }),
+    togglePublic: (id) => API.patch(`/analyze/${id}/toggle-public`),
+    getPublicAnalysis: (id) => API.get(`/analyze/public/${id}`),
 };
 
 export default API;

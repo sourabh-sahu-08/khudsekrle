@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2 } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2, Globe, Lock } from "lucide-react";
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -42,12 +42,23 @@ export default function AnalysisDetail() {
     }, [id]);
 
     const handleShare = () => {
-        navigator.clipboard.writeText(window.location.href);
+        const url = `${window.location.origin}/analysis/public/${id}`;
+        navigator.clipboard.writeText(url);
         setCopied(true);
-        toast.success("Link copied to clipboard!", {
-            description: "You can now share this analysis with others."
+        toast.success("Public link copied!", {
+            description: "You can now share this analysis with anyone."
         });
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleTogglePublic = async () => {
+        try {
+            const response = await analysisService.togglePublic(id);
+            setAnalysis(response.data.data);
+            toast.success(response.data.data.isPublic ? "Analysis is now public" : "Analysis is now private");
+        } catch (err) {
+            toast.error("Failed to update visibility");
+        }
     };
 
     const handleDownloadMarkdown = () => {
@@ -221,6 +232,13 @@ ${analysis.optimizedCode || "N/A"}
 
                         <div className="flex items-center gap-3">
                             <button 
+                                onClick={handleTogglePublic}
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 border ${analysis.isPublic ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-slate-400 border-white/5'}`}
+                                title={analysis.isPublic ? "Make Private" : "Make Public"}
+                            >
+                                {analysis.isPublic ? <Globe size={20} /> : <Lock size={20} />}
+                            </button>
+                            <button 
                                 onClick={handleDownloadMarkdown}
                                 className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all active:scale-90 border border-white/5"
                                 title="Download Markdown"
@@ -229,8 +247,9 @@ ${analysis.optimizedCode || "N/A"}
                             </button>
                             <button 
                                 onClick={handleShare}
-                                className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all active:scale-90 border border-white/5 relative"
-                                title="Copy Share Link"
+                                disabled={!analysis.isPublic}
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 border border-white/5 relative ${!analysis.isPublic ? 'opacity-30 cursor-not-allowed' : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white'}`}
+                                title={analysis.isPublic ? "Copy Public Link" : "Make public to share link"}
                             >
                                 {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
                             </button>

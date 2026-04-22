@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AnalysisDetail from './pages/AnalysisDetail';
 import Profile from './pages/Profile';
+import PublicAnalysis from './pages/PublicAnalysis';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/auth/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/analysis/:id" element={<AnalysisDetail />} />
+        <Route path="/analysis/public/:id" element={<PublicAnalysis />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>

@@ -44,6 +44,24 @@ const analysisSchema = new mongoose.Schema({
   expectedOutput: {
     type: String,
   },
+  comments: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      userName: String,
+      text: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Analysis', analysisSchema);

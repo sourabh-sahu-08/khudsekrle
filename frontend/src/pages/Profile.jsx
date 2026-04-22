@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut, Lock } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';

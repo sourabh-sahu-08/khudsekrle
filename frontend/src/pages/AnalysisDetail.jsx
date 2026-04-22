@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send } from "lucide-react";
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -411,8 +411,95 @@ ${analysis.optimizedCode || "N/A"}
 
                     <ChatInterface analysisId={id} />
                 </motion.div>
+
+                {/* Comments Section */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mt-12 glass rounded-[3rem] p-10 border border-white/5 relative overflow-hidden shadow-2xl"
+                >
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                            <MessageSquare size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-white">Developer Notes</h3>
+                            <p className="text-sm text-slate-500 font-medium">Add your own notes or comments to this analysis</p>
+                        </div>
+                    </div>
+
+                    <CommentsSection analysisId={id} initialComments={analysis.comments || []} />
+                </motion.div>
             </div>
         </Layout>
+    );
+}
+
+function CommentsSection({ analysisId, initialComments }) {
+    const [comments, setComments] = useState(initialComments);
+    const [newComment, setNewComment] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!newComment.trim() || isSubmitting) return;
+
+        setIsSubmitting(true);
+        try {
+            const response = await analysisService.addComment(analysisId, newComment.trim());
+            setComments(response.data.data);
+            setNewComment("");
+            toast.success("Note added!");
+        } catch (err) {
+            toast.error("Failed to add note");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="space-y-8">
+            <form onSubmit={handleSubmit} className="flex gap-4">
+                <input 
+                    type="text" 
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Write a note to yourself..."
+                    className="flex-1 bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all placeholder:text-slate-600"
+                />
+                <button 
+                    type="submit"
+                    disabled={!newComment.trim() || isSubmitting}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 rounded-2xl font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-emerald-900/20"
+                >
+                    {isSubmitting ? "Adding..." : <Send size={18} />}
+                </button>
+            </form>
+
+            <div className="space-y-4">
+                {comments.length === 0 ? (
+                    <div className="bg-white/[0.01] border border-dashed border-white/5 rounded-3xl p-10 text-center">
+                        <p className="text-slate-500 text-sm font-medium italic">No notes yet. Add one above!</p>
+                    </div>
+                ) : (
+                    comments.map((comment, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/[0.08] transition-all"
+                        >
+                            <div className="flex items-center justify-between mb-3">
+                                <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">{comment.userName}</span>
+                                <span className="text-[10px] font-bold text-slate-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                            </div>
+                            <p className="text-slate-300 text-sm leading-relaxed">{comment.text}</p>
+                        </motion.div>
+                    ))
+                )}
+            </div>
+        </div>
     );
 }
 

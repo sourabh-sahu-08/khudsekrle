@@ -41,6 +41,9 @@ const analysisSchema = new mongoose.Schema({
   bestPractices: {
     type: mongoose.Schema.Types.Mixed,
   },
+  expectedOutput: {
+    type: String,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Analysis', analysisSchema);

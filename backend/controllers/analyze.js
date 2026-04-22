@@ -215,3 +215,34 @@ Provide a concise, highly technical, and helpful response to the user's question
   }
 };
 
+// @desc    Add comment to analysis
+// @route   POST /api/analyze/:id/comment
+// @access  Private
+exports.addComment = async (req, res, next) => {
+  try {
+    const { text } = req.body;
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    const comment = {
+      user: req.user.id,
+      userName: req.user.name || 'User',
+      text,
+      createdAt: new Date(),
+    };
+
+    analysis.comments.push(comment);
+    await analysis.save();
+
+    res.status(200).json({
+      success: true,
+      data: analysis.comments,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

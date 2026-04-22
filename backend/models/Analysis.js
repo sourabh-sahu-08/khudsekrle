@@ -62,6 +62,10 @@ const analysisSchema = new mongoose.Schema({
       },
     },
   ],
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Analysis', analysisSchema);

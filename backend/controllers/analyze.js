@@ -315,3 +315,51 @@ exports.editComment = async (req, res, next) => {
   }
 };
 
+// @desc    Toggle public visibility of analysis
+// @route   PATCH /api/analyze/:id/toggle-public
+// @access  Private
+exports.togglePublic = async (req, res, next) => {
+  try {
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis) {
+      return res.status(404).json({ success: false, message: 'Analysis not found' });
+    }
+
+    // Make sure user owns the analysis
+    if (analysis.userId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+
+    analysis.isPublic = !analysis.isPublic;
+    await analysis.save();
+
+    res.status(200).json({
+      success: true,
+      data: analysis
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get public analysis
+// @route   GET /api/analyze/public/:id
+// @access  Public
+exports.getPublicAnalysis = async (req, res, next) => {
+  try {
+    const analysis = await Analysis.findById(req.params.id);
+
+    if (!analysis || !analysis.isPublic) {
+      return res.status(404).json({ success: false, message: 'Analysis not found or not public' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: analysis
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

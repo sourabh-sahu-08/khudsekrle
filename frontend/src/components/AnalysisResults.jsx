@@ -1,11 +1,13 @@
 "use client";
 
-import { Check, Copy, AlertCircle, Zap, Clock, Maximize2, Sparkles, Terminal } from "lucide-react";
+import { Check, Copy, AlertCircle, Zap, Clock, Maximize2, Sparkles, Terminal, Split, LayoutList } from "lucide-react";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { DiffEditor } from "@monaco-editor/react";
 
 export default function AnalysisResults({ data }) {
     const [copied, setCopied] = useState(null);
+    const [viewMode, setViewMode] = useState("diff"); // "diff" or "blocks"
 
     if (!data) return null;
 
@@ -161,27 +163,93 @@ export default function AnalysisResults({ data }) {
                 </motion.section>
             </div>
 
-            {/* Code Blocks */}
-            <div className="space-y-8 pt-4">
-                <motion.div variants={item}>
-                    <CodeBlock
-                        title="Suggested Resolution"
-                        code={data.correctedCode}
-                        onCopy={() => copyToClipboard(data.correctedCode, 'fix')}
-                        isCopied={copied === 'fix'}
-                        icon={<Terminal size={18} />}
-                    />
-                </motion.div>
-                <motion.div variants={item}>
-                    <CodeBlock
-                        title="Performance Optimized"
-                        code={data.optimizedCode}
-                        onCopy={() => copyToClipboard(data.optimizedCode, 'opt')}
-                        isCopied={copied === 'opt'}
-                        variant="emerald"
-                        icon={<Zap size={18} />}
-                    />
-                </motion.div>
+            {/* View Mode Toggle */}
+            <motion.div variants={item} className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
+                    <Terminal size={20} className="text-blue-400" />
+                    Code Comparison
+                </h3>
+                <div className="flex bg-slate-900/50 p-1 rounded-xl border border-white/5">
+                    <button 
+                        onClick={() => setViewMode("diff")}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${viewMode === "diff" ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                        <Split size={14} />
+                        Diff View
+                    </button>
+                    <button 
+                        onClick={() => setViewMode("blocks")}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${viewMode === "blocks" ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                        <LayoutList size={14} />
+                        List View
+                    </button>
+                </div>
+            </motion.div>
+
+            {/* Code Blocks / Diff Editor */}
+            <div className="space-y-8">
+                <AnimatePresence mode="wait">
+                    {viewMode === "diff" ? (
+                        <motion.div 
+                            key="diff"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.98 }}
+                            className="glass rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl h-[500px] relative group"
+                        >
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/[0.02] blur-3xl rounded-full" />
+                            <DiffEditor
+                                height="100%"
+                                language={data.language || "javascript"}
+                                original={data.originalCode}
+                                modified={data.correctedCode}
+                                theme="vs-dark"
+                                options={{
+                                    originalEditable: false,
+                                    readOnly: true,
+                                    renderSideBySide: true,
+                                    minimap: { enabled: false },
+                                    scrollBeyondLastLine: false,
+                                    fontSize: 14,
+                                    lineNumbers: 'on',
+                                    padding: { top: 20, bottom: 20 },
+                                    folding: true,
+                                    scrollbar: {
+                                        vertical: 'hidden',
+                                        horizontal: 'hidden'
+                                    }
+                                }}
+                            />
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            key="blocks"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.98 }}
+                            className="space-y-8"
+                        >
+                            <CodeBlock
+                                title="Suggested Resolution"
+                                code={data.correctedCode}
+                                onCopy={() => copyToClipboard(data.correctedCode, 'fix')}
+                                isCopied={copied === 'fix'}
+                                icon={<Terminal size={18} />}
+                            />
+                            {data.optimizedCode && data.optimizedCode !== data.correctedCode && (
+                                <CodeBlock
+                                    title="Performance Optimized"
+                                    code={data.optimizedCode}
+                                    onCopy={() => copyToClipboard(data.optimizedCode, 'opt')}
+                                    isCopied={copied === 'opt'}
+                                    variant="emerald"
+                                    icon={<Zap size={18} />}
+                                />
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </motion.div>
     );

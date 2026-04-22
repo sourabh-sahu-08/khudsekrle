@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal } from "lucide-react";
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -68,12 +68,17 @@ ${analysis.explanation}
 ${analysis.correctedCode}
 \`\`\`
 
-## 4. Performance Optimized Pattern
+## 4. Expected Output
+\`\`\`text
+${analysis.expectedOutput || "N/A"}
+\`\`\`
+
+## 5. Performance Optimized Pattern
 \`\`\`${analysis.language}
 ${analysis.optimizedCode || "N/A"}
 \`\`\`
 
-## 5. Complexity Analysis
+## 6. Complexity Analysis
 - **Time Complexity:** ${analysis.timeComplexity}
 - **Space Complexity:** ${analysis.spaceComplexity}
 - **AI Confidence:** ${analysis.confidenceScore}
@@ -335,6 +340,30 @@ ${analysis.optimizedCode || "N/A"}
                         </div>
                     </motion.div>
                 </div>
+
+                {analysis.expectedOutput && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.65 }}
+                        className="mt-12 glass rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl relative group"
+                    >
+                        <div className="bg-slate-900/50 px-8 py-6 border-b border-white/5 flex items-center justify-between">
+                            <h3 className="text-slate-400 text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-3">
+                                <Terminal size={20} className="text-blue-400" />
+                                Expected Execution Output
+                            </h3>
+                            <CopyButton text={analysis.expectedOutput} tooltip="Expected Output" />
+                        </div>
+                        <div className="p-10 bg-slate-950/50">
+                            <div className="bg-black/40 rounded-3xl p-8 border border-white/5 shadow-inner group-hover:border-blue-500/10 transition-all">
+                                <pre className="text-blue-300/80 font-mono text-sm leading-relaxed whitespace-pre-wrap">
+                                    <code>{analysis.expectedOutput}</code>
+                                </pre>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
                 
                 {analysis.optimizedCode && analysis.optimizedCode !== analysis.correctedCode && analysis.optimizedCode !== "N/A" && (
                     <motion.div 

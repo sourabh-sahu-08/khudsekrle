@@ -258,7 +258,7 @@ export default function Profile() {
                             <ProfileField 
                                 icon={<Calendar size={20} />} 
                                 label="Joined" 
-                                value={new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} 
+                                value={user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : "N/A"} 
                                 delay={0.4}
                             />
                         </div>

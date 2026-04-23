@@ -206,9 +206,16 @@ Provide a concise, highly technical, and helpful response to the user's question
       ],
     });
 
+    const aiResponse = response.choices[0].message.content;
+
+    // Persist chat history
+    analysis.chatHistory.push({ role: 'user', content: message });
+    analysis.chatHistory.push({ role: 'ai', content: aiResponse });
+    await analysis.save();
+
     res.status(200).json({
       success: true,
-      data: response.choices[0].message.content
+      data: aiResponse
     });
   } catch (err) {
     next(err);

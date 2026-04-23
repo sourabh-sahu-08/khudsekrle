@@ -66,6 +66,23 @@ const analysisSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  chatHistory: [
+    {
+      role: {
+        type: String,
+        enum: ['user', 'ai'],
+        required: true,
+      },
+      content: {
+        type: String,
+        required: true,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Analysis', analysisSchema);

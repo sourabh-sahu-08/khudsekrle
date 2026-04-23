@@ -4,6 +4,7 @@ import { analysisService } from "@/utils/api";
 import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2, Globe, Lock, Split, LayoutList } from "lucide-react";
 import { DiffEditor } from "@monaco-editor/react";
 import Layout from "@/components/Layout";
+import ConfirmModal from "@/components/ConfirmModal";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -355,6 +356,9 @@ ${analysis.optimizedCode || "N/A"}
                             exit={{ opacity: 0, scale: 0.98 }}
                             className="glass rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl h-[500px] relative group mb-12"
                         >
+                            <div className="absolute top-4 right-4 z-10">
+                                <CopyButton text={analysis.correctedCode} tooltip="Fixed Code" />
+                            </div>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/[0.02] blur-3xl rounded-full" />
                             <DiffEditor
                                 height="100%"
@@ -491,7 +495,7 @@ ${analysis.optimizedCode || "N/A"}
                         </div>
                     </div>
 
-                    <ChatInterface analysisId={id} />
+                    <ChatInterface analysisId={id} initialMessages={analysis.chatHistory || []} />
                 </motion.div>
 
                 {/* Comments Section */}
@@ -524,6 +528,8 @@ function CommentsSection({ analysisId, initialComments }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [editText, setEditText] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -542,14 +548,21 @@ function CommentsSection({ analysisId, initialComments }) {
         }
     };
 
-    const handleDelete = async (commentId) => {
-        if (!window.confirm("Are you sure you want to delete this note?")) return;
+    const handleDeleteClick = (commentId) => {
+        setCommentToDelete(commentId);
+        setIsModalOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!commentToDelete) return;
         try {
-            const response = await analysisService.deleteComment(analysisId, commentId);
+            const response = await analysisService.deleteComment(analysisId, commentToDelete);
             setComments(response.data.data);
             toast.success("Note deleted");
         } catch (err) {
             toast.error("Failed to delete note");
+        } finally {
+            setCommentToDelete(null);
         }
     };
 
@@ -617,7 +630,7 @@ function CommentsSection({ analysisId, initialComments }) {
                                         <Edit2 size={14} />
                                     </button>
                                     <button 
-                                        onClick={() => handleDelete(comment._id)}
+                                        onClick={() => handleDeleteClick(comment._id)}
                                         className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
                                         title="Delete Note"
                                     >
@@ -655,12 +668,21 @@ function CommentsSection({ analysisId, initialComments }) {
                     ))
                 )}
             </div>
+
+            <ConfirmModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="Delete Developer Note?"
+                message="This will permanently remove this note from the analysis. This action cannot be undone."
+                confirmText="Delete Note"
+            />
         </div>
     );
 }
 
-function ChatInterface({ analysisId }) {
-    const [messages, setMessages] = useState([]);
+function ChatInterface({ analysisId, initialMessages = [] }) {
+    const [messages, setMessages] = useState(initialMessages.map(m => ({ role: m.role, content: m.content })));
     const [input, setInput] = useState("");
     const [isSending, setIsSending] = useState(false);
     const scrollRef = useState(null);

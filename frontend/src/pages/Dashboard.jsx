@@ -5,21 +5,32 @@ import { History, Code, Calendar, ExternalLink, Trash2, Sparkles } from "lucide-
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function Dashboard() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterLanguage, setFilterLanguage] = useState("all");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [idToDelete, setIdToDelete] = useState(null);
 
-    const handleDelete = async (id) => {
+    const handleDeleteClick = (id) => {
+        setIdToDelete(id);
+        setIsModalOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!idToDelete) return;
         try {
-            await analysisService.deleteAnalysis(id);
-            setHistory(prev => prev.filter(item => item._id !== id));
+            await analysisService.deleteAnalysis(idToDelete);
+            setHistory(prev => prev.filter(item => item._id !== idToDelete));
             toast.success("Analysis deleted");
         } catch (err) {
             console.error("Failed to delete analysis", err);
             toast.error("Failed to delete analysis");
+        } finally {
+            setIdToDelete(null);
         }
     };
 
@@ -166,7 +177,7 @@ export default function Dashboard() {
                                         View Details
                                     </Link>
                                     <button 
-                                        onClick={() => handleDelete(itemValue._id)} 
+                                        onClick={() => handleDeleteClick(itemValue._id)} 
                                         className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all active:scale-90"
                                     >
                                         <Trash2 size={18} />
@@ -195,8 +206,17 @@ export default function Dashboard() {
                             </button>
                         </motion.div>
                     );
-                })()}
+                })() : null}
             </div>
+
+            <ConfirmModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="Delete Analysis?"
+                message="Are you sure you want to delete this analysis? This action is permanent and cannot be undone."
+                confirmText="Yes, Delete"
+            />
         </Layout>
     );
 }

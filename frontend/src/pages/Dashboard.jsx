@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { analysisService } from "@/utils/api";
 import { History, Code, Calendar, ExternalLink, Trash2, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -40,7 +40,12 @@ export default function Dashboard() {
         }
     };
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
     useEffect(() => {
+        const q = searchParams.get("q");
+        if (q) setSearchQuery(q);
+
         const fetchHistory = async () => {
             try {
                 const response = await analysisService.getHistory();
@@ -61,7 +66,7 @@ export default function Dashboard() {
             }
         };
         fetchHistory();
-    }, []);
+    }, [searchParams]);
 
     const container = {
         hidden: { opacity: 0 },

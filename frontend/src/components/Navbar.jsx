@@ -25,6 +25,7 @@ export default function Navbar({ onMenuClick }) {
         localStorage.removeItem('user');
         window.location.href = '/';
     };
+
     return (
         <motion.nav 
             initial={{ y: -100 }}
@@ -40,13 +41,14 @@ export default function Navbar({ onMenuClick }) {
                     <Menu size={20} />
                 </button>
                 <Link to="/" className="flex items-center gap-3 group min-w-fit">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/10">
-                    <Terminal size={24} />
-                </div>
-                <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent tracking-tighter hidden md:block">
-                    khudsekrle
-                </span>
-            </Link>
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/10">
+                        <Terminal size={24} />
+                    </div>
+                    <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent tracking-tighter hidden md:block">
+                        khudsekrle
+                    </span>
+                </Link>
+            </div>
 
             {isLoggedIn && (
                 <form onSubmit={handleSearch} className="flex-1 max-w-md mx-8 relative group hidden sm:block">

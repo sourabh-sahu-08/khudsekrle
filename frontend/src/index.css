@@ -44,18 +44,52 @@ body {
   background: rgba(59, 130, 246, 0.5);
 }
 
-/* Glassmorphism & Cards */
+/* Premium Glassmorphism & Cards */
 .glass {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  background: rgba(11, 15, 26, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 .card-premium {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem; /* rounded-xl */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem; /* rounded-2xl */
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-premium:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.2), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Typography Letter Spacing */
+.tracking-premium {
+  letter-spacing: -0.01em;
+}
+
+.tracking-tight-extreme {
+  letter-spacing: -0.04em;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
 /* Animations */

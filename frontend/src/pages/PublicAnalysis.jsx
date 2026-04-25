@@ -13,6 +13,7 @@ export default function PublicAnalysis() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [viewMode, setViewMode] = useState("diff"); // "diff" or "blocks"
+    const cleanCode = (code) => code?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '') || "";
 
     useEffect(() => {
         const fetchAnalysis = async () => {
@@ -99,7 +100,7 @@ ${analysis.optimizedCode || "N/A"}
     if (loading) {
         return (
             <Layout>
-                <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12 flex flex-col justify-center items-center h-[70vh] space-y-4">
+                <div className="max-w-[1400px] mx-auto pt-24 px-12 pb-12 flex flex-col justify-center items-center h-[70vh] space-y-4">
                     <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
                     <p className="text-slate-400 font-mono text-sm tracking-widest">FETCHING PUBLIC DATA...</p>
                 </div>
@@ -110,7 +111,7 @@ ${analysis.optimizedCode || "N/A"}
     if (error || !analysis) {
         return (
             <Layout>
-                <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
+                <div className="max-w-[1400px] mx-auto pt-24 px-12 pb-12">
                     <div className="glass p-12 rounded-[2.5rem] text-center max-w-xl mx-auto border border-red-500/10 shadow-2xl">
                         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-400 mx-auto mb-6">
                             <AlertTriangle size={40} />
@@ -129,7 +130,9 @@ ${analysis.optimizedCode || "N/A"}
 
     return (
         <Layout>
-            <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
+            <div className="max-w-[1400px] mx-auto pt-40 px-12 pb-20 relative">
+                {/* Decorative Background Blob */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full -z-10" />
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -278,8 +281,8 @@ ${analysis.optimizedCode || "N/A"}
                             <DiffEditor
                                 height="100%"
                                 language={analysis.language || "javascript"}
-                                original={analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
-                                modified={analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                original={cleanCode(analysis.originalCode)}
+                                modified={cleanCode(analysis.correctedCode)}
                                 theme="vs-dark"
                                 options={{
                                     originalEditable: false,
@@ -292,8 +295,8 @@ ${analysis.optimizedCode || "N/A"}
                                     padding: { top: 20, bottom: 20 },
                                     folding: true,
                                     scrollbar: {
-                                        vertical: 'hidden',
-                                        horizontal: 'hidden'
+                                        vertical: 'auto',
+                                        horizontal: 'auto'
                                     }
                                 }}
                             />
@@ -318,7 +321,7 @@ ${analysis.optimizedCode || "N/A"}
                                         <Editor
                                             height="100%"
                                             language={analysis.language || "javascript"}
-                                            value={analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                            value={cleanCode(analysis.originalCode)}
                                             theme="vs-dark"
                                             options={{
                                                 readOnly: true,
@@ -349,7 +352,7 @@ ${analysis.optimizedCode || "N/A"}
                                         <Editor
                                             height="100%"
                                             language={analysis.language || "javascript"}
-                                            value={analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                            value={cleanCode(analysis.correctedCode)}
                                             theme="vs-dark"
                                             options={{
                                                 readOnly: true,
@@ -387,7 +390,7 @@ ${analysis.optimizedCode || "N/A"}
                         <div className="p-10 bg-slate-950/50">
                             <div className="bg-black/40 rounded-3xl p-8 border border-white/5 shadow-inner group-hover:border-blue-500/10 transition-all">
                                 <pre className="text-blue-300/80 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-                                    <code>{analysis.expectedOutput?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
+                                <code>{cleanCode(analysis.expectedOutput)}</code>
                                 </pre>
                             </div>
                         </div>

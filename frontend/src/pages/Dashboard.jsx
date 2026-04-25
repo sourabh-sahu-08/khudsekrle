@@ -77,8 +77,17 @@ export default function Dashboard() {
     };
 
     const item = {
-        hidden: { opacity: 0, y: 20 },
-        show: { opacity: 1, y: 0 }
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        show: { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+            }
+        }
     };
 
     return (
@@ -199,6 +208,10 @@ export default function Dashboard() {
                                 <motion.div 
                                     key={itemValue._id} 
                                     variants={item}
+                                    whileHover={{ 
+                                        y: -10,
+                                        transition: { duration: 0.3 }
+                                    }}
                                     className="glass p-7 rounded-3xl group border border-white/5 glass-hover relative overflow-hidden"
                                 >
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/[0.03] blur-2xl rounded-full translate-x-12 -translate-y-12" />

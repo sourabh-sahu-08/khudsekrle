@@ -116,12 +116,28 @@ export default function Profile() {
         }
     };
 
-    if (!user) {
+    if (!user || loading) {
         return (
             <Layout>
-                <div className="pt-32 px-6 flex flex-col items-center justify-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                    <p className="text-slate-400">Loading your profile...</p>
+                <div className="max-w-4xl mx-auto pt-32 px-6 pb-20 animate-pulse">
+                    <div className="h-8 w-32 bg-white/5 rounded-xl mb-8" />
+                    <div className="glass rounded-[2rem] overflow-hidden border border-white/5">
+                        <div className="h-40 bg-white/5" />
+                        <div className="px-8 pb-12 -mt-16 relative z-10">
+                            <div className="flex flex-col md:flex-row md:items-end gap-6 mb-12">
+                                <div className="w-32 h-32 rounded-3xl bg-slate-900 border-4 border-slate-950" />
+                                <div className="flex-1 space-y-3 pb-2">
+                                    <div className="h-10 w-48 bg-white/10 rounded-xl" />
+                                    <div className="h-4 w-32 bg-white/5 rounded-lg" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="h-24 bg-white/5 rounded-2xl" />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </Layout>
         );

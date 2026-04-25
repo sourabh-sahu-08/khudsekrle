@@ -21,6 +21,18 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        if (!isAnalyzing && code.trim()) {
+          handleAnalyze();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAnalyzing, code]);
+
   const steps = [
     "Initializing AI models...",
     "Analyzing code structure...",
@@ -220,6 +232,9 @@ export default function Home() {
                   </button>
                 )}
               </div>
+              <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest text-center mt-4">
+                Tip: Press <span className="text-slate-400">Ctrl + Enter</span> to quickly initialize analysis
+              </p>
             </motion.div>
           </div>
 

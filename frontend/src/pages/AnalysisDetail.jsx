@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2, Globe, Lock, Split, LayoutList } from "lucide-react";
+import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2, Globe, Lock, Split, LayoutList, Twitter, Linkedin } from "lucide-react";
 import { DiffEditor, Editor } from "@monaco-editor/react";
 import Layout from "@/components/Layout";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -62,6 +62,20 @@ export default function AnalysisDetail() {
         } catch (err) {
             toast.error("Failed to update visibility");
         }
+    };
+
+    const handleSocialShare = (platform) => {
+        const url = `${window.location.origin}/analysis/public/${id}`;
+        const text = `Check out this AI-powered code analysis on khudsekrle! #AI #Programming #Debugger`;
+        
+        let shareUrl = '';
+        if (platform === 'twitter') {
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        } else if (platform === 'linkedin') {
+            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        }
+        
+        window.open(shareUrl, '_blank', 'width=600,height=400');
     };
 
     const handleDownloadMarkdown = () => {
@@ -256,6 +270,24 @@ ${analysis.optimizedCode || "N/A"}
                             >
                                 {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
                             </button>
+                            {analysis.isPublic && (
+                                <div className="flex gap-2 animate-in fade-in slide-in-from-right-1 duration-300">
+                                    <button 
+                                        onClick={() => handleSocialShare('twitter')}
+                                        className="w-12 h-12 rounded-xl bg-white/5 hover:bg-[#1DA1F2]/10 text-slate-400 hover:text-[#1DA1F2] flex items-center justify-center transition-all active:scale-90 border border-white/5"
+                                        title="Share on Twitter"
+                                    >
+                                        <Twitter size={20} />
+                                    </button>
+                                    <button 
+                                        onClick={() => handleSocialShare('linkedin')}
+                                        className="w-12 h-12 rounded-xl bg-white/5 hover:bg-[#0A66C2]/10 text-slate-400 hover:text-[#0A66C2] flex items-center justify-center transition-all active:scale-90 border border-white/5"
+                                        title="Share on LinkedIn"
+                                    >
+                                        <Linkedin size={20} />
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 </div>

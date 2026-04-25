@@ -271,6 +271,38 @@ export default function Profile() {
                             <StatCard label="Optimized" value={loading ? "..." : stats.optimizations} />
                         </div>
 
+                        {/* Language Distribution */}
+                        {!loading && history.length > 0 && (
+                            <div className="mt-12 pt-12 border-t border-white/5">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Language Distribution</h3>
+                                <div className="space-y-6">
+                                    {Object.entries(
+                                        history.reduce((acc, item) => {
+                                            acc[item.language] = (acc[item.language] || 0) + 1;
+                                            return acc;
+                                        }, {})
+                                    )
+                                    .sort((a, b) => b[1] - a[1])
+                                    .map(([lang, count], idx) => (
+                                        <div key={lang} className="space-y-2">
+                                            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest">
+                                                <span className="text-slate-300">{lang}</span>
+                                                <span className="text-blue-400">{count} {count === 1 ? 'Analysis' : 'Analyses'}</span>
+                                            </div>
+                                            <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                                                <motion.div 
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${(count / history.length) * 100}%` }}
+                                                    transition={{ duration: 1, delay: idx * 0.1 }}
+                                                    className="h-full bg-gradient-to-r from-blue-600 to-indigo-600"
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Recent Activity */}
                         <div className="mt-12 pt-12 border-t border-white/5">
                             <div className="flex items-center justify-between mb-6">

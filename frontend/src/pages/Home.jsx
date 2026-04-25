@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import AnalysisResults from "@/components/AnalysisResults";
-import { Sparkles, Save, AlertCircle, Code2, Zap, ArrowRight } from "lucide-react";
+import { Sparkles, Save, AlertCircle, Code2, Zap, ArrowRight, Code } from "lucide-react";
 import { analysisService } from "@/utils/api";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";

@@ -12,8 +12,14 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterLanguage, setFilterLanguage] = useState("all");
+    const [sortBy, setSortBy] = useState("newest");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [idToDelete, setIdToDelete] = useState(null);
+    const [stats, setStats] = useState({
+        total: 0,
+        languages: 0,
+        avgScore: 0
+    });
 
     const handleDeleteClick = (id) => {
         setIdToDelete(id);
@@ -38,7 +44,16 @@ export default function Dashboard() {
         const fetchHistory = async () => {
             try {
                 const response = await analysisService.getHistory();
-                setHistory(response.data.data);
+                const data = response.data.data;
+                setHistory(data);
+                
+                // Calculate Stats
+                const total = data.length;
+                const uniqueLangs = [...new Set(data.map(i => i.language))].length;
+                const scores = data.map(i => parseInt(i.confidenceScore) || 0).filter(s => s > 0);
+                const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+                
+                setStats({ total, languages: uniqueLangs, avgScore });
             } catch (err) {
                 console.error("Failed to fetch history", err);
             } finally {
@@ -78,7 +93,32 @@ export default function Dashboard() {
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                {/* Stats Section */}
+                {!loading && history.length > 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+                    >
+                        <div className="glass p-6 rounded-3xl border border-white/5 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/[0.05] blur-2xl rounded-full translate-x-8 -translate-y-8" />
+                            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Total Analyses</p>
+                            <h4 className="text-3xl font-black text-white">{stats.total}</h4>
+                        </div>
+                        <div className="glass p-6 rounded-3xl border border-white/5 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/[0.05] blur-2xl rounded-full translate-x-8 -translate-y-8" />
+                            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Languages</p>
+                            <h4 className="text-3xl font-black text-white">{stats.languages}</h4>
+                        </div>
+                        <div className="glass p-6 rounded-3xl border border-white/5 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/[0.05] blur-2xl rounded-full translate-x-8 -translate-y-8" />
+                            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Avg Score</p>
+                            <h4 className="text-3xl font-black text-white">{stats.avgScore}%</h4>
+                        </div>
+                    </motion.div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-12">
                     <div className="md:col-span-3 relative group">
                         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
                             <History size={20} />
@@ -91,7 +131,7 @@ export default function Dashboard() {
                             className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all placeholder:text-slate-600 hover:bg-white/[0.08]"
                         />
                     </div>
-                    <div className="relative">
+                    <div className="md:col-span-1.5 relative">
                         <select 
                             value={filterLanguage}
                             onChange={(e) => setFilterLanguage(e.target.value)}
@@ -101,6 +141,17 @@ export default function Dashboard() {
                             {[...new Set(history.map(item => item.language))].map(lang => (
                                 <option key={lang} value={lang} className="bg-slate-900 capitalize">{lang}</option>
                             ))}
+                        </select>
+                    </div>
+                    <div className="md:col-span-1.5 relative">
+                        <select 
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none"
+                        >
+                            <option value="newest" className="bg-slate-900">Newest First</option>
+                            <option value="oldest" className="bg-slate-900">Oldest First</option>
+                            <option value="highestScore" className="bg-slate-900">Highest Score</option>
                         </select>
                     </div>
                 </div>
@@ -121,6 +172,15 @@ export default function Dashboard() {
                         const matchesLanguage = filterLanguage === "all" || item.language === filterLanguage;
                         
                         return matchesSearch && matchesLanguage;
+                    }).sort((a, b) => {
+                        if (sortBy === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
+                        if (sortBy === "oldest") return new Date(a.createdAt) - new Date(b.createdAt);
+                        if (sortBy === "highestScore") {
+                            const scoreA = parseInt(a.confidenceScore) || 0;
+                            const scoreB = parseInt(b.confidenceScore) || 0;
+                            return scoreB - scoreA;
+                        }
+                        return 0;
                     });
 
                     return filteredHistory.length > 0 ? (

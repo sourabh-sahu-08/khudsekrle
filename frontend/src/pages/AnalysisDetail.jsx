@@ -769,24 +769,30 @@ function ChatInterface({ analysisId, initialMessages = [] }) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-slate-950/50 rounded-3xl p-6 min-h-[200px] max-h-[400px] overflow-y-auto border border-white/5 space-y-4">
+            <div className="bg-black/40 rounded-3xl p-6 min-h-[300px] max-h-[500px] overflow-y-auto border border-white/5 space-y-6 custom-scrollbar">
                 {messages.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-600 py-10">
-                        <Sparkles size={32} className="mb-4 opacity-20" />
-                        <p className="text-sm font-medium">No messages yet. Ask about the time complexity or security risks!</p>
+                    <div className="h-full flex flex-col items-center justify-center text-slate-600 py-16">
+                        <div className="w-16 h-16 bg-white/[0.02] rounded-2xl flex items-center justify-center mb-4 border border-white/5">
+                            <Sparkles size={24} className="opacity-20" />
+                        </div>
+                        <p className="text-sm font-bold tracking-widest uppercase opacity-40">Console Idle</p>
+                        <p className="text-xs mt-2">Initialize query to begin session</p>
                     </div>
                 ) : (
                     messages.map((msg, i) => (
                         <motion.div 
                             key={i}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                            initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                         >
-                            <div className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
+                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 px-2 ${msg.role === 'user' ? 'text-blue-400' : 'text-indigo-400'}`}>
+                                {msg.role === 'user' ? 'Debugger' : 'AI Assistant'}
+                            </span>
+                            <div className={`max-w-[85%] p-5 rounded-2xl text-[14px] leading-relaxed shadow-2xl ${
                                 msg.role === 'user' 
-                                ? 'bg-blue-600 text-white rounded-tr-none' 
-                                : 'bg-white/5 text-slate-300 border border-white/5 rounded-tl-none'
+                                ? 'bg-blue-600/10 text-blue-100 border border-blue-500/20 rounded-tr-none' 
+                                : 'bg-indigo-600/10 text-indigo-100 border border-indigo-500/20 rounded-tl-none'
                             }`}>
                                 {msg.content}
                             </div>
@@ -794,12 +800,13 @@ function ChatInterface({ analysisId, initialMessages = [] }) {
                     ))
                 )}
                 {isSending && (
-                    <div className="flex justify-start">
-                        <div className="bg-white/5 p-4 rounded-2xl rounded-tl-none border border-white/5">
-                            <div className="flex gap-1">
-                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" />
-                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:0.2s]" />
-                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+                    <div className="flex flex-col items-start">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 px-2 text-indigo-400">AI Assistant</span>
+                        <div className="bg-indigo-600/10 p-5 rounded-2xl rounded-tl-none border border-indigo-500/20">
+                            <div className="flex gap-1.5">
+                                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
+                                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
+                                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
                             </div>
                         </div>
                     </div>
@@ -807,19 +814,22 @@ function ChatInterface({ analysisId, initialMessages = [] }) {
             </div>
 
             <form onSubmit={handleSend} className="relative group">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-indigo-500 font-mono font-bold pointer-events-none group-focus-within:text-blue-400 transition-colors">
+                    &gt;
+                </div>
                 <input 
                     type="text" 
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your question here..."
-                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-4 pl-6 pr-16 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all placeholder:text-slate-600"
+                    placeholder="Ask the AI anything about your code..."
+                    className="w-full bg-slate-950/80 border border-white/10 rounded-[2rem] py-5 pl-12 pr-16 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all placeholder:text-slate-700 font-medium"
                 />
                 <button 
                     type="submit"
                     disabled={!input.trim() || isSending}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all disabled:opacity-30 disabled:grayscale"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all disabled:opacity-20 shadow-xl shadow-indigo-900/40 active:scale-90"
                 >
-                    <ArrowLeft size={18} className="rotate-180" />
+                    <Send size={18} />
                 </button>
             </form>
         </div>

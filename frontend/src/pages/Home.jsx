@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import AnalysisResults from "@/components/AnalysisResults";
-import { Sparkles, Save, AlertCircle, Code2, Zap } from "lucide-react";
+import { Sparkles, Save, AlertCircle, Code2, Zap, ArrowRight } from "lucide-react";
 import { analysisService } from "@/utils/api";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,16 @@ export default function Home() {
   const [code, setCode] = useState("// Paste your code here to begin...");
   const [language, setLanguage] = useState("javascript");
   const [analysisStep, setAnalysisStep] = useState(0);
+  const [taglineIndex, setTaglineIndex] = useState(0);
+  const taglines = ["Debug.", "Optimize.", "Secure.", "Perfect."];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTaglineIndex((prev) => (prev + 1) % taglines.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const steps = [
     "Initializing AI models...",
     "Analyzing code structure...",
@@ -19,6 +29,18 @@ export default function Home() {
     "Evaluating time & space complexity...",
     "Generating optimized solutions..."
   ];
+
+  const languages = [
+    { label: "JavaScript", value: "javascript" },
+    { label: "Python", value: "python" },
+    { label: "Java", value: "java" },
+    { label: "C++", value: "cpp" },
+    { label: "C", value: "c" }
+  ];
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   const detectLanguage = (codeSnippet) => {
     const code = codeSnippet.toLowerCase();
@@ -41,7 +63,6 @@ export default function Home() {
   };
 
   const handleAnalyze = async () => {
-    // Check if user is logged in
     const token = localStorage.getItem('token');
     if (!token) {
       const authError = "Authentication Required: You must be logged in to analyze code.";
@@ -56,7 +77,6 @@ export default function Home() {
     setError(null);
     setAnalysisStep(0);
     
-    // Animate steps
     const stepInterval = setInterval(() => {
       setAnalysisStep(prev => (prev < steps.length - 1 ? prev + 1 : prev));
     }, 1500);
@@ -96,6 +116,38 @@ export default function Home() {
   return (
     <Layout>
       <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
+        {/* Hero Section */}
+        <div className="flex flex-col items-center justify-center text-center mb-24 pt-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-[0.2em] mb-8"
+          >
+            <Sparkles size={14} />
+            The Future of Debugging
+          </motion.div>
+          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter mb-8 leading-none">
+            Write code that is <br />
+            <span className="relative inline-block h-[1.2em] min-w-[300px]">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={taglineIndex}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.5, ease: "circOut" }}
+                  className="bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent italic absolute left-1/2 -translate-x-1/2"
+                >
+                  {taglines[taglineIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          </h1>
+          <p className="text-slate-400 max-w-2xl text-xl font-medium leading-relaxed">
+            khudsekrle is your AI-powered companion for technical audits, security scanning, and algorithm optimization.
+          </p>
+        </div>
+
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -135,223 +187,138 @@ export default function Home() {
               transition={{ delay: 0.3 }}
               className="glass rounded-3xl p-6 shadow-2xl shadow-blue-500/5"
             >
-              <div className="rounded-2xl overflow-hidden border border-slate-800/50 shadow-inner">
-                <CodeEditor
-                   code={code}
-                   onChange={handleCodeChange}
-                   language={language}
-                />
-              </div>
-
-              <AnimatePresence>
-                {error && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-sm overflow-hidden"
-                  >
-                    <AlertCircle size={18} />
-                    {error}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className="mt-6 flex gap-4">
+              <CodeEditor value={code} onChange={handleCodeChange} language={language} />
+              <div className="flex gap-4 mt-6">
                 <button
                   onClick={handleAnalyze}
-                  disabled={isAnalyzing}
-                  className="flex-[3] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all shadow-xl shadow-blue-900/20 disabled:opacity-50 active:scale-95 group"
+                  disabled={isAnalyzing || !code.trim()}
+                  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.15em] transition-all active:scale-95 shadow-xl ${
+                    isAnalyzing 
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/20'
+                  }`}
                 >
                   {isAnalyzing ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      Analyzing...
+                    </>
                   ) : (
-                    <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
+                    <>
+                      <Zap size={18} fill="currentColor" />
+                      Start Analysis
+                    </>
                   )}
-                  {isAnalyzing ? "Analyzing Environment..." : "Analyze Code"}
                 </button>
-                <button 
-                  onClick={handleDownload}
-                  disabled={!result}
-                  title="Download Report"
-                  className="flex-1 bg-slate-800/50 hover:bg-slate-800 text-white px-6 rounded-2xl transition-all border border-slate-700/50 flex items-center justify-center hover:border-slate-600 disabled:opacity-30 disabled:cursor-not-allowed group"
-                >
-                  <Save size={20} className="group-hover:scale-110 transition-transform" />
-                </button>
+                {result && (
+                  <button
+                    onClick={handleDownload}
+                    className="p-4 rounded-2xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition-all hover:bg-slate-800"
+                    title="Download Report"
+                  >
+                    <Save size={20} />
+                  </button>
+                )}
               </div>
             </motion.div>
           </div>
 
           {/* Right Panel: Results */}
-          <div className="space-y-6">
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-2"
-            >
-              <Zap className="text-emerald-500" size={20} />
-              <h2 className="text-xl font-bold text-white tracking-tight">Analysis Result</h2>
-            </motion.div>
-            
+          <div className="min-h-[600px]">
             <AnimatePresence mode="wait">
-              {result ? (
+              {isAnalyzing ? (
                 <motion.div
-                  key="results"
+                  key="analyzing"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  className="glass h-full rounded-[2.5rem] p-12 flex flex-col items-center justify-center text-center relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-blue-500/[0.02] blur-3xl rounded-full" />
+                  
+                  {/* Step Indicators */}
+                  <div className="relative z-10 w-full max-w-sm">
+                    <div className="flex justify-between mb-8">
+                      {steps.map((_, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={false}
+                          animate={{ 
+                            scale: idx === analysisStep ? 1.2 : 1,
+                            backgroundColor: idx <= analysisStep ? '#3b82f6' : '#1e293b'
+                          }}
+                          className="w-2.5 h-2.5 rounded-full"
+                        />
+                      ))}
+                    </div>
+
+                    <div className="relative h-24 flex flex-col items-center justify-center">
+                      <AnimatePresence mode="wait">
+                        <motion.p
+                          key={analysisStep}
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: -20, opacity: 0 }}
+                          className="text-2xl font-black text-white absolute"
+                        >
+                          {steps[analysisStep]}
+                        </motion.p>
+                      </AnimatePresence>
+                    </div>
+                    
+                    <p className="mt-8 text-slate-500 font-mono text-xs uppercase tracking-[0.2em] animate-pulse">
+                      Processing with Llama 3.3 70B
+                    </p>
+                  </div>
+                </motion.div>
+              ) : result ? (
+                <motion.div
+                  key="result"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
                 >
                   <AnalysisResults data={result} />
                 </motion.div>
+              ) : error ? (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="glass h-[600px] rounded-[2.5rem] p-12 flex flex-col items-center justify-center text-center border-red-500/20"
+                >
+                  <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500 mb-6 shadow-2xl shadow-red-500/5">
+                    <AlertCircle size={40} />
+                  </div>
+                  <h3 className="text-2xl font-black text-white mb-2">Analysis Failed</h3>
+                  <p className="text-slate-400 max-w-sm mb-8 leading-relaxed font-medium">{error}</p>
+                  <button 
+                    onClick={handleAnalyze}
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold transition-all border border-slate-800"
+                  >
+                    Try Again
+                  </button>
+                </motion.div>
               ) : (
-                  isAnalyzing ? (
-                    <div className="space-y-8 w-full py-10 px-6">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-blue-500 blur-[80px] opacity-10 animate-pulse" />
-                        <div className="relative z-10 flex flex-col items-center">
-                          <div className="w-24 h-24 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin mb-8" />
-                          <div className="space-y-4 w-full max-w-sm">
-                            {steps.map((step, idx) => (
-                              <motion.div 
-                                key={idx}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ 
-                                  opacity: idx <= analysisStep ? 1 : 0.2,
-                                  x: idx === analysisStep ? 0 : -10,
-                                  color: idx === analysisStep ? "#3b82f6" : "#475569"
-                                }}
-                                className="flex items-center gap-3 text-sm font-bold tracking-wide"
-                              >
-                                <div className={`w-2 h-2 rounded-full ${idx < analysisStep ? 'bg-emerald-500' : idx === analysisStep ? 'bg-blue-500 animate-ping' : 'bg-slate-700'}`} />
-                                {step}
-                                {idx < analysisStep && <CheckCircle size={14} className="text-emerald-500 ml-auto" />}
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <motion.div 
-                      key="empty"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="glass rounded-3xl h-[calc(100vh-16rem)] min-h-[550px] flex flex-col items-center justify-center p-12 text-center space-y-6 relative overflow-hidden"
-                    >
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
-                        <div className="w-20 h-20 bg-slate-900/80 rounded-3xl flex items-center justify-center text-slate-500 relative z-10 border border-slate-800 shadow-2xl">
-                          <Sparkles size={40} className="animate-bounce" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-2xl font-bold text-slate-100 italic">Ready for Debugging</h3>
-                        <p className="text-slate-400 max-w-[320px] text-lg leading-relaxed">Paste your code and let AI reveal potential bugs and optimizations.</p>
-                      </div>
-                      
-                      {/* Decorative lines */}
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full" />
-                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/5 blur-3xl rounded-full" />
-                    </motion.div>
-                  )
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="glass h-[600px] rounded-[2.5rem] p-12 flex flex-col items-center justify-center text-center"
+                >
+                  <div className="w-20 h-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center text-blue-500 mb-8 relative">
+                    <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
+                    <Sparkles size={32} className="relative z-10" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white mb-3">Ready to Audit</h3>
+                  <p className="text-slate-400 max-w-xs leading-relaxed font-medium">
+                    Upload or paste your code snippet to get detailed security findings and optimizations.
+                  </p>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
         </motion.div>
-
-        {/* Features Section */}
-        <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <FeatureCard 
-            icon={<Zap className="text-amber-400" size={32} />}
-            title="Instant Analysis"
-            description="Our advanced LLM models identify bugs and vulnerabilities in milliseconds, providing real-time feedback."
-            delay={0.1}
-          />
-          <FeatureCard 
-            icon={<Sparkles className="text-blue-400" size={32} />}
-            title="Smart Correction"
-            description="Don't just find bugs—fix them. Get production-ready code replacements that follow industry best practices."
-            delay={0.2}
-          />
-          <FeatureCard 
-            icon={<Code2 className="text-emerald-400" size={32} />}
-            title="Optimization"
-            description="Go beyond basic fixes. AI analyzes time and space complexity to recommend more efficient algorithms."
-            delay={0.3}
-          />
-        </div>
-
-        {/* How It Works */}
-        <div className="mt-32">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">How it Works</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg font-medium">Three simple steps to cleaner, more efficient code.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-            {/* Connector Line (Desktop) */}
-            <div className="hidden md:block absolute top-1/2 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-y-1/2 pointer-events-none" />
-            
-            <ProcessStep 
-              number="01"
-              title="Input Code"
-              description="Paste your snippet into our advanced code editor and select your language."
-            />
-            <ProcessStep 
-              number="02"
-              title="AI Processing"
-              description="Our specialized models perform a deep audit of logic, security, and performance."
-            />
-            <ProcessStep 
-              number="03"
-              title="Apply Fixes"
-              description="Review identified vulnerabilities and apply the recommended corrections instantly."
-            />
-          </div>
-        </div>
       </div>
     </Layout>
-  );
-}
-
-function FeatureCard({ icon, title, description, delay }) {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay }}
-      className="glass p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden group hover:border-blue-500/20 transition-all shadow-xl"
-    >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/[0.02] blur-3xl rounded-full translate-x-16 -translate-y-16 group-hover:bg-blue-500/10 transition-colors" />
-      <div className="mb-6 group-hover:scale-110 transition-transform origin-left">{icon}</div>
-      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
-      <p className="text-slate-400 leading-relaxed font-medium">{description}</p>
-    </motion.div>
-  );
-}
-
-function ProcessStep({ number, title, description }) {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      className="relative z-10 text-center space-y-6"
-    >
-      <div className="w-20 h-20 rounded-3xl bg-slate-950 border border-white/5 flex items-center justify-center mx-auto shadow-2xl relative group overflow-hidden">
-        <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-        <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-400 to-indigo-600 tracking-tighter relative z-10">
-          {number}
-        </span>
-      </div>
-      <div className="space-y-2">
-        <h3 className="text-xl font-bold text-white">{title}</h3>
-        <p className="text-slate-400 text-sm leading-relaxed max-w-[240px] mx-auto font-medium">{description}</p>
-      </div>
-    </motion.div>
   );
 }

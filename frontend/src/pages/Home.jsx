@@ -14,6 +14,10 @@ export default function Home() {
   const [taglineIndex, setTaglineIndex] = useState(0);
   const taglines = ["Debug.", "Optimize.", "Secure.", "Perfect."];
 
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTaglineIndex((prev) => (prev + 1) % taglines.length);
@@ -49,10 +53,6 @@ export default function Home() {
     { label: "C++", value: "cpp" },
     { label: "C", value: "c" }
   ];
-
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
 
   const detectLanguage = (codeSnippet) => {
     const code = codeSnippet.toLowerCase();

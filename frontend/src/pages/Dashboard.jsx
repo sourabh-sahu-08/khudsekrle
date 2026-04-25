@@ -197,73 +197,102 @@ export default function Dashboard() {
                         return 0;
                     });
 
+                    const groupHistory = (items) => {
+                        if (sortBy !== "newest") return { "All Results": items };
+                        
+                        const groups = { "Today": [], "Yesterday": [], "Earlier": [] };
+                        const today = new Date().toDateString();
+                        const yesterday = new Date(Date.now() - 86400000).toDateString();
+                        
+                        items.forEach(i => {
+                            const date = new Date(i.createdAt).toDateString();
+                            if (date === today) groups["Today"].push(i);
+                            else if (date === yesterday) groups["Yesterday"].push(i);
+                            else groups["Earlier"].push(i);
+                        });
+                        
+                        return Object.fromEntries(Object.entries(groups).filter(([_, val]) => val.length > 0));
+                    };
+
+                    const groupedHistory = groupHistory(filteredHistory);
+
                     return filteredHistory.length > 0 ? (
-                        <motion.div 
-                            variants={container}
-                            initial="hidden"
-                            animate="show"
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        >
-                            {filteredHistory.map((itemValue) => (
-                                <motion.div 
-                                    key={itemValue._id} 
-                                    variants={item}
-                                    whileHover={{ 
-                                        y: -10,
-                                        transition: { duration: 0.3 }
-                                    }}
-                                    className="glass p-7 rounded-3xl group border border-white/5 glass-hover relative overflow-hidden"
-                                >
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/[0.03] blur-2xl rounded-full translate-x-12 -translate-y-12" />
-                                    
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="flex items-center gap-3 text-blue-400">
-                                            <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                                                <Code size={18} />
-                                            </div>
-                                            <span className="font-bold tracking-widest text-xs uppercase">{itemValue.language}</span>
-                                        </div>
-                                        <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 flex items-center gap-1.5">
-                                            <Calendar size={12} />
-                                            {new Date(itemValue.createdAt).toLocaleDateString()}
-                                        </span>
+                        <div className="space-y-16">
+                            {Object.entries(groupedHistory).map(([groupName, items]) => (
+                                <div key={groupName} className="space-y-8">
+                                    <div className="flex items-center gap-4">
+                                        <h3 className="text-sm font-black uppercase tracking-[0.3em] text-slate-500 whitespace-nowrap">{groupName}</h3>
+                                        <div className="h-[1px] w-full bg-white/5" />
                                     </div>
+                                    <motion.div 
+                                        variants={container}
+                                        initial="hidden"
+                                        animate="show"
+                                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                                    >
+                                        {items.map((itemValue) => (
+                                            <motion.div 
+                                                key={itemValue._id} 
+                                                variants={item}
+                                                whileHover={{ 
+                                                    y: -10,
+                                                    transition: { duration: 0.3 }
+                                                }}
+                                                className="glass p-7 rounded-3xl group border border-white/5 glass-hover relative overflow-hidden"
+                                            >
+                                                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/[0.03] blur-2xl rounded-full translate-x-12 -translate-y-12" />
+                                                
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <div className="flex items-center gap-3 text-blue-400">
+                                                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                                                            <Code size={18} />
+                                                        </div>
+                                                        <span className="font-bold tracking-widest text-xs uppercase">{itemValue.language}</span>
+                                                    </div>
+                                                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 flex items-center gap-1.5">
+                                                        <Calendar size={12} />
+                                                        {new Date(itemValue.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
 
-                                    <h3 className="text-lg font-bold text-slate-200 mb-3 line-clamp-1 group-hover:text-white transition-colors">
-                                        {itemValue.originalCode.substring(0, 50).trim()}...
-                                    </h3>
+                                                <h3 className="text-lg font-bold text-slate-200 mb-3 line-clamp-1 group-hover:text-white transition-colors">
+                                                    {itemValue.originalCode.substring(0, 50).trim()}...
+                                                </h3>
 
-                                    <div className="flex items-center gap-4 text-xs font-bold text-slate-500 mb-8 tracking-wide">
-                                        <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/5 text-blue-400/80">
-                                            <span className="italic">O</span>({
-                                                itemValue.timeComplexity?.match(/O\((.*?)\)/)?.[1] || 
-                                                itemValue.timeComplexity?.replace(/O\(|\)/g, '') || 
-                                                "n"
-                                            })
-                                        </span>
-                                        <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-500/5 text-emerald-400/80">
-                                            {itemValue.confidenceScore || "0%"} Score
-                                        </span>
-                                    </div>
+                                                <div className="flex items-center gap-4 text-xs font-bold text-slate-500 mb-8 tracking-wide">
+                                                    <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/5 text-blue-400/80">
+                                                        <span className="italic">O</span>({
+                                                            itemValue.timeComplexity?.match(/O\((.*?)\)/)?.[1] || 
+                                                            itemValue.timeComplexity?.replace(/O\(|\)/g, '') || 
+                                                            "n"
+                                                        })
+                                                    </span>
+                                                    <span className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-500/5 text-emerald-400/80">
+                                                        {itemValue.confidenceScore || "0%"} Score
+                                                    </span>
+                                                </div>
 
-                                    <div className="flex items-center gap-3 relative z-10">
-                                        <Link 
-                                            to={`/dashboard/analysis/${itemValue._id}`} 
-                                            className="flex-1 bg-slate-900/80 hover:bg-slate-800 text-white py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 border border-slate-800 group-hover:border-slate-700"
-                                        >
-                                            <ExternalLink size={16} />
-                                            View Details
-                                        </Link>
-                                        <button 
-                                            onClick={() => handleDeleteClick(itemValue._id)} 
-                                            className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all active:scale-90"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </motion.div>
+                                                <div className="flex items-center gap-3 relative z-10">
+                                                    <Link 
+                                                        to={`/dashboard/analysis/${itemValue._id}`} 
+                                                        className="flex-1 bg-slate-900/80 hover:bg-slate-800 text-white py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 border border-slate-800 group-hover:border-slate-700"
+                                                    >
+                                                        <ExternalLink size={16} />
+                                                        View Details
+                                                    </Link>
+                                                    <button 
+                                                        onClick={() => handleDeleteClick(itemValue._id)} 
+                                                        className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all active:scale-90"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </motion.div>
+                                </div>
                             ))}
-                        </motion.div>
+                        </div>
                     ) : (
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}

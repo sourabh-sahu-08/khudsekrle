@@ -2,14 +2,11 @@
 
 :root {
   --background: #0B0F1A;
-  --foreground: #f9fafb;
-  --primary: #3b82f6;
-  --primary-glow: rgba(59, 130, 246, 0.5);
-  --secondary: #6366f1;
-  --accent: #10b981;
   --card-bg: #111827;
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-bg: rgba(17, 24, 39, 0.8);
+  --primary: #3b82f6;
+  --secondary: #6366f1;
+  --border: rgba(255, 255, 255, 0.1);
+  --text-muted: #94a3b8;
 }
 
 * {
@@ -18,135 +15,64 @@
   box-sizing: border-box;
 }
 
-/* Custom Cursor Glow */
-#cursor-glow {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s, height 0.3s;
-  display: none;
-}
-
-@media (hover: hover) {
-  #cursor-glow {
-    display: block;
-  }
-}
-
 body {
   background-color: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
+  color: #f8fafc;
+  font-family: 'Inter', -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow: hidden;
 }
 
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* 8px Spacing Utility Classes (Tailwind handles most, but we define custom ones if needed) */
+
+/* Premium Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
 
-.glass-hover {
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.1);
-}
-
-.bg-glow {
-  position: fixed;
-  width: 60vw;
-  height: 60vw;
-  border-radius: 50%;
-  filter: blur(120px);
-  z-index: -1;
-  opacity: 0.15;
-  pointer-events: none;
-  animation: pulse 10s infinite alternate;
-}
-
-.blob-1 {
-  background: var(--primary);
-  top: -20%;
-  left: -10%;
-}
-
-.blob-2 {
-  background: var(--secondary);
-  bottom: -20%;
-  right: -10%;
-  animation-delay: -5s;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1) translate(0, 0); opacity: 0.1; }
-  100% { transform: scale(1.2) translate(5%, 5%); opacity: 0.2; }
-}
-
-@keyframes scan {
-  0% { top: -100%; }
-  100% { top: 100%; }
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-scan {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.05), transparent);
-  animation: scan 4s linear infinite;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1f2937;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
 }
 
-/* Typography Enhancements */
-h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.02em;
+/* Glassmorphism & Cards */
+.glass {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.card-premium {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+}
+
+.animate-glow {
+  animation: glow 3s infinite;
+}
+
+/* Monaco Overrides */
+.monaco-editor, .monaco-editor .margin, .monaco-editor-background {
+  background-color: transparent !important;
+}
+
+.monaco-editor .scroll-decoration {
+  display: none !important;
 }

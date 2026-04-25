@@ -127,7 +127,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="max-w-[1400px] mx-auto pt-40 px-6 pb-20 relative">
+      <div className="max-w-[1400px] mx-auto pt-40 px-12 pb-20 relative">
         {/* Decorative Background Blob */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full -z-10" />
         

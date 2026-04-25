@@ -30,7 +30,7 @@ export default function Navbar() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className="fixed top-0 w-full z-50 glass h-20 flex items-center px-8 justify-between border-b border-white/5 active:border-white/10 transition-colors"
+            className="fixed top-0 w-full z-50 glass h-20 flex items-center px-12 justify-between border-b border-white/5 active:border-white/10 transition-colors"
         >
             <Link to="/" className="flex items-center gap-3 group min-w-fit">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/10">

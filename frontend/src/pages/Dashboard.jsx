@@ -92,7 +92,7 @@ export default function Dashboard() {
 
     return (
         <Layout>
-            <div className="max-w-6xl mx-auto pt-24 px-6 pb-12">
+            <div className="max-w-[1400px] mx-auto pt-32 px-12 pb-20">
                 <div className="flex items-center justify-between mb-12">
                     <div>
                         <h1 className="text-4xl font-black text-white tracking-tight mb-2">Your Analyses</h1>

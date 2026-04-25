@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
 import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Check, Copy, Terminal, Split, LayoutList } from "lucide-react";
-import { DiffEditor } from "@monaco-editor/react";
+import { DiffEditor, Editor } from "@monaco-editor/react";
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -314,10 +314,24 @@ ${analysis.optimizedCode || "N/A"}
                                     </h3>
                                 </div>
                                 <div className="p-8 bg-slate-950/80">
-                                    <div className="bg-slate-900 rounded-2xl p-6 border border-white/5 shadow-inner overflow-x-auto">
-                                        <pre className="text-slate-400 font-mono text-sm leading-relaxed">
-                                            <code>{analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
-                                        </pre>
+                                    <div className="h-[300px] rounded-2xl overflow-hidden border border-white/5 shadow-inner">
+                                        <Editor
+                                            height="100%"
+                                            language={analysis.language || "javascript"}
+                                            value={analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                            theme="vs-dark"
+                                            options={{
+                                                readOnly: true,
+                                                minimap: { enabled: false },
+                                                fontSize: 14,
+                                                scrollBeyondLastLine: false,
+                                                automaticLayout: true,
+                                                padding: { top: 20 },
+                                                fontFamily: 'Fira Code, monospace',
+                                                lineNumbers: 'on',
+                                                renderLineHighlight: 'none'
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -331,10 +345,24 @@ ${analysis.optimizedCode || "N/A"}
                                     <CopyButton text={analysis.correctedCode} tooltip="Corrected Code" />
                                 </div>
                                 <div className="p-8 bg-emerald-500/[0.01]">
-                                    <div className="bg-slate-950/80 rounded-2xl p-6 border border-emerald-500/10 shadow-inner group-hover:border-emerald-500/30 transition-colors">
-                                        <pre className="text-emerald-400/90 font-mono text-sm leading-relaxed">
-                                            <code>{analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
-                                        </pre>
+                                    <div className="h-[300px] rounded-2xl overflow-hidden border border-emerald-500/10 shadow-inner group-hover:border-emerald-500/30 transition-colors">
+                                        <Editor
+                                            height="100%"
+                                            language={analysis.language || "javascript"}
+                                            value={analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
+                                            theme="vs-dark"
+                                            options={{
+                                                readOnly: true,
+                                                minimap: { enabled: false },
+                                                fontSize: 14,
+                                                scrollBeyondLastLine: false,
+                                                automaticLayout: true,
+                                                padding: { top: 20 },
+                                                fontFamily: 'Fira Code, monospace',
+                                                lineNumbers: 'on',
+                                                renderLineHighlight: 'none'
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>

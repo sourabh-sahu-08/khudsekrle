@@ -10,17 +10,35 @@ import Layout from "@/components/Layout";
 export default function Home() {
   const [code, setCode] = useState("// Paste your code here to begin...");
   const [language, setLanguage] = useState("javascript");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-
-  const languages = [
-    { value: "javascript", label: "JavaScript" },
-    { value: "python", label: "Python" },
-    { value: "java", label: "Java" },
-    { value: "cpp", label: "C++" },
-    { value: "c", label: "C" },
+  const [analysisStep, setAnalysisStep] = useState(0);
+  const steps = [
+    "Initializing AI models...",
+    "Analyzing code structure...",
+    "Checking for security vulnerabilities...",
+    "Scanning for logic errors...",
+    "Evaluating time & space complexity...",
+    "Generating optimized solutions..."
   ];
+
+  const detectLanguage = (codeSnippet) => {
+    const code = codeSnippet.toLowerCase();
+    if (code.includes("import react") || code.includes("const ") || code.includes("let ") || code.includes("function ")) return "javascript";
+    if (code.includes("def ") || code.includes("import ") || code.includes("print(")) return "python";
+    if (code.includes("public class ") || code.includes("System.out.print")) return "java";
+    if (code.includes("#include <iostream>") || code.includes("int main()")) return "cpp";
+    if (code.includes("#include <stdio.h>")) return "c";
+    return language;
+  };
+
+  const handleCodeChange = (val) => {
+    setCode(val);
+    if (val.trim() && val.length > 20) {
+      const detected = detectLanguage(val);
+      if (detected !== language) {
+        setLanguage(detected);
+      }
+    }
+  };
 
   const handleAnalyze = async () => {
     // Check if user is logged in
@@ -30,16 +48,19 @@ export default function Home() {
       setError(authError);
       toast.error(authError, {
         description: "Please sign in to your account to continue.",
-        action: {
-          label: "Sign In",
-          onClick: () => navigate('/auth/login')
-        }
       });
       return;
     }
 
     setIsAnalyzing(true);
     setError(null);
+    setAnalysisStep(0);
+    
+    // Animate steps
+    const stepInterval = setInterval(() => {
+      setAnalysisStep(prev => (prev < steps.length - 1 ? prev + 1 : prev));
+    }, 1500);
+
     try {
       const response = await analysisService.analyze({ code, language });
       setResult(response.data.data);
@@ -52,6 +73,7 @@ export default function Home() {
       setError(errorMsg);
       toast.error("Analysis failed", { description: errorMsg });
     } finally {
+      clearInterval(stepInterval);
       setIsAnalyzing(false);
     }
   };
@@ -116,7 +138,7 @@ export default function Home() {
               <div className="rounded-2xl overflow-hidden border border-slate-800/50 shadow-inner">
                 <CodeEditor
                    code={code}
-                   onChange={(val) => setCode(val || "")}
+                   onChange={handleCodeChange}
                    language={language}
                 />
               </div>
@@ -184,28 +206,57 @@ export default function Home() {
                   <AnalysisResults data={result} />
                 </motion.div>
               ) : (
-                <motion.div 
-                  key="empty"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="glass rounded-3xl h-[calc(100vh-16rem)] min-h-[550px] flex flex-col items-center justify-center p-12 text-center space-y-6 relative overflow-hidden"
-                >
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
-                    <div className="w-20 h-20 bg-slate-900/80 rounded-3xl flex items-center justify-center text-slate-500 relative z-10 border border-slate-800 shadow-2xl">
-                      <Sparkles size={40} className="animate-bounce" />
+                  isAnalyzing ? (
+                    <div className="space-y-8 w-full py-10 px-6">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-blue-500 blur-[80px] opacity-10 animate-pulse" />
+                        <div className="relative z-10 flex flex-col items-center">
+                          <div className="w-24 h-24 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin mb-8" />
+                          <div className="space-y-4 w-full max-w-sm">
+                            {steps.map((step, idx) => (
+                              <motion.div 
+                                key={idx}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ 
+                                  opacity: idx <= analysisStep ? 1 : 0.2,
+                                  x: idx === analysisStep ? 0 : -10,
+                                  color: idx === analysisStep ? "#3b82f6" : "#475569"
+                                }}
+                                className="flex items-center gap-3 text-sm font-bold tracking-wide"
+                              >
+                                <div className={`w-2 h-2 rounded-full ${idx < analysisStep ? 'bg-emerald-500' : idx === analysisStep ? 'bg-blue-500 animate-ping' : 'bg-slate-700'}`} />
+                                {step}
+                                {idx < analysisStep && <CheckCircle size={14} className="text-emerald-500 ml-auto" />}
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-slate-100 italic">Ready for Debugging</h3>
-                    <p className="text-slate-400 max-w-[320px] text-lg leading-relaxed">Paste your code and let AI reveal potential bugs and optimizations.</p>
-                  </div>
-                  
-                  {/* Decorative lines */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full" />
-                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/5 blur-3xl rounded-full" />
-                </motion.div>
+                  ) : (
+                    <motion.div 
+                      key="empty"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="glass rounded-3xl h-[calc(100vh-16rem)] min-h-[550px] flex flex-col items-center justify-center p-12 text-center space-y-6 relative overflow-hidden"
+                    >
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
+                        <div className="w-20 h-20 bg-slate-900/80 rounded-3xl flex items-center justify-center text-slate-500 relative z-10 border border-slate-800 shadow-2xl">
+                          <Sparkles size={40} className="animate-bounce" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-2xl font-bold text-slate-100 italic">Ready for Debugging</h3>
+                        <p className="text-slate-400 max-w-[320px] text-lg leading-relaxed">Paste your code and let AI reveal potential bugs and optimizations.</p>
+                      </div>
+                      
+                      {/* Decorative lines */}
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full" />
+                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/5 blur-3xl rounded-full" />
+                    </motion.div>
+                  )
               )}
             </AnimatePresence>
           </div>

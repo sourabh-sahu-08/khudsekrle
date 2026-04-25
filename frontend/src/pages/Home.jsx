@@ -127,9 +127,12 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
+      <div className="max-w-[1400px] mx-auto pt-40 px-6 pb-20 relative">
+        {/* Decorative Background Blob */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full -z-10" />
+        
         {/* Hero Section */}
-        <div className="flex flex-col items-center justify-center text-center mb-24 pt-10">
+        <div className="flex flex-col items-center justify-center text-center mb-32">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -138,23 +141,23 @@ export default function Home() {
             <Sparkles size={14} />
             The Future of Debugging
           </motion.div>
-          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter mb-8 leading-none">
-            Write code that is <br />
-            <span className="relative inline-block h-[1.2em] min-w-[300px]">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={taglineIndex}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "circOut" }}
-                  className="bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent italic absolute left-1/2 -translate-x-1/2"
-                >
-                  {taglines[taglineIndex]}
-                </motion.span>
-              </AnimatePresence>
-            </span>
-          </h1>
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter mb-10 leading-[1.1]">
+                    Write code that is <br />
+                    <span className="relative inline-block h-[1.1em] min-w-[300px]">
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={taglineIndex}
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: -20, opacity: 0 }}
+                          transition={{ duration: 0.5, ease: "circOut" }}
+                          className="bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent italic absolute left-1/2 -translate-x-1/2"
+                        >
+                          {taglines[taglineIndex]}
+                        </motion.span>
+                      </AnimatePresence>
+                    </span>
+                  </h1>
           <p className="text-slate-400 max-w-2xl text-xl font-medium leading-relaxed">
             khudsekrle is your AI-powered companion for technical audits, security scanning, and algorithm optimization.
           </p>

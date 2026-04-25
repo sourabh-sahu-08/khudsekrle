@@ -3,7 +3,7 @@
 import { Check, Copy, AlertCircle, Zap, Clock, Maximize2, Sparkles, Terminal, Split, LayoutList } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { DiffEditor } from "@monaco-editor/react";
+import { DiffEditor, Editor } from "@monaco-editor/react";
 
 export default function AnalysisResults({ data }) {
     const [copied, setCopied] = useState(null);
@@ -45,8 +45,17 @@ export default function AnalysisResults({ data }) {
     };
 
     const item = {
-        hidden: { opacity: 0, y: 10 },
-        show: { opacity: 1, y: 0 }
+        hidden: { opacity: 0, y: 20, scale: 0.98 },
+        show: { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 20
+            }
+        }
     };
 
     return (
@@ -232,6 +241,7 @@ export default function AnalysisResults({ data }) {
                         >
                             <CodeBlock
                                 title="Suggested Resolution"
+                                language={data.language}
                                 code={data.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
                                 onCopy={() => copyToClipboard(data.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, ''), 'fix')}
                                 isCopied={copied === 'fix'}
@@ -240,6 +250,7 @@ export default function AnalysisResults({ data }) {
                             {data.optimizedCode && data.optimizedCode !== data.correctedCode && (
                                 <CodeBlock
                                     title="Performance Optimized"
+                                    language={data.language}
                                     code={data.optimizedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
                                     onCopy={() => copyToClipboard(data.optimizedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, ''), 'opt')}
                                     isCopied={copied === 'opt'}
@@ -255,7 +266,7 @@ export default function AnalysisResults({ data }) {
     );
 }
 
-function CodeBlock({ title, code, onCopy, isCopied, variant = "blue", icon }) {
+ function CodeBlock({ title, code, language, onCopy, isCopied, variant = "blue", icon }) {
     const themes = {
         blue: {
             border: "border-l-blue-500/50",
@@ -288,10 +299,28 @@ function CodeBlock({ title, code, onCopy, isCopied, variant = "blue", icon }) {
                 </button>
             </div>
             <div className={`p-8 ${theme.bg}`}>
-                <div className="bg-slate-950/80 rounded-2xl p-6 border border-white/5 shadow-inner">
-                    <pre className="font-mono text-[13px] text-slate-300 overflow-x-auto leading-relaxed custom-scrollbar">
-                        <code>{code}</code>
-                    </pre>
+                <div className="h-[300px] bg-slate-950/80 rounded-2xl overflow-hidden border border-white/5 shadow-inner">
+                    <Editor
+                        height="100%"
+                        language={language || "javascript"}
+                        value={code}
+                        theme="vs-dark"
+                        options={{
+                            readOnly: true,
+                            minimap: { enabled: false },
+                            fontSize: 13,
+                            scrollBeyondLastLine: false,
+                            automaticLayout: true,
+                            padding: { top: 20 },
+                            fontFamily: 'Fira Code, monospace',
+                            lineNumbers: 'on',
+                            renderLineHighlight: 'none',
+                            scrollbar: {
+                                vertical: 'hidden',
+                                horizontal: 'hidden'
+                            }
+                        }}
+                    />
                 </div>
             </div>
         </div>

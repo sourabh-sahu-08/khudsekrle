@@ -127,12 +127,12 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-[#0B0F1A]">
-        {/* Left Sidebar is already in Layout.jsx */}
+      <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)] overflow-y-auto lg:overflow-hidden bg-[#0B0F1A]">
+        {/* Left Sidebar is already in Layout.jsx (hidden on mobile) */}
         
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
           {/* Center Panel: Editor */}
-          <div className="flex-1 flex flex-col border-r border-white/5 bg-[#0B0F1A] min-w-0">
+          <div className="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-white/5 bg-[#0B0F1A] min-w-0 min-h-[500px] lg:min-h-0">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0B0F1A]/50">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
@@ -159,7 +159,7 @@ export default function Home() {
               <CodeEditor value={code} onChange={handleCodeChange} language={language} />
               
               {/* Floating Action Button */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-6">
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-6 z-20">
                 <button
                   onClick={handleAnalyze}
                   disabled={isAnalyzing || !code.trim()}
@@ -181,7 +181,7 @@ export default function Home() {
                     </>
                   )}
                 </button>
-                <p className="text-[9px] text-slate-600 font-bold uppercase tracking-[0.3em] text-center mt-4">
+                <p className="text-[9px] text-slate-600 font-bold uppercase tracking-[0.3em] text-center mt-4 hidden sm:block">
                   Ctrl + Enter to Execute
                 </p>
               </div>
@@ -189,7 +189,7 @@ export default function Home() {
           </div>
 
           {/* Right Panel: Output */}
-          <div className="w-[450px] flex flex-col bg-[#0B0F1A] overflow-hidden">
+          <div className="w-full lg:w-[450px] flex flex-col bg-[#0B0F1A] lg:overflow-hidden border-t lg:border-t-0 border-white/5">
             <div className="px-6 py-4 border-b border-white/5 bg-[#0B0F1A]/50 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
@@ -207,7 +207,7 @@ export default function Home() {
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <div className="flex-1 overflow-y-auto custom-scrollbar min-h-[400px]">
               <AnimatePresence mode="wait">
                 {isAnalyzing ? (
                   <motion.div

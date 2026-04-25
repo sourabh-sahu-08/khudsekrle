@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Sidebar from "./Sidebar";
 import { motion } from "framer-motion";
 
 export default function Layout({ children }) {
@@ -55,8 +56,11 @@ export default function Layout({ children }) {
             </div>
             
             <Navbar />
-            <div className="relative z-10 flex-1">
-                {children}
+            <div className="relative z-10 flex flex-1 overflow-hidden">
+                <Sidebar />
+                <main className="flex-1 overflow-y-auto custom-scrollbar relative">
+                    {children}
+                </main>
             </div>
             <Footer />
         </div>

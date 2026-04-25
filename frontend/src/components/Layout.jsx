@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -9,6 +9,7 @@ export default function Layout({ children }) {
     const cursorRef = useRef(null);
     const location = useLocation();
     const isAuthPage = location.pathname.startsWith('/auth');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         const moveCursor = (e) => {
@@ -58,9 +59,9 @@ export default function Layout({ children }) {
                 ))}
             </div>
             
-            <Navbar />
+            <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             <div className="relative z-10 flex flex-1 overflow-hidden">
-                {!isAuthPage && <Sidebar />}
+                {!isAuthPage && <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
                 <main className={`flex-1 overflow-y-auto custom-scrollbar relative ${isAuthPage ? '' : ''}`}>
                     {children}
                 </main>

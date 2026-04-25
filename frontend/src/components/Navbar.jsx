@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Terminal, History, User, LogOut, Search } from 'lucide-react';
+import { Terminal, History, User, LogOut, Search, Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Navbar() {
+export default function Navbar({ onMenuClick }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
@@ -32,7 +32,14 @@ export default function Navbar() {
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className="fixed top-0 w-full z-50 glass h-20 flex items-center px-12 justify-between border-b border-white/5 active:border-white/10 transition-colors"
         >
-            <Link to="/" className="flex items-center gap-3 group min-w-fit">
+            <div className="flex items-center gap-4">
+                <button 
+                    onClick={onMenuClick}
+                    className="lg:hidden p-2 hover:bg-white/5 rounded-xl text-slate-400 hover:text-white transition-all"
+                >
+                    <Menu size={20} />
+                </button>
+                <Link to="/" className="flex items-center gap-3 group min-w-fit">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/10">
                     <Terminal size={24} />
                 </div>

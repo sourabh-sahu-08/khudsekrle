@@ -9,15 +9,24 @@ import {
     Code, 
     ChevronRight, 
     Search,
-    Command
+    Command,
+    X
 } from 'lucide-react';
 import { analysisService } from '@/utils/api';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         const fetchRecent = async () => {
@@ -40,9 +49,39 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className="w-64 flex flex-col h-[calc(100vh-80px)] border-r border-white/5 bg-[#0B0F1A] overflow-hidden hidden lg:flex">
-            {/* Search Bar */}
-            <div className="p-6">
+        <>
+            {/* Mobile Overlay */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
+            <aside className={`
+                fixed inset-y-0 left-0 w-64 bg-[#0B0F1A] border-r border-white/5 z-[70] transition-transform duration-300 transform lg:relative lg:translate-x-0 lg:z-auto lg:h-[calc(100vh-80px)]
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+                flex flex-col overflow-hidden
+            `}>
+                <div className="flex items-center justify-between p-6 lg:p-0">
+                    <div className="lg:hidden flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <Code size={18} />
+                        </div>
+                        <span className="font-black text-white">Menu</span>
+                    </div>
+                    <button onClick={onClose} className="lg:hidden p-2 hover:bg-white/5 rounded-lg text-slate-500">
+                        <X size={20} />
+                    </button>
+                </div>
+
+                {/* Search Bar */}
+                <div className="p-6">
                 <div className="relative group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={14} />
                     <input 

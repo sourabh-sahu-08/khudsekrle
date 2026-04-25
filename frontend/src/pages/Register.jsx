@@ -57,20 +57,24 @@ export default function Register() {
                     transition={{ duration: 0.5 }}
                     className="w-full max-w-md relative"
                 >
-                    <div className="glass p-10 rounded-[2.5rem] shadow-2xl border border-white/5 relative overflow-hidden backdrop-blur-3xl">
+                    <div className="glass p-10 rounded-[2.5rem] shadow-2xl border border-white/5 relative overflow-hidden backdrop-blur-3xl animate-float">
                         <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-3xl rounded-full translate-x-20 -translate-y-20" />
+                        <div className="animate-scan" />
                         
                         <div className="text-center mb-10">
                             <motion.div 
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                                className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-500 border border-emerald-500/20 shadow-lg shadow-emerald-500/10"
+                                className="w-20 h-20 bg-emerald-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-emerald-500 border border-emerald-500/20 shadow-lg shadow-emerald-500/10 relative"
                             >
-                                <UserIcon size={32} />
+                                <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-20 animate-pulse" />
+                                <UserIcon size={36} className="relative z-10" />
                             </motion.div>
-                            <h1 className="text-4xl font-black text-white tracking-tight mb-2">Join khudsekrle</h1>
-                            <p className="text-slate-400 font-medium">Create your developer account today</p>
+                            <h1 className="text-5xl font-black text-white tracking-tighter mb-3 leading-tight">
+                                Create <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Identity</span>
+                            </h1>
+                            <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">Initialize Developer Profile</p>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -164,8 +168,8 @@ export default function Register() {
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-slate-800/50"></div>
                             </div>
-                            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-[0.3em]">
-                                <span className="bg-[#0f172a] px-4 text-slate-500">Fast Connect</span>
+                            <div className="relative flex justify-center text-[9px] uppercase font-bold tracking-[0.4em]">
+                                <span className="bg-[#030712] px-4 text-slate-600">Secure Initialization</span>
                             </div>
                         </div>
 

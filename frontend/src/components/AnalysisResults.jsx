@@ -54,19 +54,19 @@ export default function AnalysisResults({ data }) {
             </div>
 
             {/* Performance Bar */}
-            <div className="px-6 py-3 flex items-center justify-between bg-white/[0.02] border-b border-white/5">
-                <div className="flex items-center gap-4">
-                   <div className="flex items-center gap-1.5">
-                      <Clock size={10} className="text-slate-500" />
-                      <span className="text-[10px] font-mono font-bold text-slate-300">{data.timeComplexity || 'O(n)'}</span>
+            <div className="px-6 py-4 flex items-center justify-between bg-white/[0.02] border-b border-white/5">
+                <div className="flex items-center gap-6">
+                   <div className="flex items-center gap-2">
+                      <Clock size={12} className="text-slate-500" />
+                      <span className="text-[10px] font-mono font-bold text-slate-300 tracking-tight">{data.timeComplexity || 'O(n)'}</span>
                    </div>
-                   <div className="flex items-center gap-1.5">
-                      <Maximize2 size={10} className="text-slate-500" />
-                      <span className="text-[10px] font-mono font-bold text-slate-300">{data.spaceComplexity || 'O(1)'}</span>
+                   <div className="flex items-center gap-2">
+                      <Maximize2 size={12} className="text-slate-500" />
+                      <span className="text-[10px] font-mono font-bold text-slate-300 tracking-tight">{data.spaceComplexity || 'O(1)'}</span>
                    </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                   <span className="text-[10px] font-black text-emerald-500 uppercase tracking-tighter">Confidence {data.confidenceScore || '98%'}</span>
+                <div className="flex items-center gap-2">
+                   <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Confidence {data.confidenceScore || '98%'}</span>
                 </div>
             </div>
 
@@ -82,7 +82,7 @@ export default function AnalysisResults({ data }) {
                             className="space-y-6"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Corrected Codebase</h3>
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Corrected Codebase</h3>
                                 <button
                                     onClick={() => copyToClipboard(data.correctedCode, 'fix')}
                                     className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-all active:scale-90"

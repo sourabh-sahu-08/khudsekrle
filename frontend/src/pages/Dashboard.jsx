@@ -98,7 +98,7 @@ export default function Dashboard() {
                     >
                         <Link
                             to="/"
-                            className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 active:scale-95 flex items-center gap-2.5"
+                            className="bg-blue-600 hover:bg-blue-500 text-white px-8 h-12 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 active:scale-95 flex items-center gap-2.5"
                         >
                             <Sparkles size={16} />
                             Initiate Audit
@@ -136,7 +136,7 @@ export default function Dashboard() {
                             placeholder="Search by code or findings..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-3.5 pl-14 pr-6 text-[13px] text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-slate-600 hover:bg-white/[0.08]"
+                            className="w-full bg-white/5 border border-white/5 rounded-xl py-3.5 pl-14 pr-6 text-[13px] text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-slate-600 hover:bg-white/[0.08]"
                         />
                     </div>
                     <div className="flex gap-4">
@@ -145,7 +145,7 @@ export default function Dashboard() {
                             <select 
                                 value={filterLanguage}
                                 onChange={(e) => setFilterLanguage(e.target.value)}
-                                className="bg-white/5 border border-white/5 rounded-2xl py-3.5 pl-10 pr-6 text-[11px] font-black uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none min-w-[160px]"
+                                className="bg-white/5 border border-white/5 rounded-xl py-3.5 pl-10 pr-6 text-[11px] font-bold uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none min-w-[160px]"
                             >
                                 <option value="all" className="bg-slate-900">All Langs</option>
                                 {[...new Set(history.map(item => item.language))].map(lang => (

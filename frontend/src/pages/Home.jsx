@@ -76,23 +76,23 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="h-14 px-6 flex items-center justify-between border-b border-white/10 bg-[#111827]/30"
+            className="h-16 px-6 flex items-center justify-between border-b border-white/10 bg-[#111827]/30"
           >
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-md bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
-                <Terminal size={14} />
+              <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+                <Terminal size={16} />
               </div>
-              <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Workspace / Source</h2>
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Workspace / Source</h2>
             </div>
             
             <div className="flex items-center gap-4">
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="bg-white/5 border border-white/10 text-slate-300 text-[10px] font-black uppercase rounded-lg px-3 py-1.5 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all cursor-pointer hover:bg-white/10"
+                className="bg-white/5 border border-white/10 text-slate-300 text-[10px] font-bold uppercase rounded-xl px-3 py-2 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all cursor-pointer hover:bg-white/10"
               >
                 {languages.map((lang) => (
-                  <option key={lang.value} value={lang.value}>{lang.label}</option>
+                  <option key={lang.value} value={lang.value} className="bg-slate-900">{lang.label}</option>
                 ))}
               </select>
             </div>
@@ -121,7 +121,7 @@ export default function Home() {
               disabled={isAnalyzing || !code.trim()}
               className={`w-full group h-14 flex items-center justify-center gap-3 rounded-b-2xl transition-all duration-500 relative overflow-hidden active:scale-[0.99] ${
                 isAnalyzing || !code.trim()
-                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                ? 'bg-slate-800/50 text-slate-500 cursor-not-allowed'
                 : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_30px_rgba(59,130,246,0.1)] hover:shadow-[0_0_50px_rgba(59,130,246,0.4)]'
               }`}
             >
@@ -129,12 +129,12 @@ export default function Home() {
               {isAnalyzing ? (
                 <div className="flex items-center gap-3">
                   <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                  <span className="text-xs font-black uppercase tracking-[0.2em]">{steps[analysisStep]}</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em]">{steps[analysisStep]}</span>
                 </div>
               ) : (
                 <>
                   <Zap size={16} className="group-hover:scale-110 transition-transform" fill="currentColor" />
-                  <span className="text-xs font-black uppercase tracking-[0.2em]">Initiate Deep Audit</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em]">Initiate Deep Audit</span>
                 </>
               )}
             </motion.button>
@@ -158,13 +158,13 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="h-14 px-6 flex items-center justify-between border-b border-white/10 bg-[#111827]/30"
+            className="h-16 px-6 flex items-center justify-between border-b border-white/10 bg-[#111827]/30"
           >
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
-                <Sparkles size={14} />
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                <Sparkles size={16} />
               </div>
-              <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-400 font-mono tracking-premium">Output_Console</h2>
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 font-mono tracking-premium">Output_Console</h2>
             </div>
           </motion.div>
 

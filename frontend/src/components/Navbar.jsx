@@ -44,7 +44,7 @@ export default function Navbar({ onMenuClick }) {
                         <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/20 group-hover:scale-105 transition-transform">
                             <Terminal size={18} strokeWidth={2.5} />
                         </div>
-                        <span className="text-lg font-black text-white tracking-tighter hidden sm:block">
+                        <span className="text-xl font-black text-white tracking-tighter hidden sm:block">
                             khudsekrle<span className="text-blue-500">.</span>
                         </span>
                     </Link>
@@ -95,12 +95,12 @@ export default function Navbar({ onMenuClick }) {
                     </>
                 ) : (
                     <div className="flex items-center gap-4">
-                        <Link to="/auth/login" className="text-[13px] font-bold text-slate-400 hover:text-white transition-colors">
+                        <Link to="/auth/login" className="text-[13px] font-semibold text-slate-400 hover:text-white transition-colors">
                             Sign In
                         </Link>
                         <Link 
                             to="/auth/register" 
-                            className="bg-white text-black px-4 py-1.5 rounded-xl text-[13px] font-black transition-all hover:bg-blue-600 hover:text-white"
+                            className="bg-white text-black px-5 py-2 rounded-xl text-[13px] font-bold transition-all hover:bg-blue-600 hover:text-white shadow-lg shadow-white/5"
                         >
                             Get Started
                         </Link>

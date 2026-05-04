@@ -42,8 +42,8 @@ export default function ChatInterface({ analysisId, initialMessages = [] }) {
                             <div className="w-16 h-16 bg-white/[0.02] rounded-2xl flex items-center justify-center mb-4 border border-white/5">
                                 <Sparkles size={24} className="opacity-20" />
                             </div>
-                            <p className="text-[10px] font-black tracking-widest uppercase opacity-40">Neural Console Idle</p>
-                            <p className="text-xs mt-2 font-medium">Ask a question to begin session</p>
+                            <p className="text-[10px] font-bold tracking-widest uppercase opacity-40">Ready to help</p>
+                            <p className="text-xs mt-2 font-medium">Ask a question to start the conversation</p>
                         </motion.div>
                     ) : (
                         messages.map((msg, i) => (

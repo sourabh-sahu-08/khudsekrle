@@ -170,9 +170,9 @@ export default function CommentsSection({ analysisId, initialComments = [] }) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleDeleteConfirm}
-                title="Destroy Note?"
-                message="This will permanently delete this developer note from the system. This protocol is irreversible."
-                confirmText="Destroy Now"
+                title="Delete Note?"
+                message="Are you sure you want to delete this note? This action cannot be undone."
+                confirmText="Delete Now"
             />
         </div>
     );

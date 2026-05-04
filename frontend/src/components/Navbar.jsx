@@ -57,7 +57,7 @@ export default function Navbar({ onMenuClick }) {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Heuristic search..."
+                            placeholder="Search your audits..."
                             className="bg-white/5 border border-white/5 rounded-2xl py-2 pl-10 pr-4 text-[12px] font-medium text-white focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600 w-72 hover:bg-white/[0.08]"
                         />
                     </form>
@@ -71,7 +71,7 @@ export default function Navbar({ onMenuClick }) {
                             <Link to="/dashboard" className="p-2.5 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl" title="Audit History">
                                 <History size={18} />
                             </Link>
-                            <button className="p-2.5 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl relative" title="Protocol Alerts">
+                            <button className="p-2.5 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl relative" title="Notifications">
                                 <Bell size={18} />
                                 <div className="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-500 rounded-full border-2 border-[#060910]" />
                             </button>
@@ -82,12 +82,12 @@ export default function Navbar({ onMenuClick }) {
                                 <div className="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                                     <User size={14} />
                                 </div>
-                                <span className="text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">Nexus_ID</span>
+                                <span className="text-[11px] font-bold text-slate-400 group-hover:text-white transition-colors">Profile</span>
                             </Link>
                             <button 
                                 onClick={handleSignOut} 
                                 className="p-2.5 text-slate-600 hover:text-red-400 transition-all hover:bg-red-500/10 rounded-xl"
-                                title="Deactivate Session"
+                                title="Sign Out"
                             >
                                 <LogOut size={18} />
                             </button>
@@ -95,8 +95,8 @@ export default function Navbar({ onMenuClick }) {
                     </>
                 ) : (
                     <div className="flex items-center gap-6">
-                        <Link to="/auth/login" className="text-[11px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">
-                            Sign_In
+                        <Link to="/auth/login" className="text-[12px] font-medium text-slate-400 hover:text-white transition-colors">
+                            Sign In
                         </Link>
                         <Link 
                             to="/auth/register" 

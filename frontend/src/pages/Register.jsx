@@ -63,8 +63,8 @@ export default function Register() {
                                 <UserIcon size={24} />
                             </div>
                             <div className="flex flex-col gap-1">
-                                <h1 className="text-2xl font-semibold text-white tracking-tight">Create Identity</h1>
-                                <p className="text-sm text-gray-400">Initialize developer profile</p>
+                                <h1 className="text-2xl font-semibold text-white tracking-tight">Create Account</h1>
+                                <p className="text-sm text-gray-400">Join the community to start analyzing code</p>
                             </div>
                         </div>
 
@@ -124,7 +124,7 @@ export default function Register() {
 
                                     {/* Password Field */}
                                     <div className="flex flex-col gap-2">
-                                        <label className="text-xs tracking-wider text-gray-400 uppercase font-bold ml-1">Secure Password</label>
+                                        <label className="text-xs tracking-wider text-gray-400 uppercase font-bold ml-1">Password</label>
                                         <div className="relative group">
                                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-500 transition-colors z-10" size={18} />
                                             <input
@@ -165,7 +165,7 @@ export default function Register() {
                                         <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                     ) : (
                                         <>
-                                            <span>Create My Account</span>
+                                            <span>Sign Up</span>
                                             <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                                         </>
                                     )}
@@ -175,19 +175,19 @@ export default function Register() {
                             {/* Divider Line */}
                             <div className="flex items-center gap-4 mt-5">
                                 <div className="flex-1 h-px bg-white/10" />
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] whitespace-nowrap">OR CONTINUE WITH</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
                                 <div className="flex-1 h-px bg-white/10" />
                             </div>
 
                             {/* Social Auth */}
                             <button className="w-full h-12 mt-4 bg-white/5 hover:bg-white/[0.08] text-white rounded-xl flex items-center justify-center gap-3 transition-all duration-200 border border-white/10 active:scale-95 group shadow-sm">
                                 <Github size={20} className="group-hover:text-emerald-400 transition-colors" />
-                                <span className="font-bold text-sm">GitHub SSO</span>
+                                <span className="font-bold text-sm">Continue with GitHub</span>
                             </button>
 
                             {/* Footer Link */}
                             <p className="mt-8 text-center text-gray-500 text-[13px]">
-                                Already part of khudsekrle?{' '}
+                                Already have an account?{' '}
                                 <Link to="/auth/login" className="text-white hover:text-emerald-400 transition-colors font-bold hover:underline underline-offset-4">
                                     Sign In
                                 </Link>

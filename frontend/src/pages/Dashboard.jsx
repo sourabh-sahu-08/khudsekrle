@@ -80,7 +80,7 @@ export default function Dashboard() {
                             animate={{ opacity: 1, x: 0 }}
                             className="text-4xl font-black text-white tracking-tight-extreme mb-3"
                         >
-                            Activity Log
+                            History
                         </motion.h1>
                         <motion.p 
                             initial={{ opacity: 0, x: -20 }}
@@ -88,7 +88,7 @@ export default function Dashboard() {
                             transition={{ delay: 0.1 }}
                             className="text-slate-500 font-medium tracking-premium"
                         >
-                            Review your code audits and optimization history.
+                            Review your code analyses and optimization history.
                         </motion.p>
                     </div>
                     <motion.div
@@ -100,8 +100,8 @@ export default function Dashboard() {
                             to="/"
                             className="bg-blue-600 hover:bg-blue-500 text-white px-8 h-12 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 active:scale-95 flex items-center gap-2.5"
                         >
-                            <Sparkles size={16} />
-                            Initiate Audit
+                            <Code size={16} />
+                            New Analysis
                         </Link>
                     </motion.div>
                 </div>
@@ -110,8 +110,8 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                     {[
                         { label: 'Total Analyses', value: stats.total, color: 'blue' },
-                        { label: 'Languages', value: stats.languages, color: 'emerald' },
-                        { label: 'Avg Confidence', value: `${stats.avgScore}%`, color: 'purple' }
+                        { label: 'Languages Used', value: stats.languages, color: 'emerald' },
+                        { label: 'Avg Confidence Score', value: `${stats.avgScore}%`, color: 'purple' }
                     ].map((stat, i) => (
                         <motion.div
                             key={stat.label}
@@ -121,7 +121,7 @@ export default function Dashboard() {
                             className="card-premium p-6 flex flex-col items-center text-center relative overflow-hidden group"
                         >
                             <div className={`absolute top-0 right-0 w-24 h-24 bg-${stat.color}-500/[0.03] blur-3xl rounded-full`} />
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">{stat.label}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">{stat.label}</p>
                             <h4 className="text-3xl font-black text-white tracking-tighter">{stat.value}</h4>
                         </motion.div>
                     ))}
@@ -215,9 +215,9 @@ export default function Dashboard() {
                                         </div>
                                         <Link 
                                             to={`/dashboard/analysis/${item._id}`}
-                                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-white transition-all group/link"
+                                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-blue-400 hover:text-white transition-all group/link"
                                         >
-                                            Inspect Audit
+                                            View Report
                                             <ChevronRight size={12} className="group-hover/link:translate-x-1 transition-transform" />
                                         </Link>
                                     </div>
@@ -229,8 +229,8 @@ export default function Dashboard() {
                             <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-slate-700 mb-4 border border-white/5">
                                 <History size={28} />
                             </div>
-                            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">No Records Found</h3>
-                            <p className="text-[11px] text-slate-500 font-medium max-w-[200px]">Adjust your filters or initiate a new audit to populate your activity log.</p>
+                            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-2">No Records Found</h3>
+                            <p className="text-[11px] text-slate-500 font-medium max-w-[200px]">Adjust your filters or start a new analysis to see your history.</p>
                         </div>
                     )}
                 </AnimatePresence>
@@ -240,9 +240,9 @@ export default function Dashboard() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleDeleteConfirm}
-                title="Purge Analysis?"
-                message="This will permanently delete this analysis record. This action cannot be reversed."
-                confirmText="Confirm Purge"
+                title="Delete Analysis?"
+                message="This will permanently delete this analysis record. This action cannot be undone."
+                confirmText="Confirm Delete"
             />
         </Layout>
     );

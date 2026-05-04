@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
+/* Human-Crafted Design System */
 :root {
   --background: #060910;
   --card-bg: #0d121f;
   --primary: #3b82f6;
-  --primary-glow: rgba(59, 130, 246, 0.5);
+  --primary-glow: rgba(59, 130, 246, 0.3);
   --secondary: #6366f1;
-  --accent: #8b5cf6;
-  --border: rgba(255, 255, 255, 0.08);
-  --text-muted: #94a3b8;
+  --border: rgba(255, 255, 255, 0.05);
+  --text-muted: #64748b;
   --success: #10b981;
   --error: #ef4444;
-  --warning: #f59e0b;
 }
 
 * {
@@ -22,95 +21,76 @@
 
 body {
   background-color: var(--background);
-  color: #f8fafc;
-  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  color: #f1f5f9;
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
-/* Custom Scrollbar */
+/* Natural Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-glow);
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* Premium Glassmorphism */
+/* Subtle Glassmorphism */
 .glass {
-  background: rgba(13, 18, 31, 0.6);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-}
-
-.glass-morphism {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
+  background: rgba(13, 18, 31, 0.7);
+  backdrop-filter: blur(12px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.4);
 }
 
 .card-premium {
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-    0 4px 6px -2px rgba(0, 0, 0, 0.05),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-premium:hover {
-  border-color: rgba(59, 130, 246, 0.3);
-  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px);
   box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.2), 
-    0 10px 10px -5px rgba(0, 0, 0, 0.1),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+    0 10px 15px -3px rgba(0, 0, 0, 0.3), 
+    0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
-/* Glow Effects */
-.glow-primary {
-  box-shadow: 0 0 20px var(--primary-glow);
+/* Organic Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
-.text-glow {
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+.animate-float {
+  animation: float 5s ease-in-out infinite;
 }
 
-/* Animations */
+/* Subtle Shimmer */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.02), transparent);
   background-size: 200% 100%;
-  animation: shimmer 3s infinite linear;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: shimmer 4s infinite linear;
 }
 
 /* Monaco Overrides */
@@ -118,11 +98,19 @@ body {
   background-color: transparent !important;
 }
 
-.monaco-editor .scroll-decoration {
-  display: none !important;
+.monaco-editor {
+  padding: 8px 0;
 }
 
-/* Utility */
+/* Typography Refinements */
+.tracking-tightest-extreme {
+  letter-spacing: -0.04em;
+}
+
+.tracking-premium {
+  letter-spacing: 0.01em;
+}
+
 .tracking-widest-xl {
-  letter-spacing: 0.25em;
+  letter-spacing: 0.2em;
 }

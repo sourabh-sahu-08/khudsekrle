@@ -58,8 +58,8 @@ export default function Login() {
                                 <LogIn size={24} />
                             </div>
                             <div className="flex flex-col gap-1">
-                                <h1 className="text-2xl font-semibold text-white tracking-tight">Access Console</h1>
-                                <p className="text-sm text-gray-400">Security clearance required</p>
+                                <h1 className="text-2xl font-semibold text-white tracking-tight">Welcome back</h1>
+                                <p className="text-sm text-gray-400">Log in to your account to continue</p>
                             </div>
                         </div>
 
@@ -139,7 +139,7 @@ export default function Login() {
                                         <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                     ) : (
                                         <>
-                                            <span>Sign In to Dashboard</span>
+                                            <span>Sign In</span>
                                             <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                                         </>
                                     )}
@@ -149,14 +149,14 @@ export default function Login() {
                             {/* Divider Line */}
                             <div className="flex items-center gap-4 mt-5">
                                 <div className="flex-1 h-px bg-white/10" />
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] whitespace-nowrap">OR CONTINUE WITH</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
                                 <div className="flex-1 h-px bg-white/10" />
                             </div>
 
                             {/* Social Auth */}
                             <button className="w-full h-12 mt-4 bg-white/5 hover:bg-white/[0.08] text-white rounded-xl flex items-center justify-center gap-3 transition-all duration-200 border border-white/10 active:scale-95 group shadow-sm">
                                 <Github size={20} className="group-hover:text-blue-400 transition-colors" />
-                                <span className="font-bold text-sm">GitHub SSO</span>
+                                <span className="font-bold text-sm">Continue with GitHub</span>
                             </button>
 
                             {/* Footer Link */}

@@ -20,9 +20,9 @@ export default function AnalysisResults({ data }) {
     const cleanCode = (code) => code?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '') || "";
 
     const tabs = [
-        { id: 'fix', label: 'Fix', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-        { id: 'explain', label: 'Explain', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-400/10' },
-        { id: 'optimize', label: 'Optimize', icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+        { id: 'fix', label: 'Solution', icon: Zap, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+        { id: 'explain', label: 'Explanation', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-400/10' },
+        { id: 'optimize', label: 'Optimization', icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
         { id: 'security', label: 'Security', icon: ShieldCheck, color: 'text-orange-400', bg: 'bg-orange-400/10' },
     ];
 
@@ -41,7 +41,7 @@ export default function AnalysisResults({ data }) {
                         }`}
                     >
                         <tab.icon size={16} className={`${activeTab === tab.id ? tab.color : 'text-slate-600 group-hover:text-slate-400'} transition-colors`} />
-                        <span className="text-[9px] font-black uppercase tracking-[0.1em]">{tab.label}</span>
+                        <span className="text-[9px] font-bold uppercase tracking-widest">{tab.label}</span>
                         
                         {activeTab === tab.id && (
                             <motion.div 
@@ -82,7 +82,7 @@ export default function AnalysisResults({ data }) {
                             className="space-y-6"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Corrected Codebase</h3>
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Fixed Code</h3>
                                 <button
                                     onClick={() => copyToClipboard(data.correctedCode, 'fix')}
                                     className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-all active:scale-90"
@@ -113,7 +113,7 @@ export default function AnalysisResults({ data }) {
                             <div className="p-5 rounded-2xl bg-[#0B0F1A] border border-white/5">
                                 <div className="flex items-center gap-2 mb-3">
                                    <AlertCircle size={14} className="text-blue-400" />
-                                   <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Findings Summary</p>
+                                   <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Analysis Summary</p>
                                 </div>
                                 <p className="text-[12px] text-slate-400 leading-relaxed font-medium">{data.findings}</p>
                             </div>
@@ -135,7 +135,7 @@ export default function AnalysisResults({ data }) {
                             </div>
                             {data.bestPractices && (
                                 <div className="space-y-4">
-                                    <h4 className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Architectural Insights</h4>
+                                    <h4 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest ml-1">Best Practices</h4>
                                     <div className="grid grid-cols-1 gap-2">
                                         {String(data.bestPractices).split('\n').filter(l => l.trim()).map((line, i) => (
                                             <div key={i} className="flex gap-3 text-[11px] text-slate-400 bg-[#0B0F1A] p-4 rounded-xl border border-white/5 hover:border-purple-500/20 transition-colors group">
@@ -158,7 +158,7 @@ export default function AnalysisResults({ data }) {
                             className="space-y-6"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Optimized Implementation</h3>
+                                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Optimized Version</h3>
                                 <button
                                     onClick={() => copyToClipboard(data.optimizedCode || data.correctedCode, 'opt')}
                                     className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-all"
@@ -190,9 +190,9 @@ export default function AnalysisResults({ data }) {
                                     <Zap size={18} fill="currentColor" />
                                 </div>
                                 <div>
-                                   <p className="text-[11px] font-black text-emerald-500 uppercase tracking-widest mb-1">Efficiency Boost</p>
+                                   <p className="text-[11px] font-bold text-emerald-500 uppercase tracking-widest mb-1">Efficiency Improvements</p>
                                    <p className="text-[12px] text-emerald-400/80 font-medium leading-relaxed">
-                                       Optimized for memory overhead and execution speed. Reduced algorithmic complexity where applicable.
+                                       We've optimized this code for better memory usage and execution speed while maintaining functionality.
                                    </p>
                                 </div>
                             </div>
@@ -210,14 +210,14 @@ export default function AnalysisResults({ data }) {
                             <div className="bg-[#0B0F1A] rounded-2xl border border-orange-500/10 p-6 space-y-6">
                                 <div className="flex items-center gap-3 pb-4 border-b border-white/5">
                                     <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">Security Protocol: Active</span>
+                                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Security Evaluation</span>
                                 </div>
                                 <div className="space-y-4">
                                    <p className="text-[13px] text-slate-300 leading-relaxed font-medium">
-                                       {data.securityAudit || "No major security vulnerabilities detected. Code adheres to OWASP Top 10 guidelines and internal safety protocols."}
+                                       {data.securityAudit || "No major security issues detected. Your code follows common security practices."}
                                    </p>
                                    <div className="flex flex-wrap gap-2 pt-2">
-                                      {['XSS-Safe', 'SQL-Injection-Protected', 'No-Buffer-Overflow'].map(tag => (
+                                      {['XSS-Safe', 'Injection-Safe', 'Secure-Dependencies'].map(tag => (
                                          <span key={tag} className="px-2 py-1 rounded-md bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-widest">{tag}</span>
                                       ))}
                                    </div>
@@ -226,10 +226,10 @@ export default function AnalysisResults({ data }) {
                             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
                                 <div className="flex items-center gap-2 mb-3">
                                     <ShieldCheck size={14} className="text-slate-500" />
-                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Audit Scope</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Audit Scope</span>
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                                    Our AI engine scans for data leaks, insecure dependency usage, and cryptographically weak patterns.
+                                    We check for common vulnerabilities like data leaks, insecure input handling, and weak encryption patterns.
                                 </p>
                             </div>
                         </motion.div>

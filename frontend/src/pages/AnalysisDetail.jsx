@@ -142,7 +142,7 @@ export default function AnalysisDetail() {
                             </div>
                             <div>
                                 <h1 className="text-5xl font-black text-white tracking-tightest-extreme mb-1">
-                                    Audit_Session
+                                    Analysis Report
                                 </h1>
                                 <div className="flex items-center gap-4">
                                     <span className="bg-blue-500/10 px-4 py-1.5 rounded-lg text-[10px] text-blue-400 uppercase font-black tracking-widest-xl border border-blue-500/10">
@@ -157,7 +157,7 @@ export default function AnalysisDetail() {
                     
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass px-10 py-6 rounded-[2.5rem] border border-white/5 flex flex-wrap items-center gap-8 shadow-2xl">
                         <div className="flex flex-col gap-2">
-                            <p className="text-[9px] uppercase font-black tracking-widest-xl text-slate-500">AI Confidence Core</p>
+                            <p className="text-[9px] uppercase font-bold tracking-widest text-slate-500">Confidence Score</p>
                             <div className="flex items-center gap-4">
                                 <div className="h-2 w-40 bg-slate-950 rounded-full overflow-hidden border border-white/5 shadow-inner">
                                     <motion.div initial={{ width: 0 }} animate={{ width: analysis.confidenceScore || '90%' }} transition={{ duration: 1.5, ease: "circOut" }} className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_10px_rgba(59,130,246,0.3)]" />
@@ -169,10 +169,10 @@ export default function AnalysisDetail() {
                         <div className="h-12 w-[1px] bg-white/5 hidden xl:block" />
 
                         <div className="flex items-center gap-3">
-                            <button onClick={handleTogglePublic} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 border shadow-lg ${analysis.isPublic ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-slate-500 border-white/5'}`} title={analysis.isPublic ? "Go Stealth" : "Broadcast Public"}>
+                            <button onClick={handleTogglePublic} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 border shadow-lg ${analysis.isPublic ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-slate-500 border-white/5'}`} title={analysis.isPublic ? "Make Private" : "Make Public"}>
                                 {analysis.isPublic ? <Globe size={20} /> : <Lock size={20} />}
                             </button>
-                            <button onClick={handleDownloadMarkdown} className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-500 hover:text-white transition-all active:scale-90 border border-white/5 shadow-lg" title="Export Manifest">
+                            <button onClick={handleDownloadMarkdown} className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-500 hover:text-white transition-all active:scale-90 border border-white/5 shadow-lg" title="Download Report">
                                 <Download size={20} />
                             </button>
                             <button onClick={handleShare} disabled={!analysis.isPublic} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 border relative shadow-lg ${!analysis.isPublic ? 'opacity-20 cursor-not-allowed' : 'bg-white/5 hover:bg-white/10 text-slate-500 hover:text-white'}`}>
@@ -189,7 +189,7 @@ export default function AnalysisDetail() {
                             <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-500 border border-blue-500/10">
                                 <AlertTriangle size={20} />
                             </div>
-                            <h3 className="text-xs font-black uppercase tracking-widest-xl text-slate-400">Heuristic Findings</h3>
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Findings</h3>
                         </div>
                         <div className="bg-slate-950/40 p-8 rounded-[2rem] border border-white/5 shadow-inner">
                             <pre className="text-slate-300 leading-relaxed font-mono text-base whitespace-pre-wrap">{analysis.findings}</pre>
@@ -202,8 +202,8 @@ export default function AnalysisDetail() {
                                 <Clock size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-black tracking-widest-xl text-slate-500 mb-1">Time Complexity</p>
-                                <p className="text-3xl font-mono text-white font-black tracking-tighter">{analysis.timeComplexity}</p>
+                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-1">Time Complexity</p>
+                                <p className="text-3xl font-mono text-white font-bold tracking-tighter">{analysis.timeComplexity}</p>
                             </div>
                         </motion.div>
 
@@ -212,8 +212,8 @@ export default function AnalysisDetail() {
                                 <Database size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-black tracking-widest-xl text-slate-500 mb-1">Memory Overhead</p>
-                                <p className="text-3xl font-mono text-white font-black tracking-tighter">{analysis.spaceComplexity}</p>
+                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-1">Memory Usage</p>
+                                <p className="text-3xl font-mono text-white font-bold tracking-tighter">{analysis.spaceComplexity}</p>
                             </div>
                         </motion.div>
                     </div>
@@ -225,16 +225,16 @@ export default function AnalysisDetail() {
                         <div className="w-10 h-10 bg-indigo-600/10 rounded-xl flex items-center justify-center text-indigo-400 border border-indigo-500/10">
                             <Sparkles size={20} />
                         </div>
-                        <h3 className="text-xs font-black uppercase tracking-widest-xl text-slate-400">Neural Insights</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Explanation</h3>
                     </div>
                     <p className="text-slate-200 leading-relaxed whitespace-pre-wrap text-2xl font-bold tracking-tight relative z-10">{analysis.explanation}</p>
                 </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24">
-                    <CodePreview title="DEPRECATED_SOURCE" code={analysis.originalCode} language={analysis.language} height="400px" />
+                    <CodePreview title="Original Code" code={analysis.originalCode} language={analysis.language} height="400px" />
                     <div className="relative">
                         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-[2rem] blur-xl opacity-50" />
-                        <CodePreview title="OPTIMIZED_MANIFEST" code={analysis.correctedCode} language={analysis.language} height="400px" />
+                        <CodePreview title="Optimized Code" code={analysis.correctedCode} language={analysis.language} height="400px" />
                     </div>
                 </div>
 
@@ -245,8 +245,8 @@ export default function AnalysisDetail() {
                                 <MessageSquare size={24} />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-white tracking-tight">Neural_Consultant</h3>
-                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">REAL-TIME INFERENCE ENGINE</p>
+                                <h3 className="text-2xl font-bold text-white tracking-tight">AI Assistant</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Ask questions about this report</p>
                             </div>
                         </div>
                         <ChatInterface analysisId={id} initialMessages={analysis.chatHistory || []} />
@@ -258,8 +258,8 @@ export default function AnalysisDetail() {
                                 <Terminal size={24} />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-white tracking-tight">System_Logs</h3>
-                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">DEVELOPER PERSISTENCE LAYER</p>
+                                <h3 className="text-2xl font-bold text-white tracking-tight">My Notes</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Saved developer notes</p>
                             </div>
                         </div>
                         <CommentsSection analysisId={id} initialComments={analysis.comments || []} />

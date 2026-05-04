@@ -11,38 +11,44 @@ const groq = new Groq({
 exports.analyzeCode = async (req, res, next) => {
   try {
     const { code, language } = req.body;
-    console.log(`DEBUG: ANALYZE REQUEST - User ID: ${req.user.id}, Email: ${req.user.email}, Language: ${language}`);
-
+    
     if (!code || !language) {
       return res.status(400).json({ success: false, message: 'Please provide code and language' });
     }
 
+    // Security: Limit code length to prevent API abuse and cost spikes
+    if (code.length > 15000) {
+      return res.status(400).json({ success: false, message: 'Code is too long for deep analysis. Please provide a snippet under 15k characters.' });
+    }
+
+    console.log(`DEBUG: ANALYZE REQUEST - User ID: ${req.user.id}, Email: ${req.user.email}, Language: ${language}`);
+
     const prompt = `
 Analyze the following code written in ${language}. 
 
-### INSTRUCTIONS:
-1. **DEEP ANALYSIS**: Identify syntax errors, logical bugs, security vulnerabilities (OWASP Top 10), and performance bottlenecks.
-2. **REASONING**: Before providing the final JSON, mentally simulate the execution and think through edge cases.
-3. **CORRECTION**: Provide a corrected version that is production-ready.
-4. **OPTIMIZATION**: Provide an optimized version with better time/space complexity if possible.
+### CORE OBJECTIVES:
+1. **CRITICAL AUDIT**: Identify syntax errors, logical bugs, and edge cases.
+2. **SECURITY PROTOCOL**: Evaluate against OWASP Top 10 (SQLi, XSS, CSRF, insecure dependencies, etc.).
+3. **PERFORMANCE MANIFEST**: Identify bottlenecks, O(n) complexities, and memory leaks.
+4. **REASONING**: Think step-by-step. Simulate execution in your neural layers before responding.
 
-### OUTPUT FORMAT:
-You must respond with a SINGLE JSON object. No markdown, no prose outside the JSON.
+### OUTPUT SCHEMA:
+You MUST respond with a SINGLE JSON object. No markdown, no conversational prose.
 
 {
-  "findings": "Detailed, bulleted list of all identified issues (bugs, security, logic).",
-  "explanation": "Clear, technical breakdown of why these issues occur and the logic behind the fixes.",
-  "correctedCode": "The complete fixed version of the code.",
-  "expectedOutput": "The exact output the corrected code is expected to produce when executed (e.g., console logs, return values).",
-  "optimizedCode": "A performance-optimized version (if applicable).",
-  "timeComplexity": "Big-O notation (e.g., O(n log n)) with brief justification.",
-  "spaceComplexity": "Big-O notation with brief justification.",
-  "confidenceScore": "A percentage (e.g., 95%) reflecting your certainty.",
-  "securityAudit": "Specific security evaluation (e.g., 'Vulnerable to SQL Injection', 'Secure').",
-  "bestPractices": "List of 3-5 specific improvements for modern, idiomatic code."
+  "findings": "Strictly technical, bulleted list of issues found. Be extremely critical.",
+  "explanation": "High-level architectural breakdown of the fix logic and system implications.",
+  "correctedCode": "The complete, production-ready fixed version of the code.",
+  "expectedOutput": "The exact stdout/return values expected from the corrected code.",
+  "optimizedCode": "A performance-optimized pattern (e.g., using Map instead of Array for O(1) lookups).",
+  "timeComplexity": "Big-O notation with 1-sentence justification.",
+  "spaceComplexity": "Big-O notation with 1-sentence justification.",
+  "confidenceScore": "A percentage (e.g., 99%) reflecting audit certainty.",
+  "securityAudit": "Specific security evaluation score and summary.",
+  "bestPractices": "3-5 senior-level architectural improvements for modern, idiomatic code."
 }
 
-### CODE TO ANALYZE:
+### SOURCE CODE TO AUDIT:
 \`\`\`${language}
 ${code}
 \`\`\`
@@ -53,7 +59,7 @@ ${code}
       messages: [
         { 
             role: 'system', 
-            content: 'You are a Senior Principal Software Engineer and Security Architect. Your task is to perform deep technical audits of code. You are extremely critical, detail-oriented, and follow industry best practices. You ALWAYS respond in valid JSON format.' 
+            content: 'You are a Senior Principal Software Engineer and Security Architect at a top-tier tech firm. Your task is to perform deep technical audits. You are extremely critical, detail-oriented, and prioritize security and performance above all. You ALWAYS respond in strict, valid JSON.' 
         },
         { role: 'user', content: prompt }
       ],

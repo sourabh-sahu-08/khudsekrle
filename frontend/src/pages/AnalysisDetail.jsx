@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { analysisService } from "@/utils/api";
-import { ArrowLeft, Code, Clock, Zap, AlertTriangle, CheckCircle, Database, Sparkles, Download, Share2, Check, FileJson, Copy, Terminal, MessageSquare, Send, Trash2, Edit2, Globe, Lock, Split, LayoutList, Twitter, Linkedin } from "lucide-react";
-import { DiffEditor, Editor } from "@monaco-editor/react";
+import { ArrowLeft, Clock, AlertTriangle, Database, Sparkles, Download, Share2, Check, FileJson, Globe, Lock, MessageSquare, Terminal } from "lucide-react";
 import Layout from "@/components/Layout";
-import ConfirmModal from "@/components/ConfirmModal";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import CodePreview from "@/components/shared/CodePreview";
+import ChatInterface from "@/components/analysis/ChatInterface";
+import CommentsSection from "@/components/analysis/CommentsSection";
 
 export default function AnalysisDetail() {
     const { id } = useParams();
@@ -15,13 +16,12 @@ export default function AnalysisDetail() {
     const [error, setError] = useState("");
     const [copied, setCopied] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
-    const [viewMode, setViewMode] = useState("diff"); // "diff" or "blocks"
 
     useEffect(() => {
         const handleScroll = () => {
-            const totalWidth = document.documentElement.scrollHeight - window.innerHeight;
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
             const currentScroll = window.scrollY;
-            setScrollProgress((currentScroll / totalWidth) * 100);
+            setScrollProgress((currentScroll / totalHeight) * 100);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -48,9 +48,7 @@ export default function AnalysisDetail() {
         const url = `${window.location.origin}/analysis/public/${id}`;
         navigator.clipboard.writeText(url);
         setCopied(true);
-        toast.success("Public link copied!", {
-            description: "You can now share this analysis with anyone."
-        });
+        toast.success("Public link copied!");
         setTimeout(() => setCopied(false), 2000);
     };
 
@@ -58,100 +56,41 @@ export default function AnalysisDetail() {
         try {
             const response = await analysisService.togglePublic(id);
             setAnalysis(response.data.data);
-            toast.success(response.data.data.isPublic ? "Analysis is now public" : "Analysis is now private");
+            toast.success(response.data.data.isPublic ? "Global visibility enabled" : "Privacy protocol activated");
         } catch (err) {
-            toast.error("Failed to update visibility");
+            toast.error("Network error: Visibility update failed");
         }
-    };
-
-    const handleSocialShare = (platform) => {
-        const url = `${window.location.origin}/analysis/public/${id}`;
-        const text = `Check out this AI-powered code analysis on khudsekrle! #AI #Programming #Debugger`;
-        
-        let shareUrl = '';
-        if (platform === 'twitter') {
-            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-        } else if (platform === 'linkedin') {
-            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-        }
-        
-        window.open(shareUrl, '_blank', 'width=600,height=400');
     };
 
     const handleDownloadMarkdown = () => {
         if (!analysis) return;
         try {
-            const markdown = `
-# khudsekrle Analysis Report: ${analysis.language.toUpperCase()}
-*Generated on: ${new Date(analysis.createdAt).toLocaleString()}*
-
-## 1. Identified Findings
-${analysis.findings}
-
-## 2. AI Insights & Explanation
-${analysis.explanation}
-
-## 3. Recommended Resolution (Corrected Code)
-\`\`\`${analysis.language}
-${analysis.correctedCode}
-\`\`\`
-
-## 4. Expected Output
-\`\`\`text
-${analysis.expectedOutput || "N/A"}
-\`\`\`
-
-## 5. Performance Optimized Pattern
-\`\`\`${analysis.language}
-${analysis.optimizedCode || "N/A"}
-\`\`\`
-
-## 6. Complexity Analysis
-- **Time Complexity:** ${analysis.timeComplexity}
-- **Space Complexity:** ${analysis.spaceComplexity}
-- **AI Confidence:** ${analysis.confidenceScore}
-`;
+            const markdown = `# AI Audit Report: ${analysis.language.toUpperCase()}\n\n## Findings\n${analysis.findings}\n\n## Explanation\n${analysis.explanation}\n\n## Corrected Code\n\`\`\`${analysis.language}\n${analysis.correctedCode}\n\`\`\``;
             const blob = new Blob([markdown], { type: "text/markdown" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `khudsekrle_analysis_${analysis.language}_${id?.substring(0, 8)}.md`;
+            a.download = `audit_${id?.substring(0, 8)}.md`;
             a.click();
             URL.revokeObjectURL(url);
-            toast.success("Markdown report downloaded");
+            toast.success("Report exported as Markdown");
         } catch (err) {
-            toast.error("Failed to generate report");
+            toast.error("Export failed");
         }
-    };
-
-    const CopyButton = ({ text, tooltip }) => {
-        const [isCopied, setIsCopied] = useState(false);
-        const handleCopy = () => {
-            navigator.clipboard.writeText(text);
-            setIsCopied(true);
-            toast.success(`${tooltip} copied!`);
-            setTimeout(() => setIsCopied(false), 2000);
-        };
-        return (
-            <button 
-                onClick={handleCopy}
-                className="p-2 hover:bg-white/10 rounded-lg text-slate-500 hover:text-white transition-all active:scale-90"
-                title={`Copy ${tooltip}`}
-            >
-                {isCopied ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
-            </button>
-        );
     };
 
     if (loading) {
         return (
             <Layout>
-                <div className="max-w-6xl mx-auto pt-24 px-6 pb-12 flex flex-col justify-center items-center h-[70vh] space-y-4">
+                <div className="flex flex-col items-center justify-center h-[80vh] space-y-8">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
-                        <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin relative z-10"></div>
+                        <div className="absolute inset-0 bg-blue-500 blur-3xl opacity-20 animate-pulse" />
+                        <div className="w-20 h-20 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin relative z-10 shadow-2xl"></div>
                     </div>
-                    <p className="text-slate-400 font-mono text-sm tracking-widest animate-pulse">RECOVERING DATA...</p>
+                    <div className="text-center space-y-2">
+                        <p className="text-white font-black text-xl tracking-[0.2em] uppercase animate-shimmer bg-clip-text text-transparent">Decoding Metadata</p>
+                        <p className="text-slate-500 text-[10px] font-black tracking-widest uppercase">INITIALIZING SECURE SESSION...</p>
+                    </div>
                 </div>
             </Layout>
         );
@@ -160,20 +99,20 @@ ${analysis.optimizedCode || "N/A"}
     if (error || !analysis) {
         return (
             <Layout>
-                <div className="max-w-6xl mx-auto pt-24 px-6 pb-12">
+                <div className="max-w-6xl mx-auto pt-32 px-6">
                     <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="glass p-12 rounded-[2.5rem] text-center max-w-xl mx-auto border border-red-500/10 shadow-2xl shadow-red-500/5"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="glass p-16 rounded-[3rem] text-center max-w-2xl mx-auto border border-red-500/10 shadow-2xl"
                     >
-                        <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-400 mx-auto mb-6">
-                            <AlertTriangle size={40} />
+                        <div className="w-24 h-24 bg-red-500/5 rounded-[2rem] flex items-center justify-center text-red-500 mx-auto mb-8 border border-red-500/10 shadow-inner">
+                            <AlertTriangle size={48} />
                         </div>
-                        <h2 className="text-2xl text-white font-black mb-3">Analysis Lost</h2>
-                        <p className="text-slate-400 mb-10 leading-relaxed font-medium">{error}</p>
-                        <Link to="/dashboard" className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold transition-all inline-flex items-center gap-3 border border-slate-800">
-                            <ArrowLeft size={20} />
-                            Return to Dashboard
+                        <h2 className="text-3xl text-white font-black mb-4 tracking-tight">Access Protocol Failure</h2>
+                        <p className="text-slate-400 mb-12 leading-relaxed font-medium text-lg">{error || "The requested analysis does not exist in our neural core."}</p>
+                        <Link to="/dashboard" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all inline-flex items-center gap-4 border border-white/5 shadow-xl">
+                            <ArrowLeft size={18} />
+                            Return to Nexus
                         </Link>
                     </motion.div>
                 </div>
@@ -183,655 +122,150 @@ ${analysis.optimizedCode || "N/A"}
 
     return (
         <Layout>
-            {/* Scroll Progress Bar */}
             <div className="fixed top-0 left-0 w-full h-1 z-[100] pointer-events-none">
-                <motion.div 
-                    className="h-full bg-blue-500 origin-left"
-                    style={{ width: `${scrollProgress}%` }}
-                />
+                <motion.div className="h-full bg-blue-500 origin-left shadow-[0_0_15px_rgba(59,130,246,0.5)]" style={{ width: `${scrollProgress}%` }} />
             </div>
 
-            <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-12">
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                >
-                    <Link to="/dashboard" className="text-slate-500 hover:text-white flex items-center gap-2 mb-10 transition-all font-bold text-sm tracking-widest group w-fit">
-                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                        BACK TO DASHBOARD
+            <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-24">
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+                    <Link to="/dashboard" className="text-slate-500 hover:text-white flex items-center gap-2 mb-12 transition-all font-black text-[10px] tracking-widest-xl group w-fit">
+                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                        BACK TO TERMINAL
                     </Link>
                 </motion.div>
 
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
-                        <div className="flex items-center gap-4 mb-3">
-                            <div className="w-14 h-14 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 shadow-xl shadow-blue-500/5 border border-blue-500/10">
-                                <Code size={28} />
+                <div className="flex flex-col xl:flex-row xl:items-end justify-between mb-16 gap-10">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                        <div className="flex items-center gap-5 mb-4">
+                            <div className="w-16 h-16 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 shadow-2xl border border-blue-500/10">
+                                <FileJson size={32} />
                             </div>
-                            <h1 className="text-4xl font-black text-white tracking-tight">
-                                Analysis Results
-                            </h1>
+                            <div>
+                                <h1 className="text-5xl font-black text-white tracking-tightest-extreme mb-1">
+                                    Audit_Session
+                                </h1>
+                                <div className="flex items-center gap-4">
+                                    <span className="bg-blue-500/10 px-4 py-1.5 rounded-lg text-[10px] text-blue-400 uppercase font-black tracking-widest-xl border border-blue-500/10">
+                                        {analysis.language}
+                                    </span>
+                                    <span className="text-slate-800">/</span>
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{new Date(analysis.createdAt).toLocaleDateString()}</span>
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-slate-400 flex items-center gap-3 font-medium ml-1">
-                            <span className="font-mono bg-blue-500/10 px-3 py-1 rounded-lg text-xs text-blue-400 uppercase font-bold tracking-widest border border-blue-500/10">
-                                {analysis.language}
-                            </span>
-                            <span className="text-slate-700">•</span>
-                            <span className="text-sm">{new Date(analysis.createdAt).toLocaleString()}</span>
-                        </p>
                     </motion.div>
                     
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="glass px-8 py-5 rounded-[2rem] border border-white/5 flex items-center gap-6 shadow-2xl"
-                    >
-                        <div className="space-y-1">
-                            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500">AI Confidence</p>
-                            <div className="flex items-center gap-3">
-                                <div className="h-1.5 w-32 bg-slate-900 rounded-full overflow-hidden">
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        animate={{ width: analysis.confidenceScore || '0%' }}
-                                        transition={{ duration: 1, ease: "easeOut" }}
-                                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-500" 
-                                    />
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass px-10 py-6 rounded-[2.5rem] border border-white/5 flex flex-wrap items-center gap-8 shadow-2xl">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-[9px] uppercase font-black tracking-widest-xl text-slate-500">AI Confidence Core</p>
+                            <div className="flex items-center gap-4">
+                                <div className="h-2 w-40 bg-slate-950 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                                    <motion.div initial={{ width: 0 }} animate={{ width: analysis.confidenceScore || '90%' }} transition={{ duration: 1.5, ease: "circOut" }} className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_10px_rgba(59,130,246,0.3)]" />
                                 </div>
-                                <span className="text-blue-400 font-black text-xl leading-none">{analysis.confidenceScore}</span>
+                                <span className="text-blue-400 font-black text-2xl tracking-tighter">{analysis.confidenceScore}</span>
                             </div>
                         </div>
 
-                        <div className="h-10 w-[1px] bg-white/10 hidden md:block" />
+                        <div className="h-12 w-[1px] bg-white/5 hidden xl:block" />
 
                         <div className="flex items-center gap-3">
-                            <button 
-                                onClick={handleTogglePublic}
-                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 border ${analysis.isPublic ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-slate-400 border-white/5'}`}
-                                title={analysis.isPublic ? "Make Private" : "Make Public"}
-                            >
+                            <button onClick={handleTogglePublic} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 border shadow-lg ${analysis.isPublic ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-slate-500 border-white/5'}`} title={analysis.isPublic ? "Go Stealth" : "Broadcast Public"}>
                                 {analysis.isPublic ? <Globe size={20} /> : <Lock size={20} />}
                             </button>
-                            <button 
-                                onClick={handleDownloadMarkdown}
-                                className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all active:scale-90 border border-white/5"
-                                title="Download Markdown"
-                            >
+                            <button onClick={handleDownloadMarkdown} className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-500 hover:text-white transition-all active:scale-90 border border-white/5 shadow-lg" title="Export Manifest">
                                 <Download size={20} />
                             </button>
-                            <button 
-                                onClick={handleShare}
-                                disabled={!analysis.isPublic}
-                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 border border-white/5 relative ${!analysis.isPublic ? 'opacity-30 cursor-not-allowed' : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white'}`}
-                                title={analysis.isPublic ? "Copy Public Link" : "Make public to share link"}
-                            >
+                            <button onClick={handleShare} disabled={!analysis.isPublic} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 border relative shadow-lg ${!analysis.isPublic ? 'opacity-20 cursor-not-allowed' : 'bg-white/5 hover:bg-white/10 text-slate-500 hover:text-white'}`}>
                                 {copied ? <Check size={20} className="text-emerald-500" /> : <Share2 size={20} />}
                             </button>
-                            {analysis.isPublic && (
-                                <div className="flex gap-2 animate-in fade-in slide-in-from-right-1 duration-300">
-                                    <button 
-                                        onClick={() => handleSocialShare('twitter')}
-                                        className="w-12 h-12 rounded-xl bg-white/5 hover:bg-[#1DA1F2]/10 text-slate-400 hover:text-[#1DA1F2] flex items-center justify-center transition-all active:scale-90 border border-white/5"
-                                        title="Share on Twitter"
-                                    >
-                                        <Twitter size={20} />
-                                    </button>
-                                    <button 
-                                        onClick={() => handleSocialShare('linkedin')}
-                                        className="w-12 h-12 rounded-xl bg-white/5 hover:bg-[#0A66C2]/10 text-slate-400 hover:text-[#0A66C2] flex items-center justify-center transition-all active:scale-90 border border-white/5"
-                                        title="Share on LinkedIn"
-                                    >
-                                        <Linkedin size={20} />
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     </motion.div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="glass p-10 rounded-[2.5rem] border-l-4 border-l-purple-500 lg:col-span-2 relative overflow-hidden group shadow-2xl"
-                    >
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/[0.03] blur-3xl rounded-full translate-x-24 -translate-y-24" />
-                        <div className="flex items-center gap-3 mb-6 relative z-10">
-                            <AlertTriangle className="text-purple-400" size={22} />
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Identified Vulnerabilities</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-12">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-8 glass p-12 rounded-[3rem] border-l-4 border-l-blue-600 relative overflow-hidden group shadow-2xl">
+                        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/[0.03] blur-3xl rounded-full translate-x-40 -translate-y-40" />
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center text-blue-500 border border-blue-500/10">
+                                <AlertTriangle size={20} />
+                            </div>
+                            <h3 className="text-xs font-black uppercase tracking-widest-xl text-slate-400">Heuristic Findings</h3>
                         </div>
-                        <div className="bg-slate-950/50 p-6 rounded-2xl border border-white/5 relative z-10">
-                            <pre className="text-slate-300 leading-relaxed font-mono text-[15px] whitespace-pre-wrap">{analysis.findings}</pre>
+                        <div className="bg-slate-950/40 p-8 rounded-[2rem] border border-white/5 shadow-inner">
+                            <pre className="text-slate-300 leading-relaxed font-mono text-base whitespace-pre-wrap">{analysis.findings}</pre>
                         </div>
                     </motion.div>
 
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="glass p-10 rounded-[2.5rem] flex flex-col justify-center space-y-10 border border-white/5 shadow-2xl"
-                    >
-                        <div className="flex items-center gap-5">
-                            <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 shadow-inner">
-                                <Clock size={28} />
+                    <div className="lg:col-span-4 flex flex-col gap-8">
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="glass p-10 rounded-[2.5rem] border border-white/5 shadow-2xl flex items-center gap-6 group hover:border-blue-500/20 transition-all">
+                            <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 shadow-inner group-hover:scale-110 transition-transform">
+                                <Clock size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-1">Time Complexity</p>
-                                <p className="text-2xl font-mono text-white font-bold leading-none">{analysis.timeComplexity}</p>
+                                <p className="text-[10px] uppercase font-black tracking-widest-xl text-slate-500 mb-1">Time Complexity</p>
+                                <p className="text-3xl font-mono text-white font-black tracking-tighter">{analysis.timeComplexity}</p>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-5">
-                            <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 shadow-inner">
-                                <Database size={28} />
+                        </motion.div>
+
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="glass p-10 rounded-[2.5rem] border border-white/5 shadow-2xl flex items-center gap-6 group hover:border-emerald-500/20 transition-all">
+                            <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 shadow-inner group-hover:scale-110 transition-transform">
+                                <Database size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-1">Space Complexity</p>
-                                <p className="text-2xl font-mono text-white font-bold leading-none">{analysis.spaceComplexity}</p>
+                                <p className="text-[10px] uppercase font-black tracking-widest-xl text-slate-500 mb-1">Memory Overhead</p>
+                                <p className="text-3xl font-mono text-white font-black tracking-tighter">{analysis.spaceComplexity}</p>
                             </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </div>
                 </div>
 
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="glass p-10 rounded-[2.5rem] mb-12 border border-white/5 shadow-2xl relative overflow-hidden group"
-                >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/[0.02] blur-3xl rounded-full translate-x-32 -translate-y-32" />
-                    <div className="flex items-center gap-3 mb-6 relative z-10">
-                        <Sparkles className="text-blue-400" size={24} />
-                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Detailed AI Insights</h3>
-                    </div>
-                    <p className="text-slate-300 leading-relaxed whitespace-pre-wrap text-xl font-medium relative z-10">{analysis.explanation}</p>
-                </motion.div>
-
-                {/* Code Comparison Section */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.45 }}
-                    className="flex items-center justify-between mb-8 mt-12"
-                >
-                    <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <Terminal size={20} className="text-blue-400" />
-                        Code Comparison
-                    </h3>
-                    <div className="flex bg-slate-900/50 p-1 rounded-xl border border-white/5">
-                        <button 
-                            onClick={() => setViewMode("diff")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${viewMode === "diff" ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
-                        >
-                            <Split size={14} />
-                            Diff View
-                        </button>
-                        <button 
-                            onClick={() => setViewMode("blocks")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${viewMode === "blocks" ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
-                        >
-                            <LayoutList size={14} />
-                            List View
-                        </button>
-                    </div>
-                </motion.div>
-
-                <AnimatePresence mode="wait">
-                    {viewMode === "diff" ? (
-                        <motion.div 
-                            key="diff"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.98 }}
-                            className="glass rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl h-[500px] relative group mb-12"
-                        >
-                            <div className="absolute top-4 right-4 z-10">
-                                <CopyButton text={analysis.correctedCode} tooltip="Fixed Code" />
-                            </div>
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/[0.02] blur-3xl rounded-full" />
-                            <DiffEditor
-                                height="100%"
-                                language={analysis.language || "javascript"}
-                                original={analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
-                                modified={analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
-                                theme="vs-dark"
-                                options={{
-                                    originalEditable: false,
-                                    readOnly: true,
-                                    renderSideBySide: true,
-                                    minimap: { enabled: false },
-                                    scrollBeyondLastLine: false,
-                                    fontSize: 14,
-                                    lineNumbers: 'on',
-                                    padding: { top: 20, bottom: 20 },
-                                    folding: true,
-                                    scrollbar: {
-                                        vertical: 'hidden',
-                                        horizontal: 'hidden'
-                                    }
-                                }}
-                            />
-                        </motion.div>
-                    ) : (
-                        <motion.div 
-                            key="blocks"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.98 }}
-                            className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12"
-                        >
-                            <div className="glass rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl">
-                                <div className="bg-slate-900 px-8 py-5 border-b border-white/5 flex items-center justify-between">
-                                    <h3 className="text-slate-400 text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-3">
-                                        <Code size={18} className="text-slate-500" />
-                                        Original Codebase
-                                    </h3>
-                                </div>
-                                <div className="p-8 bg-slate-950/80">
-                                    <div className="h-[300px] rounded-2xl overflow-hidden border border-white/5 shadow-inner">
-                                        <Editor
-                                            height="100%"
-                                            language={analysis.language || "javascript"}
-                                            value={analysis.originalCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
-                                            theme="vs-dark"
-                                            options={{
-                                                readOnly: true,
-                                                minimap: { enabled: false },
-                                                fontSize: 14,
-                                                scrollBeyondLastLine: false,
-                                                automaticLayout: true,
-                                                padding: { top: 20 },
-                                                fontFamily: 'Fira Code, monospace',
-                                                lineNumbers: 'on',
-                                                renderLineHighlight: 'none'
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="glass rounded-[2rem] overflow-hidden border border-emerald-500/20 shadow-2xl shadow-emerald-500/5 group">
-                                <div className="bg-emerald-500/[0.03] px-8 py-5 border-b border-white/5 flex items-center justify-between">
-                                    <h3 className="text-emerald-400/80 text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-3">
-                                        <CheckCircle size={18} className="text-emerald-500" />
-                                        Recommended Resolution
-                                    </h3>
-                                    <CopyButton text={analysis.correctedCode} tooltip="Corrected Code" />
-                                </div>
-                                <div className="p-8 bg-emerald-500/[0.01]">
-                                    <div className="h-[300px] rounded-2xl overflow-hidden border border-emerald-500/10 shadow-inner group-hover:border-emerald-500/30 transition-colors">
-                                        <Editor
-                                            height="100%"
-                                            language={analysis.language || "javascript"}
-                                            value={analysis.correctedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}
-                                            theme="vs-dark"
-                                            options={{
-                                                readOnly: true,
-                                                minimap: { enabled: false },
-                                                fontSize: 14,
-                                                scrollBeyondLastLine: false,
-                                                automaticLayout: true,
-                                                padding: { top: 20 },
-                                                fontFamily: 'Fira Code, monospace',
-                                                lineNumbers: 'on',
-                                                renderLineHighlight: 'none'
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {analysis.expectedOutput && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.65 }}
-                        className="mt-12 glass rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl relative group"
-                    >
-                        <div className="bg-slate-900/50 px-8 py-6 border-b border-white/5 flex items-center justify-between">
-                            <h3 className="text-slate-400 text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-3">
-                                <Terminal size={20} className="text-blue-400" />
-                                Expected Execution Output
-                            </h3>
-                            <CopyButton text={analysis.expectedOutput} tooltip="Expected Output" />
-                        </div>
-                        <div className="p-10 bg-slate-950/50">
-                            <div className="bg-black/40 rounded-3xl p-8 border border-white/5 shadow-inner group-hover:border-blue-500/10 transition-all">
-                                <pre className="text-blue-300/80 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-                                    <code>{analysis.expectedOutput?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
-                                </pre>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-                
-                {analysis.optimizedCode && analysis.optimizedCode !== analysis.correctedCode && analysis.optimizedCode !== "N/A" && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7 }}
-                        className="mt-12 glass rounded-[2.5rem] overflow-hidden border border-blue-500/20 shadow-2xl shadow-blue-500/5 group"
-                    >
-                        <div className="bg-blue-500/[0.03] px-8 py-6 border-b border-white/5 flex items-center justify-between">
-                            <h3 className="text-blue-400/80 text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-3">
-                                <Zap size={20} className="text-blue-500 animate-pulse" />
-                                Performance Optimized Pattern
-                            </h3>
-                            <CopyButton text={analysis.optimizedCode} tooltip="Optimized Code" />
-                        </div>
-                        <div className="p-10 bg-blue-500/[0.01]">
-                            <div className="bg-slate-950/80 rounded-3xl p-8 border border-blue-500/10 shadow-inner group-hover:border-blue-500/30 transition-all">
-                                <pre className="text-blue-300 font-mono text-sm leading-relaxed">
-                                    <code>{analysis.optimizedCode?.replace(/^```[\w]*\n/, '').replace(/\n```$/, '')}</code>
-                                </pre>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-
-                {/* AI Chat Section */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="mt-20 glass rounded-[3rem] p-10 border border-white/5 relative overflow-hidden shadow-2xl"
-                >
-                    <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/[0.02] blur-3xl rounded-full -translate-x-32 -translate-y-32" />
-                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                                <Sparkles size={24} />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-white">Ask AI Assistant</h3>
-                                <p className="text-sm text-slate-500 font-medium">Get deeper insights or clarifications about this analysis</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <ChatInterface analysisId={id} initialMessages={analysis.chatHistory || []} />
-                </motion.div>
-
-                {/* Comments Section */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="mt-12 glass rounded-[3rem] p-10 border border-white/5 relative overflow-hidden shadow-2xl"
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass p-12 rounded-[3.5rem] mb-20 border border-white/5 shadow-3xl relative overflow-hidden group">
+                    <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-indigo-600/[0.03] blur-3xl rounded-full" />
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                            <MessageSquare size={24} />
+                        <div className="w-10 h-10 bg-indigo-600/10 rounded-xl flex items-center justify-center text-indigo-400 border border-indigo-500/10">
+                            <Sparkles size={20} />
                         </div>
-                        <div>
-                            <h3 className="text-xl font-bold text-white">Developer Notes</h3>
-                            <p className="text-sm text-slate-500 font-medium">Add your own notes or comments to this analysis</p>
+                        <h3 className="text-xs font-black uppercase tracking-widest-xl text-slate-400">Neural Insights</h3>
+                    </div>
+                    <p className="text-slate-200 leading-relaxed whitespace-pre-wrap text-2xl font-bold tracking-tight relative z-10">{analysis.explanation}</p>
+                </motion.div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24">
+                    <CodePreview title="DEPRECATED_SOURCE" code={analysis.originalCode} language={analysis.language} height="400px" />
+                    <div className="relative">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-[2rem] blur-xl opacity-50" />
+                        <CodePreview title="OPTIMIZED_MANIFEST" code={analysis.correctedCode} language={analysis.language} height="400px" />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <div className="space-y-10">
+                        <div className="flex items-center gap-5 px-4">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/10 shadow-lg">
+                                <MessageSquare size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-white tracking-tight">Neural_Consultant</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">REAL-TIME INFERENCE ENGINE</p>
+                            </div>
                         </div>
+                        <ChatInterface analysisId={id} initialMessages={analysis.chatHistory || []} />
                     </div>
 
-                    <CommentsSection analysisId={id} initialComments={analysis.comments || []} />
-                </motion.div>
+                    <div className="space-y-10">
+                        <div className="flex items-center gap-5 px-4">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/10 shadow-lg">
+                                <Terminal size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-white tracking-tight">System_Logs</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">DEVELOPER PERSISTENCE LAYER</p>
+                            </div>
+                        </div>
+                        <CommentsSection analysisId={id} initialComments={analysis.comments || []} />
+                    </div>
+                </div>
             </div>
         </Layout>
-    );
-}
-
-function CommentsSection({ analysisId, initialComments }) {
-    const [comments, setComments] = useState(initialComments);
-    const [newComment, setNewComment] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [editText, setEditText] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [commentToDelete, setCommentToDelete] = useState(null);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!newComment.trim() || isSubmitting) return;
-
-        setIsSubmitting(true);
-        try {
-            const response = await analysisService.addComment(analysisId, newComment.trim());
-            setComments(response.data.data);
-            setNewComment("");
-            toast.success("Note added!");
-        } catch (err) {
-            toast.error("Failed to add note");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleDeleteClick = (commentId) => {
-        setCommentToDelete(commentId);
-        setIsModalOpen(true);
-    };
-
-    const handleDeleteConfirm = async () => {
-        if (!commentToDelete) return;
-        try {
-            const response = await analysisService.deleteComment(analysisId, commentToDelete);
-            setComments(response.data.data);
-            toast.success("Note deleted");
-        } catch (err) {
-            toast.error("Failed to delete note");
-        } finally {
-            setCommentToDelete(null);
-        }
-    };
-
-    const handleEditStart = (comment) => {
-        setEditingId(comment._id);
-        setEditText(comment.text);
-    };
-
-    const handleEditSave = async (commentId) => {
-        if (!editText.trim()) return;
-        try {
-            const response = await analysisService.editComment(analysisId, commentId, editText.trim());
-            setComments(response.data.data);
-            setEditingId(null);
-            toast.success("Note updated");
-        } catch (err) {
-            toast.error("Failed to update note");
-        }
-    };
-
-    return (
-        <div className="space-y-8">
-            <form onSubmit={handleSubmit} className="flex gap-4">
-                <input 
-                    type="text" 
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Write a note to yourself..."
-                    className="flex-1 bg-slate-900/50 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all placeholder:text-slate-600"
-                />
-                <button 
-                    type="submit"
-                    disabled={!newComment.trim() || isSubmitting}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 rounded-2xl font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-emerald-900/20"
-                >
-                    {isSubmitting ? "Adding..." : <Send size={18} />}
-                </button>
-            </form>
-
-            <div className="space-y-4">
-                {comments.length === 0 ? (
-                    <div className="bg-white/[0.01] border border-dashed border-white/5 rounded-3xl p-10 text-center">
-                        <p className="text-slate-500 text-sm font-medium italic">No notes yet. Add one above!</p>
-                    </div>
-                ) : (
-                    comments.map((comment, i) => (
-                        <motion.div 
-                            key={comment._id || i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/[0.08] transition-all group/comment"
-                        >
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">{comment.userName}</span>
-                                    <span className="text-[10px] font-bold text-slate-500">{new Date(comment.createdAt).toLocaleString()}</span>
-                                </div>
-                                
-                                <div className="flex items-center gap-2 opacity-0 group-hover/comment:opacity-100 transition-opacity">
-                                    <button 
-                                        onClick={() => handleEditStart(comment)}
-                                        className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all"
-                                        title="Edit Note"
-                                    >
-                                        <Edit2 size={14} />
-                                    </button>
-                                    <button 
-                                        onClick={() => handleDeleteClick(comment._id)}
-                                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
-                                        title="Delete Note"
-                                    >
-                                        <Trash2 size={14} />
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            {editingId === comment._id ? (
-                                <div className="space-y-3">
-                                    <textarea 
-                                        value={editText}
-                                        onChange={(e) => setEditText(e.target.value)}
-                                        className="w-full bg-slate-900 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all min-h-[80px]"
-                                    />
-                                    <div className="flex items-center gap-3">
-                                        <button 
-                                            onClick={() => handleEditSave(comment._id)}
-                                            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"
-                                        >
-                                            Save Changes
-                                        </button>
-                                        <button 
-                                            onClick={() => setEditingId(null)}
-                                            className="text-slate-400 hover:text-white text-xs font-bold transition-colors"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <p className="text-slate-300 text-sm leading-relaxed">{comment.text}</p>
-                            )}
-                        </motion.div>
-                    ))
-                )}
-            </div>
-
-            <ConfirmModal 
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onConfirm={handleDeleteConfirm}
-                title="Delete Developer Note?"
-                message="This will permanently remove this note from the analysis. This action cannot be undone."
-                confirmText="Delete Note"
-            />
-        </div>
-    );
-}
-
-function ChatInterface({ analysisId, initialMessages = [] }) {
-    const [messages, setMessages] = useState(initialMessages.map(m => ({ role: m.role, content: m.content })));
-    const [input, setInput] = useState("");
-    const [isSending, setIsSending] = useState(false);
-    const scrollRef = useState(null);
-
-    const handleSend = async (e) => {
-        e.preventDefault();
-        if (!input.trim() || isSending) return;
-
-        const userMsg = input.trim();
-        setInput("");
-        setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-        setIsSending(true);
-
-        try {
-            const response = await analysisService.chat(analysisId, userMsg);
-            setMessages(prev => [...prev, { role: 'ai', content: response.data.data }]);
-        } catch (err) {
-            toast.error("Failed to get AI response");
-            setMessages(prev => [...prev, { role: 'ai', content: "Sorry, I encountered an error. Please try again." }]);
-        } finally {
-            setIsSending(false);
-        }
-    };
-
-    return (
-        <div className="space-y-6">
-            <div className="bg-black/40 rounded-3xl p-6 min-h-[300px] max-h-[500px] overflow-y-auto border border-white/5 space-y-6 custom-scrollbar">
-                {messages.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-600 py-16">
-                        <div className="w-16 h-16 bg-white/[0.02] rounded-2xl flex items-center justify-center mb-4 border border-white/5">
-                            <Sparkles size={24} className="opacity-20" />
-                        </div>
-                        <p className="text-sm font-bold tracking-widest uppercase opacity-40">Console Idle</p>
-                        <p className="text-xs mt-2">Initialize query to begin session</p>
-                    </div>
-                ) : (
-                    messages.map((msg, i) => (
-                        <motion.div 
-                            key={i}
-                            initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
-                        >
-                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 px-2 ${msg.role === 'user' ? 'text-blue-400' : 'text-indigo-400'}`}>
-                                {msg.role === 'user' ? 'Debugger' : 'AI Assistant'}
-                            </span>
-                            <div className={`max-w-[85%] p-5 rounded-2xl text-[14px] leading-relaxed shadow-2xl ${
-                                msg.role === 'user' 
-                                ? 'bg-blue-600/10 text-blue-100 border border-blue-500/20 rounded-tr-none' 
-                                : 'bg-indigo-600/10 text-indigo-100 border border-indigo-500/20 rounded-tl-none'
-                            }`}>
-                                {msg.content}
-                            </div>
-                        </motion.div>
-                    ))
-                )}
-                {isSending && (
-                    <div className="flex flex-col items-start">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 px-2 text-indigo-400">AI Assistant</span>
-                        <div className="bg-indigo-600/10 p-5 rounded-2xl rounded-tl-none border border-indigo-500/20">
-                            <div className="flex gap-1.5">
-                                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
-                                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
-                                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }} className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <form onSubmit={handleSend} className="relative group">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-indigo-500 font-mono font-bold pointer-events-none group-focus-within:text-blue-400 transition-colors">
-                    &gt;
-                </div>
-                <input 
-                    type="text" 
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask the AI anything about your code..."
-                    className="w-full bg-slate-950/80 border border-white/10 rounded-[2rem] py-5 pl-12 pr-16 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all placeholder:text-slate-700 font-medium"
-                />
-                <button 
-                    type="submit"
-                    disabled={!input.trim() || isSending}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all disabled:opacity-20 shadow-xl shadow-indigo-900/40 active:scale-90"
-                >
-                    <Send size={18} />
-                </button>
-            </form>
-        </div>
     );
 }

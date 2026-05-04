@@ -1,27 +1,29 @@
-# khudsekrle (AI-Powered Code Debugger and Explanation System)
+# khudsekrle (Neural Code Audit & Optimization Nexus)
 
-A production-ready full-stack application for intelligent code analysis, debugging, and optimization.
+A high-fidelity, production-ready full-stack application for intelligent code analysis, security auditing, and architectural optimization.
 
-## Features
-- **Intelligent Debugging**: Detects syntax and logical errors using AI.
-- **Simple Explanations**: Breaks down complex errors into beginner-friendly language.
-- **Code Optimization**: Suggests more efficient versions of your code.
-- **Complexity Analysis**: Provides Big-O time and space complexity.
-- **Multi-language Support**: Supports C, C++, Java, Python, and JavaScript.
-- **History Tracking**: View and manage previous analysis results in a personalized dashboard.
-- **Modern UI**: Sleek dark-themed interface with Monaco Editor integration.
+## 🚀 Project Vision
+**khudsekrle** is designed to be the ultimate companion for senior engineers. It doesn't just find bugs; it performs deep heuristic analysis to identify architectural flaws, security vulnerabilities, and performance bottlenecks, providing production-ready resolutions in real-time.
 
-## Tech Stack
-- **Frontend**: React (Vite), Tailwind CSS, Monaco Editor, Lucide Icons, Framer Motion.
-- **Backend**: Node.js, Express, MongoDB, Groq API (Llama 3.3).
-- **Security**: JWT, Bcrypt, Helmet, CORS, Rate Limiting.
+## ✨ Premium Features
+- **Neural Audit Core**: Deep syntax and logical bug detection using Llama 3.3 (Groq).
+- **Security Manifest**: Full evaluation against OWASP Top 10 security standards.
+- **Complexity Heuristics**: Detailed Big-O time and space complexity justifications.
+- **Architectural Chat**: Real-time consulting with an AI principal engineer about your audit results.
+- **Developer Persistence**: Integrated developer notes and history tracking.
+- **SaaS Aesthetics**: Premium dark-mode glassmorphism interface with fluid animations.
 
-## Getting Started
+## 🛠 Tech Stack
+- **Frontend**: React 18, Vite, Tailwind CSS, Monaco Editor, Framer Motion, Lucide Icons.
+- **Backend**: Node.js, Express, MongoDB (Atlas), Groq API (Inference Engine).
+- **Security**: JWT, Bcrypt, Helmet, Express Rate Limit, CORS.
+
+## 🏁 Getting Started
 
 ### Prerequisites
-- Node.js installed
-- MongoDB URI
-- Groq API Key
+- Node.js (v18+)
+- MongoDB Connection String
+- Groq Cloud API Key
 
 ### Installation
 
@@ -30,7 +32,7 @@ A production-ready full-stack application for intelligent code analysis, debuggi
    ```bash
    cd backend
    npm install
-   # Create .env file based on .env.example
+   # Configure .env with MONGODB_URI, JWT_SECRET, GROQ_API_KEY
    npm start
    ```
 3. **Setup Frontend**
@@ -40,18 +42,13 @@ A production-ready full-stack application for intelligent code analysis, debuggi
    npm run dev
    ```
 
-## Deployment
-- **Backend (Render)**:
-  1. Connect your GitHub repository to Render.
-  2. Select "Blueprint" to use the `render.yaml` file automatically.
-  3. Alternatively, create a "Web Service" with:
-     - **Root Directory**: `backend`
-     - **Build Command**: `npm install`
-     - **Start Command**: `npm start`
-  4. Configure Environment Variables: `MONGODB_URI`, `JWT_SECRET`, `GROQ_API_KEY`.
-- **Frontend**: Deploy to Vercel or Netlify. Ensure `VITE_API_URL` environment variable points to your Render backend URL.
-- **Database**: Use MongoDB Atlas for a production-ready database.
+## 🚢 Deployment
+- **Backend**: Optimized for Render or Heroku. Uses `render.yaml` for automated blueprinting.
+- **Frontend**: Recommended deployment on Vercel with `VITE_API_URL` pointing to the backend nexus.
 
-## Documentation
-Refer to `brain/documentation.md` for project abstract and system architecture.
-Refer to `brain/viva_qa.md` for exam preparation.
+## 📄 Documentation
+- **Architecture**: See `brain/documentation.md` for the system design document.
+- **Q&A**: See `brain/viva_qa.md` for technical deep-dives and exam prep.
+
+---
+*Built with precision for the modern developer.*

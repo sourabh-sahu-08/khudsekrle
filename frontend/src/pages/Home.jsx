@@ -82,7 +82,7 @@ export default function Home() {
               <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-lg">
                 <Terminal size={16} />
               </div>
-              <h2 className="text-[10px] font-black uppercase tracking-widest-xl text-slate-400">SOURCE_CORE</h2>
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Editor</h2>
             </div>
             
             <div className="flex items-center gap-4">
@@ -91,7 +91,7 @@ export default function Home() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-transparent border-none text-slate-300 text-[10px] font-black uppercase outline-none cursor-pointer hover:text-white transition-colors"
+                  className="bg-transparent border-none text-slate-300 text-[10px] font-bold uppercase outline-none cursor-pointer hover:text-white transition-colors"
                 >
                   {languages.map((lang) => (
                     <option key={lang.value} value={lang.value} className="bg-slate-900">{lang.label}</option>
@@ -131,17 +131,17 @@ export default function Home() {
                 {isAnalyzing ? (
                   <div className="flex items-center gap-3">
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span className="text-[10px] font-black uppercase tracking-widest-xl">{steps[analysisStep]}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{steps[analysisStep]}</span>
                   </div>
                 ) : (
                   <>
                     <Cpu size={18} className="group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="text-[10px] font-black uppercase tracking-widest-xl">Initiate Neural Audit</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Analyze Code</span>
                   </>
                 )}
               </motion.button>
               
-              <div className="flex items-center justify-center px-6 bg-white/5 rounded-2xl border border-white/5 text-[9px] font-black uppercase tracking-widest-xl text-slate-500">
+              <div className="flex items-center justify-center px-6 bg-white/5 rounded-2xl border border-white/5 text-[9px] font-bold uppercase tracking-widest text-slate-500">
                  <kbd className="bg-white/10 px-2 py-1 rounded-md text-white mr-2">CTRL</kbd>
                  <span className="opacity-30">+</span>
                  <kbd className="bg-white/10 px-2 py-1 rounded-md text-white ml-2">ENTER</kbd>
@@ -160,7 +160,7 @@ export default function Home() {
               <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-lg">
                 <Sparkles size={16} />
               </div>
-              <h2 className="text-[10px] font-black uppercase tracking-widest-xl text-slate-400">OUTPUT_NEXUS</h2>
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Results</h2>
             </div>
           </motion.div>
 
@@ -195,7 +195,7 @@ export default function Home() {
                        </div>
                     </div>
                     <div className="space-y-6">
-                       <h3 className="text-[12px] font-black text-white uppercase tracking-widest-xl animate-shimmer bg-clip-text text-transparent">Process_Synchronized</h3>
+                       <h3 className="text-[12px] font-bold text-white uppercase tracking-widest animate-shimmer bg-clip-text text-transparent">Analyzing your code</h3>
                        <div className="flex items-center justify-center gap-3">
                           {[0, 1, 2].map(i => (
                             <motion.div 
@@ -206,8 +206,8 @@ export default function Home() {
                             />
                           ))}
                        </div>
-                       <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest-xl max-w-[280px] mx-auto leading-loose opacity-70">
-                         Decoding syntax patterns and validating logical heuristics against cloud-trained models.
+                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest max-w-[280px] mx-auto leading-loose opacity-70">
+                         We're checking your code for errors, security risks, and optimization opportunities.
                        </p>
                     </div>
                   </motion.div>
@@ -230,9 +230,9 @@ export default function Home() {
                     <div className="w-20 h-20 bg-red-500/5 rounded-3xl flex items-center justify-center text-red-500 mb-8 border border-red-500/10 shadow-2xl">
                       <ShieldAlert size={36} />
                     </div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest-xl mb-3">Protocol_Interrupted</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-3">Analysis Failed</h3>
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed mb-8">{error}</p>
-                    <button onClick={handleAnalyze} className="text-[10px] font-black uppercase tracking-widest-xl text-blue-400 hover:text-white transition-colors border-b border-blue-400/20 pb-1">Reset Session</button>
+                    <button onClick={handleAnalyze} className="text-[10px] font-bold uppercase tracking-widest text-blue-400 hover:text-white transition-colors border-b border-blue-400/20 pb-1">Try Again</button>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -244,9 +244,9 @@ export default function Home() {
                     <div className="w-24 h-24 bg-slate-900/40 rounded-[2rem] flex items-center justify-center text-slate-700 mb-10 border border-white/5 shadow-inner">
                       <Code2 size={48} />
                     </div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest-xl mb-4">Neural_Link_Idle</h3>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest-xl leading-loose opacity-50">
-                      Deploy your code to the source terminal to initiate high-fidelity neural analysis.
+                    <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4">Ready to analyze</h3>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-loose opacity-50">
+                      Paste your code into the editor and click analyze to get started.
                     </p>
                   </motion.div>
                 )}

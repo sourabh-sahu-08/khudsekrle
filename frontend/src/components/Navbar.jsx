@@ -41,8 +41,8 @@ export default function Navbar({ onMenuClick }) {
                         <Menu size={18} />
                     </button>
                     <Link to="/" className="flex items-center gap-3 group">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-blue-600/20 group-hover:scale-105 transition-all duration-500 group-hover:rotate-6">
-                            <Zap size={20} strokeWidth={2.5} fill="currentColor" />
+                        <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white border border-white/10 shadow-lg group-hover:scale-105 transition-all duration-500 group-hover:border-blue-500/50">
+                            <Terminal size={18} strokeWidth={2.5} className="text-blue-500" />
                         </div>
                         <span className="text-xl font-black text-white tracking-tightest-extreme hidden sm:block">
                             khudsekrle<span className="text-blue-500">.</span>

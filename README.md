@@ -1,17 +1,17 @@
-# khudsekrle (Neural Code Audit & Optimization Nexus)
+# khudsekrle (AI Code Analysis & Debugger)
 
-A high-fidelity, production-ready full-stack application for intelligent code analysis, security auditing, and architectural optimization.
+A production-ready full-stack application for intelligent code analysis, security auditing, and optimization.
 
 ## 🚀 Project Vision
-**khudsekrle** is designed to be the ultimate companion for senior engineers. It doesn't just find bugs; it performs deep heuristic analysis to identify architectural flaws, security vulnerabilities, and performance bottlenecks, providing production-ready resolutions in real-time.
+**khudsekrle** is built to help developers write better code. It identifies logical errors, security risks, and performance bottlenecks, providing clear explanations and optimized solutions in real-time.
 
-## ✨ Premium Features
-- **Neural Audit Core**: Deep syntax and logical bug detection using Llama 3.3 (Groq).
-- **Security Manifest**: Full evaluation against OWASP Top 10 security standards.
-- **Complexity Heuristics**: Detailed Big-O time and space complexity justifications.
-- **Architectural Chat**: Real-time consulting with an AI principal engineer about your audit results.
-- **Developer Persistence**: Integrated developer notes and history tracking.
-- **SaaS Aesthetics**: Premium dark-mode glassmorphism interface with fluid animations.
+## ✨ Features
+- **Smart Code Audit**: Identify syntax and logical errors instantly.
+- **Security Evaluation**: Check your code against common security standards (OWASP).
+- **Complexity Analysis**: Understand the time and space complexity of your algorithms.
+- **AI Assistant**: Chat with an AI to get deeper insights into your code.
+- **Developer Notes**: Save notes and track your analysis history.
+- **Modern Design**: Clean, dark-themed interface with smooth animations.
 
 ## 🛠 Tech Stack
 - **Frontend**: React 18, Vite, Tailwind CSS, Monaco Editor, Framer Motion, Lucide Icons.

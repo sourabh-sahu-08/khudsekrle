@@ -89,7 +89,7 @@ export default function AnalysisDetail() {
                     </div>
                     <div className="text-center space-y-2">
                         <p className="text-white font-black text-xl tracking-[0.2em] uppercase animate-shimmer bg-clip-text text-transparent">Decoding Metadata</p>
-                        <p className="text-slate-500 text-[10px] font-black tracking-widest uppercase">INITIALIZING SECURE SESSION...</p>
+                        <p className="text-slate-500 text-xs font-black tracking-widest uppercase">INITIALIZING SECURE SESSION...</p>
                     </div>
                 </div>
             </Layout>
@@ -128,7 +128,7 @@ export default function AnalysisDetail() {
 
             <div className="max-w-[1400px] mx-auto pt-24 px-6 pb-24">
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-                    <Link to="/dashboard" className="text-slate-500 hover:text-white flex items-center gap-2 mb-12 transition-all font-black text-[10px] tracking-widest-xl group w-fit">
+                    <Link to="/dashboard" className="text-slate-500 hover:text-white flex items-center gap-2 mb-12 transition-all font-black text-xs tracking-widest group w-fit">
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                         BACK TO TERMINAL
                     </Link>
@@ -141,15 +141,15 @@ export default function AnalysisDetail() {
                                 <FileJson size={32} />
                             </div>
                             <div>
-                                <h1 className="text-5xl font-black text-white tracking-tightest-extreme mb-1">
+                                <h1 className="text-5xl font-black text-white tracking-tighter mb-1">
                                     Analysis Report
                                 </h1>
                                 <div className="flex items-center gap-4">
-                                    <span className="bg-blue-500/10 px-4 py-1.5 rounded-lg text-[10px] text-blue-400 uppercase font-black tracking-widest-xl border border-blue-500/10">
+                                    <span className="bg-blue-500/10 px-4 py-1.5 rounded-lg text-xs text-blue-400 uppercase font-black tracking-widest border border-blue-500/10">
                                         {analysis.language}
                                     </span>
                                     <span className="text-slate-800">/</span>
-                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{new Date(analysis.createdAt).toLocaleDateString()}</span>
+                                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{new Date(analysis.createdAt).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ export default function AnalysisDetail() {
                     
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass px-10 py-6 rounded-[2.5rem] border border-white/5 flex flex-wrap items-center gap-8 shadow-2xl">
                         <div className="flex flex-col gap-2">
-                            <p className="text-[9px] uppercase font-bold tracking-widest text-slate-500">Confidence Score</p>
+                            <p className="text-xs uppercase font-bold tracking-widest text-slate-500">Confidence Score</p>
                             <div className="flex items-center gap-4">
                                 <div className="h-2 w-40 bg-slate-950 rounded-full overflow-hidden border border-white/5 shadow-inner">
                                     <motion.div initial={{ width: 0 }} animate={{ width: analysis.confidenceScore || '90%' }} transition={{ duration: 1.5, ease: "circOut" }} className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_10px_rgba(59,130,246,0.3)]" />
@@ -202,7 +202,7 @@ export default function AnalysisDetail() {
                                 <Clock size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-1">Time Complexity</p>
+                                <p className="text-xs uppercase font-bold tracking-widest text-slate-500 mb-1">Time Complexity</p>
                                 <p className="text-3xl font-mono text-white font-bold tracking-tighter">{analysis.timeComplexity}</p>
                             </div>
                         </motion.div>
@@ -212,7 +212,7 @@ export default function AnalysisDetail() {
                                 <Database size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-1">Memory Usage</p>
+                                <p className="text-xs uppercase font-bold tracking-widest text-slate-500 mb-1">Memory Usage</p>
                                 <p className="text-3xl font-mono text-white font-bold tracking-tighter">{analysis.spaceComplexity}</p>
                             </div>
                         </motion.div>

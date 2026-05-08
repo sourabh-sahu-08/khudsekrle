@@ -77,11 +77,11 @@ export default function PublicAnalysis() {
                            <Link to="/" className="p-2 rounded-lg bg-white/5 text-slate-500 hover:text-white transition-all">
                               <ChevronLeft size={18} />
                            </Link>
-                           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">Public Audit Report</span>
+                           <span className="text-xs font-black uppercase tracking-[0.3em] text-slate-600">Public Audit Report</span>
                         </div>
-                        <h1 className="text-4xl font-black text-white tracking-tight-extreme mb-2 flex items-center gap-4">
+                        <h1 className="text-4xl font-black text-white tracking-tighter mb-2 flex items-center gap-4">
                            Shared Insight
-                           <span className="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[11px] font-black text-blue-400 uppercase tracking-widest">{analysis.language}</span>
+                           <span className="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs font-black text-blue-400 uppercase tracking-widest">{analysis.language}</span>
                         </h1>
                         <p className="text-slate-500 font-medium flex items-center gap-2">
                            <Clock size={14} />
@@ -92,7 +92,7 @@ export default function PublicAnalysis() {
                     <div className="flex items-center gap-4">
                         <div className="card-premium px-6 py-3 flex items-center gap-6">
                             <div className="flex flex-col items-center">
-                               <span className="text-[9px] font-black uppercase text-slate-600 mb-1">Confidence</span>
+                               <span className="text-xs font-black uppercase text-slate-600 mb-1">Confidence</span>
                                <span className="text-sm font-black text-blue-500">{analysis.confidenceScore}</span>
                             </div>
                             <div className="h-6 w-[1px] bg-white/5" />
@@ -116,9 +116,9 @@ export default function PublicAnalysis() {
                     >
                         <div className="flex items-center gap-3">
                             <ShieldCheck size={18} className="text-blue-500" />
-                            <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Audit Summary</h3>
+                            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Audit Summary</h3>
                         </div>
-                        <p className="text-[15px] text-slate-300 leading-relaxed font-medium bg-black/20 p-6 rounded-2xl border border-white/5">
+                        <p className="text-sm text-slate-300 leading-relaxed font-medium bg-black/20 p-6 rounded-2xl border border-white/5">
                             {analysis.findings}
                         </p>
                     </motion.div>
@@ -134,7 +134,7 @@ export default function PublicAnalysis() {
                                 <Activity size={24} />
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Efficiency</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-slate-500">Efficiency</p>
                                 <p className="text-xl font-black text-white font-mono">{analysis.timeComplexity}</p>
                             </div>
                         </div>
@@ -143,7 +143,7 @@ export default function PublicAnalysis() {
                                 <Database size={24} />
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Footprint</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-slate-500">Footprint</p>
                                 <p className="text-xl font-black text-white font-mono">{analysis.spaceComplexity}</p>
                             </div>
                         </div>
@@ -159,7 +159,7 @@ export default function PublicAnalysis() {
                 >
                     <div className="flex items-center gap-3">
                         <Sparkles size={20} className="text-purple-400" />
-                        <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Logic Rationale</h3>
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Logic Rationale</h3>
                     </div>
                     <p className="text-lg text-slate-300 leading-relaxed font-medium">{analysis.explanation}</p>
                 </motion.div>
@@ -178,7 +178,7 @@ export default function PublicAnalysis() {
                             <button 
                                 key={mode.id}
                                 onClick={() => setViewMode(mode.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === mode.id ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-white'}`}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${viewMode === mode.id ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-white'}`}
                             >
                                 <mode.icon size={14} />
                                 {mode.label}
@@ -221,7 +221,7 @@ export default function PublicAnalysis() {
                             className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12"
                         >
                             <div className="card-premium overflow-hidden">
-                                <div className="px-6 py-4 border-b border-white/5 bg-white/2 text-[10px] font-black uppercase tracking-widest text-slate-500">Input_Buffer</div>
+                                <div className="px-6 py-4 border-b border-white/5 bg-white/2 text-xs font-black uppercase tracking-widest text-slate-500">Input_Buffer</div>
                                 <div className="h-[400px]">
                                     <Editor
                                         height="100%"
@@ -233,7 +233,7 @@ export default function PublicAnalysis() {
                                 </div>
                             </div>
                             <div className="card-premium overflow-hidden border-blue-500/20">
-                                <div className="px-6 py-4 border-b border-white/5 bg-blue-500/5 text-[10px] font-black uppercase tracking-widest text-blue-400">Resolution_Output</div>
+                                <div className="px-6 py-4 border-b border-white/5 bg-blue-500/5 text-xs font-black uppercase tracking-widest text-blue-400">Resolution_Output</div>
                                 <div className="h-[400px]">
                                     <Editor
                                         height="100%"

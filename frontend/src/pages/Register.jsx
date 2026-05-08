@@ -79,7 +79,7 @@ export default function Register() {
                                         exit={{ opacity: 0, height: 0 }}
                                         className="overflow-hidden mb-5"
                                     >
-                                        <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2.5 text-red-400 text-[13px]">
+                                        <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2.5 text-red-400 text-sm">
                                             <XCircle size={14} className="shrink-0" />
                                             <span className="leading-tight">{error}</span>
                                         </div>
@@ -149,7 +149,7 @@ export default function Register() {
                                             ) : (
                                                 <div className="w-3 h-3 rounded-full border border-slate-700" />
                                             )}
-                                            <span className={`text-[11px] font-bold uppercase tracking-wider ${passValidation.length ? 'text-emerald-500' : 'text-slate-600'}`}>
+                                            <span className={`text-xs font-bold uppercase tracking-wider ${passValidation.length ? 'text-emerald-500' : 'text-slate-600'}`}>
                                                 Minimum 6 characters
                                             </span>
                                         </div>
@@ -175,7 +175,7 @@ export default function Register() {
                             {/* Divider Line */}
                             <div className="flex items-center gap-4 mt-5">
                                 <div className="flex-1 h-px bg-white/10" />
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
                                 <div className="flex-1 h-px bg-white/10" />
                             </div>
 
@@ -186,7 +186,7 @@ export default function Register() {
                             </button>
 
                             {/* Footer Link */}
-                            <p className="mt-8 text-center text-gray-500 text-[13px]">
+                            <p className="mt-8 text-center text-gray-500 text-sm">
                                 Already have an account?{' '}
                                 <Link to="/auth/login" className="text-white hover:text-emerald-400 transition-colors font-bold hover:underline underline-offset-4">
                                     Sign In

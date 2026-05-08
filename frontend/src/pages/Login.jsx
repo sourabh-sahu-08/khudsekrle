@@ -74,7 +74,7 @@ export default function Login() {
                                         exit={{ opacity: 0, height: 0 }}
                                         className="overflow-hidden mb-5"
                                     >
-                                        <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2.5 text-red-400 text-[13px]">
+                                        <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2.5 text-red-400 text-sm">
                                             <XCircle size={14} className="shrink-0" />
                                             <span className="leading-tight">{error}</span>
                                         </div>
@@ -105,7 +105,7 @@ export default function Login() {
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center justify-between px-1">
                                             <label className="text-xs tracking-wider text-gray-400 uppercase font-bold">Password</label>
-                                            <button type="button" className="text-[11px] text-blue-400 hover:text-blue-300 font-bold transition-colors">
+                                            <button type="button" className="text-xs text-blue-400 hover:text-blue-300 font-bold transition-colors">
                                                 Forgot Password?
                                             </button>
                                         </div>
@@ -149,7 +149,7 @@ export default function Login() {
                             {/* Divider Line */}
                             <div className="flex items-center gap-4 mt-5">
                                 <div className="flex-1 h-px bg-white/10" />
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
                                 <div className="flex-1 h-px bg-white/10" />
                             </div>
 
@@ -160,7 +160,7 @@ export default function Login() {
                             </button>
 
                             {/* Footer Link */}
-                            <p className="mt-8 text-center text-gray-500 text-[13px]">
+                            <p className="mt-8 text-center text-gray-500 text-sm">
                                 Don't have an account?{' '}
                                 <Link to="/auth/register" className="text-white hover:text-blue-400 transition-colors font-bold hover:underline underline-offset-4">
                                     Create one for free

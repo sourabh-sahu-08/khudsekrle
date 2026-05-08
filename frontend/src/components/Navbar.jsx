@@ -44,7 +44,7 @@ export default function Navbar({ onMenuClick }) {
                         <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white border border-white/10 shadow-lg group-hover:scale-105 transition-all duration-500 group-hover:border-blue-500/50">
                             <Terminal size={18} strokeWidth={2.5} className="text-blue-500" />
                         </div>
-                        <span className="text-xl font-black text-white tracking-tightest-extreme hidden sm:block">
+                        <span className="text-xl font-black text-white tracking-tighter hidden sm:block">
                             khudsekrle<span className="text-blue-500">.</span>
                         </span>
                     </Link>
@@ -57,8 +57,8 @@ export default function Navbar({ onMenuClick }) {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search your audits..."
-                            className="bg-white/5 border border-white/5 rounded-2xl py-2 pl-10 pr-4 text-[12px] font-medium text-white focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600 w-72 hover:bg-white/[0.08]"
+                            placeholder="Search analyses..."
+                            className="bg-white/5 border border-white/5 rounded-2xl py-2 pl-10 pr-4 text-sm font-medium text-white focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600 w-72 hover:bg-white/[0.08]"
                         />
                     </form>
                 )}
@@ -68,7 +68,7 @@ export default function Navbar({ onMenuClick }) {
                 {isLoggedIn ? (
                     <>
                         <div className="flex items-center gap-2 pr-4 border-r border-white/5">
-                            <Link to="/dashboard" className="p-2.5 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl" title="Audit History">
+                            <Link to="/dashboard" className="p-2.5 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl" title="Analysis History">
                                 <History size={18} />
                             </Link>
                             <button className="p-2.5 text-slate-500 hover:text-white transition-all hover:bg-white/5 rounded-xl relative" title="Notifications">
@@ -82,7 +82,7 @@ export default function Navbar({ onMenuClick }) {
                                 <div className="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                                     <User size={14} />
                                 </div>
-                                <span className="text-[11px] font-bold text-slate-400 group-hover:text-white transition-colors">Profile</span>
+                                <span className="text-xs font-bold text-slate-400 group-hover:text-white transition-colors">Profile</span>
                             </Link>
                             <button 
                                 onClick={handleSignOut} 
@@ -95,12 +95,12 @@ export default function Navbar({ onMenuClick }) {
                     </>
                 ) : (
                     <div className="flex items-center gap-6">
-                        <Link to="/auth/login" className="text-[12px] font-medium text-slate-400 hover:text-white transition-colors">
+                        <Link to="/auth/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
                             Sign In
                         </Link>
                         <Link 
                             to="/auth/register" 
-                            className="bg-white text-black px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all hover:bg-blue-600 hover:text-white shadow-2xl active:scale-95"
+                            className="bg-white text-black px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all hover:bg-blue-600 hover:text-white shadow-2xl active:scale-95"
                         >
                             Get Started
                         </Link>

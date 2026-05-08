@@ -102,15 +102,3 @@ body {
   padding: 8px 0;
 }
 
-/* Typography Refinements */
-.tracking-tightest-extreme {
-  letter-spacing: -0.04em;
-}
-
-.tracking-premium {
-  letter-spacing: 0.01em;
-}
-
-.tracking-widest-xl {
-  letter-spacing: 0.2em;
-}

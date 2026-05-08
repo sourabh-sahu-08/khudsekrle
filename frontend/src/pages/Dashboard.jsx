@@ -78,7 +78,7 @@ export default function Dashboard() {
                         <motion.h1 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-4xl font-black text-white tracking-tight-extreme mb-3"
+                            className="text-4xl font-black text-white tracking-tighter mb-3"
                         >
                             History
                         </motion.h1>
@@ -86,7 +86,7 @@ export default function Dashboard() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-slate-500 font-medium tracking-premium"
+                            className="text-slate-500 font-medium tracking-tight"
                         >
                             Review your code analyses and optimization history.
                         </motion.p>
@@ -121,7 +121,7 @@ export default function Dashboard() {
                             className="card-premium p-6 flex flex-col items-center text-center relative overflow-hidden group"
                         >
                             <div className={`absolute top-0 right-0 w-24 h-24 bg-${stat.color}-500/[0.03] blur-3xl rounded-full`} />
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">{stat.label}</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{stat.label}</p>
                             <h4 className="text-3xl font-black text-white tracking-tighter">{stat.value}</h4>
                         </motion.div>
                     ))}
@@ -136,7 +136,7 @@ export default function Dashboard() {
                             placeholder="Search by code or findings..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/5 rounded-xl py-3.5 pl-14 pr-6 text-[13px] text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-slate-600 hover:bg-white/[0.08]"
+                            className="w-full bg-white/5 border border-white/5 rounded-xl py-3.5 pl-14 pr-6 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-slate-600 hover:bg-white/[0.08]"
                         />
                     </div>
                     <div className="flex gap-4">
@@ -145,7 +145,7 @@ export default function Dashboard() {
                             <select 
                                 value={filterLanguage}
                                 onChange={(e) => setFilterLanguage(e.target.value)}
-                                className="bg-white/5 border border-white/5 rounded-xl py-3.5 pl-10 pr-6 text-[11px] font-bold uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none min-w-[160px]"
+                                className="bg-white/5 border border-white/5 rounded-xl py-3.5 pl-10 pr-6 text-xs font-bold uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer hover:bg-white/[0.08] appearance-none min-w-[160px]"
                             >
                                 <option value="all" className="bg-slate-900">All Langs</option>
                                 {[...new Set(history.map(item => item.language))].map(lang => (
@@ -188,11 +188,11 @@ export default function Dashboard() {
                                                     {item.originalCode.substring(0, 40).trim()}...
                                                 </h3>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-blue-400/60 transition-colors">
+                                                    <span className="text-xs font-black uppercase tracking-widest text-slate-600 group-hover:text-blue-400/60 transition-colors">
                                                         {item.language}
                                                     </span>
                                                     <span className="text-slate-800">•</span>
-                                                    <span className="text-[10px] font-bold text-slate-600">
+                                                    <span className="text-xs font-bold text-slate-600">
                                                         {new Date(item.createdAt).toLocaleDateString()}
                                                     </span>
                                                 </div>
@@ -208,7 +208,7 @@ export default function Dashboard() {
                                     
                                     <div className="flex items-center justify-between mt-6">
                                         <div className="flex items-center gap-4">
-                                            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                                            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                                 {item.confidenceScore || "0%"} Score
                                             </span>
                                             <span className="text-[10px] font-mono text-slate-600">O({item.timeComplexity?.match(/O\((.*?)\)/)?.[1] || "n"})</span>
@@ -230,7 +230,7 @@ export default function Dashboard() {
                                 <History size={28} />
                             </div>
                             <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-2">No Records Found</h3>
-                            <p className="text-[11px] text-slate-500 font-medium max-w-[200px]">Adjust your filters or start a new analysis to see your history.</p>
+                            <p className="text-xs text-slate-500 font-medium max-w-[200px]">Adjust your filters or start a new analysis to see your history.</p>
                         </div>
                     )}
                 </AnimatePresence>

@@ -71,7 +71,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-64px)] bg-[#060910] overflow-hidden">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] bg-[#060910] overflow-hidden">
         <main className="flex-1 flex flex-col min-w-0 border-r border-white/5 bg-[#060910]">
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
@@ -82,7 +82,7 @@ export default function Home() {
               <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-lg">
                 <Terminal size={16} />
               </div>
-              <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Editor</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">Editor</h2>
             </div>
             
             <div className="flex items-center gap-4">
@@ -91,7 +91,7 @@ export default function Home() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-transparent border-none text-slate-300 text-[10px] font-bold uppercase outline-none cursor-pointer hover:text-white transition-colors"
+                  className="bg-transparent border-none text-slate-300 text-xs font-bold uppercase outline-none cursor-pointer hover:text-white transition-colors"
                 >
                   {languages.map((lang) => (
                     <option key={lang.value} value={lang.value} className="bg-slate-900">{lang.label}</option>
@@ -131,17 +131,17 @@ export default function Home() {
                 {isAnalyzing ? (
                   <div className="flex items-center gap-3">
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{steps[analysisStep]}</span>
+                    <span className="text-xs font-bold uppercase tracking-widest">{steps[analysisStep]}</span>
                   </div>
                 ) : (
                   <>
                     <Cpu size={18} className="group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Analyze Code</span>
+                    <span className="text-xs font-bold uppercase tracking-widest">Analyze Code</span>
                   </>
                 )}
               </motion.button>
               
-              <div className="flex items-center justify-center px-6 bg-white/5 rounded-2xl border border-white/5 text-[9px] font-bold uppercase tracking-widest text-slate-500">
+              <div className="flex items-center justify-center px-6 bg-white/5 rounded-2xl border border-white/5 text-xs font-bold uppercase tracking-widest text-slate-500">
                  <kbd className="bg-white/10 px-2 py-1 rounded-md text-white mr-2">CTRL</kbd>
                  <span className="opacity-30">+</span>
                  <kbd className="bg-white/10 px-2 py-1 rounded-md text-white ml-2">ENTER</kbd>
@@ -150,7 +150,7 @@ export default function Home() {
           </div>
         </main>
 
-        <aside className="w-[450px] flex flex-col bg-[#060910] border-l border-white/5 shadow-2xl">
+        <aside className="w-full lg:w-[450px] flex flex-col bg-[#060910] border-t lg:border-t-0 lg:border-l border-white/5 shadow-2xl">
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -160,7 +160,7 @@ export default function Home() {
               <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-lg">
                 <Sparkles size={16} />
               </div>
-              <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Results</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">Results</h2>
             </div>
           </motion.div>
 
@@ -195,7 +195,7 @@ export default function Home() {
                        </div>
                     </div>
                     <div className="space-y-6">
-                       <h3 className="text-[12px] font-bold text-white uppercase tracking-widest animate-shimmer bg-clip-text text-transparent">Analyzing your code</h3>
+                       <h3 className="text-sm font-bold text-white uppercase tracking-widest animate-shimmer bg-clip-text text-transparent">Analyzing your code</h3>
                        <div className="flex items-center justify-center gap-3">
                           {[0, 1, 2].map(i => (
                             <motion.div 
@@ -206,7 +206,7 @@ export default function Home() {
                             />
                           ))}
                        </div>
-                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest max-w-[280px] mx-auto leading-loose opacity-70">
+                       <p className="text-xs text-slate-500 font-bold uppercase tracking-widest max-w-[280px] mx-auto leading-loose opacity-70">
                          We're checking your code for errors, security risks, and optimization opportunities.
                        </p>
                     </div>
@@ -231,8 +231,8 @@ export default function Home() {
                       <ShieldAlert size={36} />
                     </div>
                     <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-3">Analysis Failed</h3>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed mb-8">{error}</p>
-                    <button onClick={handleAnalyze} className="text-[10px] font-bold uppercase tracking-widest text-blue-400 hover:text-white transition-colors border-b border-blue-400/20 pb-1">Try Again</button>
+                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed mb-8">{error}</p>
+                    <button onClick={handleAnalyze} className="text-xs font-bold uppercase tracking-widest text-blue-400 hover:text-white transition-colors border-b border-blue-400/20 pb-1">Try Again</button>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -245,7 +245,7 @@ export default function Home() {
                       <Code2 size={48} />
                     </div>
                     <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4">Ready to analyze</h3>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-loose opacity-50">
+                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-loose opacity-50">
                       Paste your code into the editor and click analyze to get started.
                     </p>
                   </motion.div>

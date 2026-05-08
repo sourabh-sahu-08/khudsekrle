@@ -33,10 +33,28 @@ export default function Layout({ children }) {
                 </main>
             </div>
 
-            {/* Global Background Glow (Subtle) */}
+            {/* Global Background Glow (Subtle & Animated) */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full" />
+                <motion.div 
+                    animate={{ 
+                        scale: [1, 1.2, 1],
+                        opacity: [0.05, 0.08, 0.05],
+                        x: [-20, 20, -20],
+                        y: [-20, 20, -20]
+                    }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full" 
+                />
+                <motion.div 
+                    animate={{ 
+                        scale: [1.2, 1, 1.2],
+                        opacity: [0.05, 0.08, 0.05],
+                        x: [20, -20, 20],
+                        y: [20, -20, 20]
+                    }}
+                    transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/20 blur-[120px] rounded-full" 
+                />
             </div>
         </div>
     );

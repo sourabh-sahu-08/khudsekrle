@@ -160,8 +160,23 @@ export default function Dashboard() {
                 <AnimatePresence mode="wait">
                     {loading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {[1, 2, 4, 5].map((i) => (
-                                <div key={i} className="card-premium h-32 animate-pulse bg-white/5" />
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="card-premium p-6 relative overflow-hidden">
+                                    <div className="flex items-start gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 animate-pulse" />
+                                        <div className="flex-1 space-y-2">
+                                            <div className="h-4 bg-white/5 rounded animate-pulse w-3/4" />
+                                            <div className="h-3 bg-white/5 rounded animate-pulse w-1/2" />
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-6">
+                                        <div className="flex gap-2">
+                                            <div className="h-4 w-12 bg-white/5 rounded animate-pulse" />
+                                            <div className="h-4 w-12 bg-white/5 rounded animate-pulse" />
+                                        </div>
+                                        <div className="h-4 w-16 bg-white/5 rounded animate-pulse" />
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     ) : filteredHistory.length > 0 ? (
@@ -225,12 +240,20 @@ export default function Dashboard() {
                             ))}
                         </motion.div>
                     ) : (
-                        <div className="card-premium h-64 flex flex-col items-center justify-center text-center p-12">
-                            <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-slate-700 mb-4 border border-white/5">
-                                <History size={28} />
+                        <div className="card-premium py-20 flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-blue-500/[0.01] pointer-events-none" />
+                            <div className="w-20 h-20 bg-blue-500/5 rounded-3xl flex items-center justify-center text-blue-500/40 mb-6 border border-blue-500/10 shadow-inner">
+                                <Sparkles size={32} />
                             </div>
-                            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-2">No Records Found</h3>
-                            <p className="text-xs text-slate-500 font-medium max-w-[200px]">Adjust your filters or start a new analysis to see your history.</p>
+                            <h3 className="text-xl font-black text-white tracking-tight mb-2">No Analyses Recorded</h3>
+                            <p className="text-sm text-slate-500 font-medium max-w-sm mb-8">Your dashboard is currently empty. Start by running an AI analysis on your code snippets to see them here.</p>
+                            <Link 
+                                to="/" 
+                                className="bg-white/5 hover:bg-white/10 text-white px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all border border-white/10 active:scale-95 flex items-center gap-2"
+                            >
+                                <Sparkles size={14} className="text-blue-400" />
+                                Start First Analysis
+                            </Link>
                         </div>
                     )}
                 </AnimatePresence>

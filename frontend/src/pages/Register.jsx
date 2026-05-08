@@ -10,22 +10,29 @@ export default function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [passValidation, setPassValidation] = useState({ length: false });
+    const [passValidation, setPassValidation] = useState({ length: false, match: false });
     const navigate = useNavigate();
 
     useEffect(() => {
         setPassValidation({
-            length: password.length >= 6
+            length: password.length >= 6,
+            match: password === confirmPassword && confirmPassword !== ''
         });
-    }, [password]);
+    }, [password, confirmPassword]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!passValidation.length) {
             setError('Password must be at least 6 characters.');
+            return;
+        }
+        if (!passValidation.match) {
+            setError('Passwords do not match.');
             return;
         }
         setLoading(true);
@@ -101,7 +108,7 @@ export default function Register() {
                                                 className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
                                                 placeholder="Enter your name"
                                                 value={name}
-                                                onChange={(e) => setName(e.target.value)}
+                                                onChange={(e) => { setName(e.target.value); setError(null); }}
                                             />
                                         </div>
                                     </div>
@@ -117,7 +124,7 @@ export default function Register() {
                                                 className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
                                                 placeholder="name@example.com"
                                                 value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => { setEmail(e.target.value); setError(null); }}
                                             />
                                         </div>
                                     </div>
@@ -133,7 +140,7 @@ export default function Register() {
                                                 className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-12 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
                                                 placeholder="Min 6 characters"
                                                 value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
+                                                onChange={(e) => { setPassword(e.target.value); setError(null); }}
                                             />
                                             <button 
                                                 type="button"
@@ -143,15 +150,50 @@ export default function Register() {
                                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                             </button>
                                         </div>
-                                        <div className="flex items-center gap-2 mt-1 ml-1">
-                                            {passValidation.length ? (
-                                                <CheckCircle2 size={14} className="text-emerald-500" />
-                                            ) : (
-                                                <div className="w-3 h-3 rounded-full border border-slate-700" />
-                                            )}
-                                            <span className={`text-xs font-bold uppercase tracking-wider ${passValidation.length ? 'text-emerald-500' : 'text-slate-600'}`}>
-                                                Minimum 6 characters
-                                            </span>
+                                        <div className="flex flex-col gap-1 mt-1 ml-1">
+                                            <div className="flex items-center gap-2">
+                                                {passValidation.length ? (
+                                                    <CheckCircle2 size={12} className="text-emerald-500" />
+                                                ) : (
+                                                    <div className="w-2.5 h-2.5 rounded-full border border-slate-700" />
+                                                )}
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider ${passValidation.length ? 'text-emerald-500' : 'text-slate-600'}`}>
+                                                    Minimum 6 characters
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                {passValidation.match ? (
+                                                    <CheckCircle2 size={12} className="text-emerald-500" />
+                                                ) : (
+                                                    <div className="w-2.5 h-2.5 rounded-full border border-slate-700" />
+                                                )}
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider ${passValidation.match ? 'text-emerald-500' : 'text-slate-600'}`}>
+                                                    Passwords match
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Confirm Password Field */}
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-xs tracking-wider text-gray-400 uppercase font-bold ml-1">Confirm Password</label>
+                                        <div className="relative group">
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-500 transition-colors z-10" size={18} />
+                                            <input
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                required
+                                                className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-12 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
+                                                placeholder="Repeat password"
+                                                value={confirmPassword}
+                                                onChange={(e) => { setConfirmPassword(e.target.value); setError(null); }}
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors flex items-center justify-center z-10"
+                                            >
+                                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

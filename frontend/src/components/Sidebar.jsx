@@ -11,7 +11,9 @@ import {
     Search,
     Command,
     X,
-    Zap
+    Zap,
+    Crown,
+    ExternalLink
 } from 'lucide-react';
 import { analysisService } from '@/utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -73,8 +75,14 @@ export default function Sidebar({ isOpen, onClose }) {
                             <User size={20} />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-bold text-white truncate">{user?.name || 'Developer'}</p>
-                            <p className="text-[10px] text-slate-500 font-medium truncate">{user?.email || 'standard-tier'}</p>
+                            <div className="flex items-center gap-1.5">
+                                <p className="text-sm font-bold text-white truncate">{user?.name || 'Developer'}</p>
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                            </div>
+                            <p className="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1">
+                                <Crown size={10} className="text-blue-500/50" />
+                                Standard Tier
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -101,7 +109,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 {/* Recent Analyses (Scrollable) */}
                 <div className="flex-1 overflow-y-auto px-4 mt-2 custom-scrollbar">
                     <div className="flex items-center justify-between px-3 mb-4">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Recent Audits</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Recent Analyses</p>
                         <PlusCircle size={14} className="text-slate-700 hover:text-blue-500 cursor-pointer transition-colors" />
                     </div>
                     
@@ -127,7 +135,7 @@ export default function Sidebar({ isOpen, onClose }) {
                             ))
                         ) : (
                             <div className="px-3 py-4 text-center border border-dashed border-white/5 rounded-2xl">
-                                <p className="text-[10px] text-slate-600 font-bold uppercase">No Audits Found</p>
+                                <p className="text-[10px] text-slate-600 font-bold uppercase">No Analyses Found</p>
                             </div>
                         )}
                     </div>

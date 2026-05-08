@@ -96,7 +96,7 @@ export default function Login() {
                                                 className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all hover:bg-white/[0.08] relative z-0"
                                                 placeholder="name@example.com"
                                                 value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => { setEmail(e.target.value); setError(null); }}
                                             />
                                         </div>
                                     </div>
@@ -117,7 +117,7 @@ export default function Login() {
                                                 className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-12 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all hover:bg-white/[0.08] relative z-0"
                                                 placeholder="••••••••"
                                                 value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
+                                                onChange={(e) => { setPassword(e.target.value); setError(null); }}
                                             />
                                             <button 
                                                 type="button"

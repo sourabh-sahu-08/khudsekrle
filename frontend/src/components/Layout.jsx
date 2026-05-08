@@ -16,7 +16,7 @@ export default function Layout({ children }) {
             {/* Navbar - Fixed Height 64px (h-16) */}
             <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             
-            <div className="flex flex-1 overflow-hidden relative pt-16">
+            <div className="flex flex-1 overflow-hidden relative pt-14">
                 {/* Conditional Sidebar */}
                 {!isAuthPage && (
                     <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />

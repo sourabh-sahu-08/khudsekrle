@@ -9,7 +9,12 @@ exports.errorHandler = (err, req, res, next) => {
   }
 
   if (err.code === 11000) {
-    error = { message: "A record with that value already exists.", statusCode: 400 };
+    const field = Object.keys(err.keyValue || {})[0];
+    const message = field
+      ? `${field.charAt(0).toUpperCase() + field.slice(1)} already in use.`
+      : "A record with that value already exists.";
+
+    error = { message, statusCode: 400 };
   }
 
   if (err.name === "ValidationError") {

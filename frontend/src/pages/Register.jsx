@@ -59,166 +59,170 @@ export default function Register() {
   return (
     <Layout>
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6 py-14">
+      <div className="mx-auto grid w-full max-w-[1400px] items-stretch gap-12 lg:grid-cols-2 lg:gap-20">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/60 shadow-2xl shadow-slate-950/40 lg:grid-cols-[0.95fr_1.05fr]"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="rounded-[2.5rem] border border-white/10 bg-slate-950/40 p-10 shadow-2xl backdrop-blur-xl sm:p-16 xl:p-24"
         >
-          <div className="p-8 sm:p-10">
-            <div className="mx-auto max-w-md">
-              <div className="mb-8">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
-                  <UserIcon size={22} />
-                </div>
-                <h2 className="mt-5 text-3xl font-bold tracking-[-0.04em] text-white">
-                  Create your workspace
-                </h2>
-                <p className="mt-2 text-sm text-slate-400">
-                  Save analyses, revisit fixes, and keep your review history organized.
-                </p>
+          <div className="mx-auto max-w-md">
+            <div className="mb-12">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300 shadow-inner">
+                <UserIcon size={22} />
               </div>
-
-              <AnimatePresence mode="wait">
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mb-5 overflow-hidden rounded-2xl border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm text-red-100"
-                  >
-                    {error}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <label className="block">
-                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
-                    Full name
-                  </span>
-                  <div className="relative">
-                    <UserIcon
-                      size={18}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter your full name"
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
-                    />
-                  </div>
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
-                    Email
-                  </span>
-                  <div className="relative">
-                    <Mail
-                      size={18}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@example.com"
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
-                    />
-                  </div>
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
-                    Password
-                  </span>
-                  <div className="relative">
-                    <Lock
-                      size={18}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Choose a strong password"
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-12 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((previous) => !previous)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                  <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">
-                    {passValidation.length ? (
-                      <CheckCircle2 size={16} className="text-emerald-300" />
-                    ) : (
-                      <div className="h-4 w-4 rounded-full border border-slate-600" />
-                    )}
-                    At least 6 characters
-                  </div>
-                </label>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-400 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-400/20 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {loading ? (
-                    <div className="h-4 w-4 rounded-full border-2 border-slate-900/20 border-t-slate-900 animate-spin" />
-                  ) : (
-                    <>
-                      Create Account
-                      <ArrowRight size={16} />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              <p className="mt-8 text-sm text-slate-400">
-                Already have an account?{" "}
-                <Link to="/auth/login" className="font-semibold text-white hover:text-emerald-300">
-                  Sign in
-                </Link>
-              </p>
-            </div>
-          </div>
-
-          <div className="hidden border-l border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.18),transparent_28%),linear-gradient(180deg,#08131e_0%,#060a14_100%)] p-10 lg:flex lg:flex-col lg:justify-between">
-            <div>
-              <p className="eyebrow mb-4">What you get</p>
-              <h1 className="text-4xl font-bold tracking-[-0.05em] text-white">
-                Build a review history your team can trust.
-              </h1>
-              <p className="mt-4 max-w-md text-base leading-7 text-slate-300">
-                Store findings, revisit optimized solutions, and keep a clean archive of code reviews as your project evolves.
+              <h2 className="mt-6 text-3xl font-bold tracking-[-0.04em] text-white">
+                Create your workspace
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Save analyses, revisit fixes, and keep your review history organized.
               </p>
             </div>
 
-            <div className="grid gap-3">
-              {[
-                "Protected account access with JWT authentication",
-                "Saved reports with findings, corrected code, and complexity notes",
-                "Profile tools for updating account details and password settings",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-200"
+            <AnimatePresence mode="wait">
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-8 overflow-hidden rounded-2xl border border-red-400/15 bg-red-500/10 px-5 py-4 text-xs text-red-100"
                 >
-                  {item}
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <label className="block">
+                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.24em] text-slate-500">
+                  Full name
+                </span>
+                <div className="relative">
+                  <UserIcon
+                    size={18}
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600"
+                  />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 pl-14 pr-5 text-sm text-white placeholder:text-slate-600 transition-all focus:border-emerald-400/30 focus:outline-none focus:ring-4 focus:ring-emerald-400/5"
+                  />
                 </div>
-              ))}
-            </div>
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.24em] text-slate-500">
+                  Email Address
+                </span>
+                <div className="relative">
+                  <Mail
+                    size={18}
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600"
+                  />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 pl-14 pr-5 text-sm text-white placeholder:text-slate-600 transition-all focus:border-emerald-400/30 focus:outline-none focus:ring-4 focus:ring-emerald-400/5"
+                  />
+                </div>
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.24em] text-slate-500">
+                  Secure Password
+                </span>
+                <div className="relative">
+                  <Lock
+                    size={18}
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600"
+                  />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Choose a strong password"
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 pl-14 pr-14 text-sm text-white placeholder:text-slate-600 transition-all focus:border-emerald-400/30 focus:outline-none focus:ring-4 focus:ring-emerald-400/5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <div className="mt-4 flex items-center gap-3 text-xs text-slate-500">
+                  {passValidation.length ? (
+                    <CheckCircle2 size={18} className="text-emerald-300" />
+                  ) : (
+                    <div className="h-4 w-4 rounded-full border border-slate-700" />
+                  )}
+                  Password strength: At least 6 characters
+                </div>
+              </label>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl bg-emerald-400 text-sm font-bold text-slate-950 shadow-xl shadow-emerald-400/10 transition-all hover:bg-emerald-300 hover:shadow-emerald-400/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {loading ? (
+                  <div className="h-4 w-4 rounded-full border-2 border-slate-900/20 border-t-slate-900 animate-spin" />
+                ) : (
+                  <>
+                    Create Workspace
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <p className="mt-10 text-center text-xs text-slate-500">
+              Already have an account?{" "}
+              <Link to="/auth/login" className="font-semibold text-slate-300 hover:text-emerald-300 underline underline-offset-4 decoration-white/10 hover:decoration-emerald-300">
+                Sign in here
+              </Link>
+            </p>
           </div>
         </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="hidden rounded-[2.5rem] border border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.12),transparent_40%),linear-gradient(180deg,rgba(8,19,30,0.4)_0%,rgba(6,10,20,0.5)_100%)] p-16 backdrop-blur-xl lg:flex lg:flex-col lg:justify-center lg:gap-20 xl:p-24"
+        >
+          <div className="max-w-md">
+            <p className="eyebrow mb-6 text-emerald-400/70 text-[10px]">What you get</p>
+            <h1 className="text-4xl font-bold tracking-[-0.04em] text-white leading-tight">
+              Build a review history your team can trust.
+            </h1>
+            <p className="mt-6 text-base leading-relaxed text-slate-400/90">
+              Store findings, revisit optimized solutions, and keep a clean archive of code reviews as your project evolves.
+            </p>
+          </div>
+
+          <div className="grid gap-4">
+            {[
+              "Protected account access with JWT authentication",
+              "Saved reports with findings, corrected code, and complexity notes",
+              "Profile tools for updating account details and password settings",
+            ].map((item) => (
+              <div
+                key={item}
+                className="rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-4 text-[13px] font-medium text-slate-300 transition-colors hover:bg-white/[0.04]"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
       </div>
     </Layout>
   );

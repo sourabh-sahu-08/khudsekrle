@@ -104,13 +104,13 @@ export default function Navbar() {
             <>
               <Link
                 to="/auth/login"
-                className="text-sm font-medium text-slate-300 hover:text-white"
+                className="flex h-11 items-center px-4 text-sm font-medium text-slate-300 hover:text-white"
               >
                 Sign In
               </Link>
               <Link
                 to="/auth/register"
-                className="rounded-2xl bg-sky-400 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-sky-400/20 hover:bg-sky-300"
+                className="flex h-11 items-center rounded-2xl bg-sky-400 px-6 text-sm font-bold text-slate-950 shadow-xl shadow-sky-400/20 hover:bg-sky-300 active:scale-95"
               >
                 Start Free
               </Link>

@@ -1,350 +1,450 @@
-import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, Hash, Shield, ArrowLeft, LogOut, Lock, Activity, TrendingUp, Zap, ChevronRight, Edit3 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import Layout from '@/components/Layout';
-import { analysisService, authService } from '@/utils/api';
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  Lock,
+  Mail,
+  ShieldCheck,
+  User,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import Layout from "@/components/Layout";
+import { analysisService, authService } from "@/utils/api";
 
 export default function Profile() {
-    const [user, setUser] = useState(null);
-    const [stats, setStats] = useState({ totalAnalyses: 0, corrections: 0, optimizations: 0 });
-    const [history, setHistory] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({ name: '', email: '' });
-    const [updating, setUpdating] = useState(false);
-    const [securityData, setSecurityData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    const [showSecurity, setShowSecurity] = useState(false);
-    const [updatingSecurity, setUpdatingSecurity] = useState(false);
-    const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({
+    totalAnalyses: 0,
+    corrections: 0,
+    optimizations: 0,
+  });
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "" });
+  const [securityData, setSecurityData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [updating, setUpdating] = useState(false);
+  const [updatingSecurity, setUpdatingSecurity] = useState(false);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchAllData = async () => {
-            try {
-                const [userRes, statsRes, historyRes] = await Promise.all([
-                    authService.getMe(),
-                    analysisService.getStats(),
-                    analysisService.getHistory()
-                ]);
-                const userData = userRes.data.data;
-                setUser({ ...userData, id: userData._id || userData.id });
-                setFormData({ name: userData.name, email: userData.email });
-                setStats(statsRes.data.data);
-                setHistory(historyRes.data.data);
-            } catch (err) {
-                if (err.response?.status === 401) navigate('/auth/login');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAllData();
-    }, [navigate]);
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const [userRes, statsRes, historyRes] = await Promise.all([
+          authService.getMe(),
+          analysisService.getStats(),
+          analysisService.getHistory(),
+        ]);
 
-    const handleUpdate = async (e) => {
-        e.preventDefault();
-        setUpdating(true);
-        try {
-            const response = await authService.updateDetails(formData);
-            const userData = response.data.data;
-            setUser(prev => ({ ...prev, ...userData }));
-            setIsEditing(false);
-            toast.success("Identity updated");
-        } catch (err) {
-            toast.error("Update failed");
-        } finally {
-            setUpdating(false);
+        const userData = userRes.data.data;
+        setUser({ ...userData, id: userData._id || userData.id });
+        setFormData({ name: userData.name, email: userData.email });
+        setStats(statsRes.data.data);
+        setHistory(historyRes.data.data);
+      } catch (error) {
+        if (error.response?.status === 401) {
+          navigate("/auth/login");
+        } else {
+          toast.error("Failed to load profile");
         }
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleUpdatePassword = async (e) => {
-        e.preventDefault();
-        if (securityData.newPassword !== securityData.confirmPassword) return toast.error("Passwords mismatch");
-        setUpdatingSecurity(true);
-        try {
-            await authService.updatePassword({
-                currentPassword: securityData.currentPassword,
-                newPassword: securityData.newPassword
-            });
-            setShowSecurity(false);
-            setSecurityData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            toast.success("Security credentials updated");
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Security update failed");
-        } finally {
-            setUpdatingSecurity(false);
-        }
-    };
+    fetchAllData();
+  }, [navigate]);
 
-    if (loading) return (
-        <Layout><div className="max-w-5xl mx-auto pt-32 px-6 h-screen flex items-center justify-center">
-            <div className="w-10 h-10 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-        </div></Layout>
-    );
+  const languageBreakdown = useMemo(() => {
+    const counts = history.reduce((acc, item) => {
+      acc[item.language] = (acc[item.language] || 0) + 1;
+      return acc;
+    }, {});
 
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  }, [history]);
+
+  const handleUpdate = async (event) => {
+    event.preventDefault();
+    setUpdating(true);
+
+    try {
+      const response = await authService.updateDetails(formData);
+      const userData = response.data.data;
+      const nextUser = { ...user, ...userData };
+      setUser(nextUser);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: nextUser._id || nextUser.id,
+          name: nextUser.name,
+          email: nextUser.email,
+          role: nextUser.role,
+        })
+      );
+      setIsEditing(false);
+      toast.success("Profile updated");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Update failed");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleUpdatePassword = async (event) => {
+    event.preventDefault();
+
+    if (securityData.newPassword !== securityData.confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    setUpdatingSecurity(true);
+
+    try {
+      await authService.updatePassword({
+        currentPassword: securityData.currentPassword,
+        newPassword: securityData.newPassword,
+      });
+      setShowSecurity(false);
+      setSecurityData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      toast.success("Password updated");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Password update failed");
+    } finally {
+      setUpdatingSecurity(false);
+    }
+  };
+
+  if (loading) {
     return (
-        <Layout>
-            <div className="max-w-5xl mx-auto pt-32 px-6 pb-20">
-                {/* Profile Header */}
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-8">
-                    <div className="flex items-center gap-6">
-                        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-2xl shadow-blue-600/20 relative group">
-                            <User size={40} className="group-hover:scale-110 transition-transform" />
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-4 border-[#0B0F1A]" title="Verified" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black text-white tracking-tighter mb-2">{user.name}</h1>
-                            <p className="text-slate-500 font-medium flex items-center gap-2">
-                                <Mail size={14} />
-                                {user.email}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                        <button 
-                            onClick={() => setIsEditing(!isEditing)}
-                            className="bg-white/5 border border-white/10 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-2"
-                        >
-                            <Edit3 size={14} />
-                            Modify Identity
-                        </button>
-                        <button 
-                            onClick={() => { localStorage.clear(); window.location.href = '/auth/login'; }}
-                            className="text-red-400 hover:text-red-300 font-black text-xs uppercase tracking-widest px-4 transition-colors"
-                        >
-                            Log Out
-                        </button>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column: Stats & Meta */}
-                    <div className="lg:col-span-1 space-y-8">
-                        <div className="card-premium p-8 space-y-8">
-                            <div className="flex items-center gap-3 pb-6 border-b border-white/5">
-                                <TrendingUp size={18} className="text-blue-500" />
-                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">System Analytics</h3>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 gap-6">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Total Analyses</p>
-                                    <p className="text-3xl font-black text-white">{stats.totalAnalyses}</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Resolutions</p>
-                                    <p className="text-3xl font-black text-emerald-500">{stats.corrections}</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Optimizations</p>
-                                    <p className="text-3xl font-black text-purple-500">{stats.optimizations}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="card-premium p-8 space-y-6">
-                            <div className="flex items-center gap-3 pb-4 border-b border-white/5">
-                                <Shield size={18} className="text-emerald-500" />
-                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Security Node</h3>
-                            </div>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Protocol</span>
-                                    <span className="text-xs font-black text-white uppercase">Encrypted_V2</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Status</span>
-                                    <span className="text-xs font-black text-emerald-500 uppercase">Operational</span>
-                                </div>
-                                <button 
-                                    onClick={() => setShowSecurity(!showSecurity)}
-                                    className="w-full mt-4 py-2.5 rounded-xl bg-white/5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all border border-white/5"
-                                >
-                                    {showSecurity ? "Conceal Settings" : "Security Override"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Column: Content/Forms */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <AnimatePresence mode="wait">
-                            {isEditing ? (
-                                <motion.div
-                                    key="edit"
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="card-premium p-10"
-                                >
-                                    <h3 className="text-xl font-black text-white mb-8 tracking-tight">Identity Parameters</h3>
-                                    <form onSubmit={handleUpdate} className="space-y-6">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Legal Name</label>
-                                                <input 
-                                                    type="text" 
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 px-6 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-medium"
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Email Access</label>
-                                                <input 
-                                                    type="email" 
-                                                    value={formData.email}
-                                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 px-6 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-medium"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4 pt-4">
-                                            <button 
-                                                type="submit" 
-                                                disabled={updating}
-                                                className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all disabled:opacity-50"
-                                            >
-                                                {updating ? "Processing..." : "Commit Changes"}
-                                            </button>
-                                            <button onClick={() => setIsEditing(false)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white px-4 transition-colors">Abort</button>
-                                        </div>
-                                    </form>
-                                </motion.div>
-                            ) : showSecurity ? (
-                                <motion.div
-                                    key="security"
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="card-premium p-10"
-                                >
-                                    <h3 className="text-xl font-black text-white mb-8 tracking-tight">Credential Management</h3>
-                                    <form onSubmit={handleUpdatePassword} className="space-y-6">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Current Secret</label>
-                                            <input 
-                                                type="password" 
-                                                required
-                                                value={securityData.currentPassword}
-                                                onChange={(e) => setSecurityData({...securityData, currentPassword: e.target.value})}
-                                                className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 px-6 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
-                                                placeholder="••••••••"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 ml-1">New Secret</label>
-                                                <input 
-                                                    type="password" 
-                                                    required
-                                                    value={securityData.newPassword}
-                                                    onChange={(e) => setSecurityData({...securityData, newPassword: e.target.value})}
-                                                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 px-6 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
-                                                    placeholder="••••••••"
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Confirm Secret</label>
-                                                <input 
-                                                    type="password" 
-                                                    required
-                                                    value={securityData.confirmPassword}
-                                                    onChange={(e) => setSecurityData({...securityData, confirmPassword: e.target.value})}
-                                                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-3 px-6 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
-                                                    placeholder="••••••••"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4 pt-4">
-                                            <button 
-                                                type="submit"
-                                                disabled={updatingSecurity}
-                                                className="bg-white text-black px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
-                                            >
-                                                {updatingSecurity ? "Updating..." : "Update Credentials"}
-                                            </button>
-                                            <button onClick={() => setShowSecurity(false)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white px-4 transition-colors">Discard</button>
-                                        </div>
-                                    </form>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="activity"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="space-y-8"
-                                >
-                                    {/* Language Distribution */}
-                                    <div className="card-premium p-10">
-                                        <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 mb-8 flex items-center gap-3">
-                                            <Activity size={14} className="text-blue-400" />
-                                            Language Mastery
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                            {Object.entries(
-                                                history.reduce((acc, item) => {
-                                                    acc[item.language] = (acc[item.language] || 0) + 1;
-                                                    return acc;
-                                                }, {})
-                                            )
-                                            .sort((a, b) => b[1] - a[1])
-                                            .map(([lang, count], idx) => (
-                                                <div key={lang} className="space-y-3">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-xs font-black uppercase tracking-widest text-slate-300">{lang}</span>
-                                                        <span className="text-xs font-black text-blue-400 uppercase">{count} analyses</span>
-                                                    </div>
-                                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                                        <motion.div 
-                                                            initial={{ width: 0 }}
-                                                            animate={{ width: `${(count / history.length) * 100}%` }}
-                                                            transition={{ duration: 1, delay: idx * 0.1 }}
-                                                            className="h-full bg-blue-600"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Recent Activity List */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 ml-1">Terminal Activity</h3>
-                                        {history.length > 0 ? (
-                                            history.slice(0, 4).map((item) => (
-                                                <Link 
-                                                    key={item._id} 
-                                                    to={`/dashboard/analysis/${item._id}`}
-                                                    className="card-premium p-6 flex items-center justify-between group hover:border-blue-500/20"
-                                                >
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                                                            <Terminal size={18} />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-white font-bold text-sm line-clamp-1">{item.originalCode.substring(0, 30)}...</p>
-                                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{item.language} • {new Date(item.createdAt).toLocaleDateString()}</p>
-                                                        </div>
-                                                    </div>
-                                                    <ChevronRight size={16} className="text-slate-700 group-hover:text-white transition-all group-hover:translate-x-1" />
-                                                </Link>
-                                            ))
-                                        ) : (
-                                            <div className="card-premium p-10 text-center">
-                                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">No activity recorded yet.</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </div>
-            </div>
-        </Layout>
+      <Layout>
+        <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+          <div className="h-10 w-10 rounded-full border-2 border-sky-400/20 border-t-sky-400 animate-spin" />
+        </div>
+      </Layout>
     );
+  }
+
+  return (
+    <Layout>
+      <div className="mx-auto max-w-6xl px-6 pb-20 pt-28">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex items-center gap-5">
+            <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-sky-400 to-blue-600 text-slate-950 shadow-2xl shadow-sky-500/20">
+              <User size={36} />
+            </div>
+            <div>
+              <p className="eyebrow mb-2">Profile</p>
+              <h1 className="text-4xl font-bold tracking-[-0.05em] text-white">
+                {user?.name}
+              </h1>
+              <p className="mt-2 flex items-center gap-2 text-slate-400">
+                <Mail size={15} />
+                {user?.email}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => {
+                setIsEditing((previous) => !previous);
+                setShowSecurity(false);
+              }}
+              className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:border-sky-400/20"
+            >
+              Edit profile
+            </button>
+            <button
+              onClick={() => {
+                setShowSecurity((previous) => !previous);
+                setIsEditing(false);
+              }}
+              className="rounded-2xl border border-emerald-400/15 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-100 hover:bg-emerald-500/15"
+            >
+              Update password
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {[
+            { label: "Saved analyses", value: stats.totalAnalyses },
+            { label: "Corrections generated", value: stats.corrections },
+            { label: "Optimizations suggested", value: stats.optimizations },
+          ].map((stat) => (
+            <div key={stat.label} className="card-premium p-6">
+              <p className="text-sm text-slate-500">{stat.label}</p>
+              <p className="mt-3 text-3xl font-bold text-white">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <AnimatePresence mode="wait">
+            {isEditing ? (
+              <motion.div
+                key="edit"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="card-premium p-8"
+              >
+                <h2 className="text-2xl font-bold text-white">Edit profile</h2>
+                <p className="mt-2 text-sm text-slate-400">
+                  Update the name and email used across your saved workspace.
+                </p>
+
+                <form onSubmit={handleUpdate} className="mt-6 space-y-5">
+                  <label className="block">
+                    <span className="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
+                      Full name
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData((previous) => ({
+                          ...previous,
+                          name: e.target.value,
+                        }))
+                      }
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-400/20"
+                      required
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
+                      Email
+                    </span>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((previous) => ({
+                          ...previous,
+                          email: e.target.value,
+                        }))
+                      }
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-400/20"
+                      required
+                    />
+                  </label>
+
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      disabled={updating}
+                      className="rounded-2xl bg-sky-400 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-sky-300 disabled:opacity-70"
+                    >
+                      {updating ? "Saving..." : "Save changes"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="rounded-2xl border border-white/10 px-5 py-3 text-sm font-semibold text-slate-300 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            ) : showSecurity ? (
+              <motion.div
+                key="security"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="card-premium p-8"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+                    <Lock size={18} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Update password</h2>
+                    <p className="text-sm text-slate-400">
+                      Keep your workspace secure with a fresh password.
+                    </p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleUpdatePassword} className="mt-6 space-y-5">
+                  {[
+                    {
+                      label: "Current password",
+                      key: "currentPassword",
+                    },
+                    {
+                      label: "New password",
+                      key: "newPassword",
+                    },
+                    {
+                      label: "Confirm new password",
+                      key: "confirmPassword",
+                    },
+                  ].map((field) => (
+                    <label key={field.key} className="block">
+                      <span className="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
+                        {field.label}
+                      </span>
+                      <input
+                        type="password"
+                        value={securityData[field.key]}
+                        onChange={(e) =>
+                          setSecurityData((previous) => ({
+                            ...previous,
+                            [field.key]: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                        required
+                      />
+                    </label>
+                  ))}
+
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      disabled={updatingSecurity}
+                      className="rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-300 disabled:opacity-70"
+                    >
+                      {updatingSecurity ? "Updating..." : "Update password"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowSecurity(false)}
+                      className="rounded-2xl border border-white/10 px-5 py-3 text-sm font-semibold text-slate-300 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="overview"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="card-premium p-8"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-400/10 text-sky-300">
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Account overview</h2>
+                    <p className="text-sm text-slate-400">
+                      Basic account details and recent workspace activity.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                      Display name
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white">{user?.name}</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                      Email
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white">{user?.email}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="space-y-6">
+            <div className="card-premium p-8">
+              <h2 className="text-2xl font-bold text-white">Language activity</h2>
+              <p className="mt-2 text-sm text-slate-400">
+                Distribution of analyses by language in your saved history.
+              </p>
+
+              <div className="mt-6 space-y-4">
+                {languageBreakdown.length > 0 ? (
+                  languageBreakdown.map(([language, count]) => (
+                    <div key={language}>
+                      <div className="mb-2 flex items-center justify-between text-sm">
+                        <span className="font-semibold text-white">{language}</span>
+                        <span className="text-slate-400">{count} analyses</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-white/5">
+                        <div
+                          className="h-2 rounded-full bg-sky-400"
+                          style={{ width: `${(count / history.length) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-400">
+                    No saved analyses yet. Run a review to start building history.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="card-premium p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Recent reports</h2>
+                  <p className="mt-2 text-sm text-slate-400">
+                    Jump back into your latest findings and recommendations.
+                  </p>
+                </div>
+                <Link
+                  to="/dashboard"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-sky-300 hover:text-white"
+                >
+                  View all
+                  <ArrowRight size={15} />
+                </Link>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                {history.length > 0 ? (
+                  history.slice(0, 4).map((item) => (
+                    <Link
+                      key={item._id}
+                      to={`/dashboard/analysis/${item._id}`}
+                      className="block rounded-2xl border border-white/10 bg-slate-950/50 p-4 hover:border-sky-400/20"
+                    >
+                      <p className="line-clamp-2 text-sm font-medium text-slate-200">
+                        {item.originalCode.substring(0, 80).trim()}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                        <span>{item.language}</span>
+                        <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-400">
+                    No recent reports yet.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
 }

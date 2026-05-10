@@ -1,201 +1,225 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { User as UserIcon, Mail, Lock, ArrowRight, Github, CheckCircle2, XCircle, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
-import { authService } from '@/utils/api';
-import Layout from '@/components/Layout';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  User as UserIcon,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import Layout from "@/components/Layout";
+import { authService } from "@/utils/api";
 
 export default function Register() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [passValidation, setPassValidation] = useState({ length: false });
-    const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [passValidation, setPassValidation] = useState({ length: false });
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        setPassValidation({
-            length: password.length >= 6
-        });
-    }, [password]);
+  useEffect(() => {
+    setPassValidation({
+      length: password.length >= 6,
+    });
+  }, [password]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!passValidation.length) {
-            setError('Password must be at least 6 characters.');
-            return;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-            const { data } = await authService.register({ name, email, password });
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            toast.success(`Welcome to khudsekrle, ${data.user.name}!`);
-            navigate('/');
-        } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Registration failed.';
-            setError(errorMsg);
-            toast.error(errorMsg);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    return (
-        <Layout>
-            <div className="min-h-full flex flex-col items-center justify-center py-20 px-6 relative overflow-hidden">
-                {/* Background Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-600/5 blur-[120px] rounded-full pointer-events-none" />
+    if (!passValidation.length) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-[420px] relative z-10"
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data } = await authService.register({ name, email, password });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      toast.success(`Welcome to khudsekrle, ${data.user.name}`);
+      navigate("/");
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || "Registration failed.";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Layout>
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6 py-14">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/60 shadow-2xl shadow-slate-950/40 lg:grid-cols-[0.95fr_1.05fr]"
+        >
+          <div className="p-8 sm:p-10">
+            <div className="mx-auto max-w-md">
+              <div className="mb-8">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+                  <UserIcon size={22} />
+                </div>
+                <h2 className="mt-5 text-3xl font-bold tracking-[-0.04em] text-white">
+                  Create your workspace
+                </h2>
+                <p className="mt-2 text-sm text-slate-400">
+                  Save analyses, revisit fixes, and keep your review history organized.
+                </p>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-5 overflow-hidden rounded-2xl border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm text-red-100"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
+                    Full name
+                  </span>
+                  <div className="relative">
+                    <UserIcon
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                    />
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                    />
+                  </div>
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
+                    Email
+                  </span>
+                  <div className="relative">
+                    <Mail
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                    />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@example.com"
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                    />
+                  </div>
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
+                    Password
+                  </span>
+                  <div className="relative">
+                    <Lock
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                    />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Choose a strong password"
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-12 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((previous) => !previous)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">
+                    {passValidation.length ? (
+                      <CheckCircle2 size={16} className="text-emerald-300" />
+                    ) : (
+                      <div className="h-4 w-4 rounded-full border border-slate-600" />
+                    )}
+                    At least 6 characters
+                  </div>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-400 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-400/20 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                    <div className="bg-[#111827] p-6 pb-8 rounded-2xl border border-white/10 shadow-2xl shadow-black/50 flex flex-col">
-                        {/* Header */}
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-12 h-12 bg-emerald-600/10 rounded-xl flex items-center justify-center mb-4 text-emerald-500 border border-emerald-500/20 shadow-inner">
-                                <UserIcon size={24} />
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <h1 className="text-2xl font-semibold text-white tracking-tight">Create Account</h1>
-                                <p className="text-sm text-gray-400">Join the community to start analyzing code</p>
-                            </div>
-                        </div>
+                  {loading ? (
+                    <div className="h-4 w-4 rounded-full border-2 border-slate-900/20 border-t-slate-900 animate-spin" />
+                  ) : (
+                    <>
+                      Create Account
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+              </form>
 
-                        {/* Content Gap */}
-                        <div className="mt-8 flex flex-col">
-                            {/* Error Message */}
-                            <AnimatePresence mode="wait">
-                                {error && (
-                                    <motion.div 
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        className="overflow-hidden mb-5"
-                                    >
-                                        <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2.5 text-red-400 text-sm">
-                                            <XCircle size={14} className="shrink-0" />
-                                            <span className="leading-tight">{error}</span>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            {/* Form Area */}
-                            <form onSubmit={handleSubmit} className="flex flex-col">
-                                <div className="flex flex-col gap-4">
-                                    {/* Name Field */}
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs tracking-wider text-gray-400 uppercase font-bold ml-1">Full Name</label>
-                                        <div className="relative group">
-                                            <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-500 transition-colors z-10" size={18} />
-                                            <input
-                                                type="text"
-                                                required
-                                                className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
-                                                placeholder="Enter your name"
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Email Field */}
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs tracking-wider text-gray-400 uppercase font-bold ml-1">Email Address</label>
-                                        <div className="relative group">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-500 transition-colors z-10" size={18} />
-                                            <input
-                                                type="email"
-                                                required
-                                                className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
-                                                placeholder="name@example.com"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Password Field */}
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs tracking-wider text-gray-400 uppercase font-bold ml-1">Password</label>
-                                        <div className="relative group">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-500 transition-colors z-10" size={18} />
-                                            <input
-                                                type={showPassword ? "text" : "password"}
-                                                required
-                                                className="w-full h-12 bg-white/5 border border-white/10 rounded-lg pl-12 pr-12 text-white text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all hover:bg-white/[0.08] relative z-0"
-                                                placeholder="Min 6 characters"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                            />
-                                            <button 
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors flex items-center justify-center z-10"
-                                            >
-                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                            </button>
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-1 ml-1">
-                                            {passValidation.length ? (
-                                                <CheckCircle2 size={14} className="text-emerald-500" />
-                                            ) : (
-                                                <div className="w-3 h-3 rounded-full border border-slate-700" />
-                                            )}
-                                            <span className={`text-xs font-bold uppercase tracking-wider ${passValidation.length ? 'text-emerald-500' : 'text-slate-600'}`}>
-                                                Minimum 6 characters
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="w-full h-12 mt-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-xl flex items-center justify-center gap-2.5 transition-all duration-200 shadow-lg shadow-emerald-900/20 active:scale-95 hover:brightness-110 disabled:opacity-50 group"
-                                >
-                                    {loading ? (
-                                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                    ) : (
-                                        <>
-                                            <span>Sign Up</span>
-                                            <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
-                                        </>
-                                    )}
-                                </button>
-                            </form>
-
-                            {/* Divider Line */}
-                            <div className="flex items-center gap-4 mt-5">
-                                <div className="flex-1 h-px bg-white/10" />
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">or continue with</span>
-                                <div className="flex-1 h-px bg-white/10" />
-                            </div>
-
-                            {/* Social Auth */}
-                            <button className="w-full h-12 mt-4 bg-white/5 hover:bg-white/[0.08] text-white rounded-xl flex items-center justify-center gap-3 transition-all duration-200 border border-white/10 active:scale-95 group shadow-sm">
-                                <Github size={20} className="group-hover:text-emerald-400 transition-colors" />
-                                <span className="font-bold text-sm">Continue with GitHub</span>
-                            </button>
-
-                            {/* Footer Link */}
-                            <p className="mt-8 text-center text-gray-500 text-sm">
-                                Already have an account?{' '}
-                                <Link to="/auth/login" className="text-white hover:text-emerald-400 transition-colors font-bold hover:underline underline-offset-4">
-                                    Sign In
-                                </Link>
-                            </p>
-                        </div>
-                    </div>
-                </motion.div>
+              <p className="mt-8 text-sm text-slate-400">
+                Already have an account?{" "}
+                <Link to="/auth/login" className="font-semibold text-white hover:text-emerald-300">
+                  Sign in
+                </Link>
+              </p>
             </div>
-        </Layout>
-    );
+          </div>
+
+          <div className="hidden border-l border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.18),transparent_28%),linear-gradient(180deg,#08131e_0%,#060a14_100%)] p-10 lg:flex lg:flex-col lg:justify-between">
+            <div>
+              <p className="eyebrow mb-4">What you get</p>
+              <h1 className="text-4xl font-bold tracking-[-0.05em] text-white">
+                Build a review history your team can trust.
+              </h1>
+              <p className="mt-4 max-w-md text-base leading-7 text-slate-300">
+                Store findings, revisit optimized solutions, and keep a clean archive of code reviews as your project evolves.
+              </p>
+            </div>
+
+            <div className="grid gap-3">
+              {[
+                "Protected account access with JWT authentication",
+                "Saved reports with findings, corrected code, and complexity notes",
+                "Profile tools for updating account details and password settings",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-200"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </Layout>
+  );
 }

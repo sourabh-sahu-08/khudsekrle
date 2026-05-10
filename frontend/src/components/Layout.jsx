@@ -1,43 +1,38 @@
-import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function Layout({ children }) {
-    const location = useLocation();
-    const isAuthPage = location.pathname.startsWith('/auth');
-    const isWorkspace = location.pathname === '/' || location.pathname.startsWith('/dashboard/analysis/');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+  const isAuthPage = location.pathname.startsWith("/auth");
+  const isWorkspace =
+    location.pathname === "/" || location.pathname.startsWith("/dashboard/analysis/");
 
-    return (
-        <div className="h-screen bg-[#0B0F1A] flex flex-col overflow-hidden text-slate-200">
-            {/* Navbar - Fixed Height 64px (h-16) */}
-            <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-            
-            <div className="flex flex-1 overflow-hidden relative pt-16">
-                {/* Conditional Sidebar */}
-                {!isAuthPage && (
-                    <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-                )}
+  return (
+    <div className="min-h-screen bg-transparent text-slate-200">
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 grid-overlay opacity-40" />
+        <div className="absolute top-[-15%] left-[-8%] h-[36rem] w-[36rem] rounded-full bg-sky-500/10 blur-[140px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] h-[34rem] w-[34rem] rounded-full bg-blue-700/10 blur-[150px]" />
+      </div>
 
-                {/* Main Content Area */}
-                <main className={`flex-1 flex flex-col overflow-hidden relative ${isAuthPage ? 'overflow-y-auto' : ''}`}>
-                    <div className={`flex-1 ${isWorkspace ? 'overflow-hidden' : 'overflow-y-auto custom-scrollbar'}`}>
-                        {children}
-                    </div>
-                    
-                    {/* Minimal Footer only on non-workspace pages or as a slim bar */}
-                    {!isWorkspace && !isAuthPage && <Footer />}
-                </main>
-            </div>
+      <Navbar />
 
-            {/* Global Background Glow (Subtle) */}
-            <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full" />
-            </div>
-        </div>
-    );
+      <div className="relative z-10 flex min-h-screen pt-16">
+        {!isAuthPage && <Sidebar />}
+
+        <main className="flex min-w-0 flex-1 flex-col">
+          <div
+            className={`flex-1 ${
+              isWorkspace ? "overflow-hidden" : "overflow-y-auto"
+            }`}
+          >
+            {children}
+          </div>
+          {!isWorkspace && !isAuthPage && <Footer />}
+        </main>
+      </div>
+    </div>
+  );
 }
